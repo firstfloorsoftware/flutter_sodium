@@ -1,10 +1,7 @@
 # flutter_sodium
 
-A new flutter plugin project.
+A serious framework needs a serious cryptographic library. The flutter_sodium plugin provides [libsodium](https://download.libsodium.org/doc/) bindings for [flutter](https://flutter.io).
 
 ## Getting Started
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
-
-For help on editing plugin code, view the [documentation](https://flutter.io/platform-plugins/#edit-code).
+This plugin is very much work in progress, and not available yet in [Dart Pub](https://pub.dartlang.org/).
