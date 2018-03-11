@@ -16,6 +16,9 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
 }
 
@@ -31,4 +34,8 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+}
+
+dependencies {
+    compile 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:1.0.9-SNAPSHOT'
 }
