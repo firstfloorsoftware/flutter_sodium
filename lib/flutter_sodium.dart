@@ -1,11 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter/services.dart';
 
-class FlutterSodium {
-  static const MethodChannel _channel =
-      const MethodChannel('flutter_sodium');
+/// Sodium is a modern, easy-to-use software library for encryption, decryption, signatures, password hashing and more.
+class Sodium {
+  static const MethodChannel _channel = const MethodChannel('flutter_sodium');
 
-  static Future<String> get platformVersion =>
-      _channel.invokeMethod('getPlatformVersion');
+  //
+  // sodium_version
+  //
+  static Future<String> sodiumVersionString() =>
+      _channel.invokeMethod('sodium_version_string');
 }

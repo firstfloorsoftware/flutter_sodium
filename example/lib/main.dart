@@ -10,7 +10,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String _sodiumVersion = 'Unknown';
 
   @override
   initState() {
@@ -20,12 +20,12 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-    String platformVersion;
+    String sodiumVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await FlutterSodium.platformVersion;
+      sodiumVersion = await Sodium.sodiumVersionString();
     } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+      sodiumVersion = 'Failed to get sodium version.';
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
       return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _sodiumVersion = sodiumVersion;
     });
   }
 
@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
           title: new Text('Plugin example app'),
         ),
         body: new Center(
-          child: new Text('Running on: $_platformVersion\n'),
+          child: new Text(_sodiumVersion),
         ),
       ),
     );
