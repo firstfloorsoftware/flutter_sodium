@@ -10,7 +10,7 @@ class Sodium {
   //
   // crypto_shorthash
   //
-  /// Computes a fixed-size fingerprint specified input and key.
+  /// Computes a fixed-size fingerprint for specified input and key.
   static Future<Uint8List> cryptoShorthash(Uint8List i, Uint8List k) =>
       _channel.invokeMethod('crypto_shorthash', {'in': i, 'k': k});
 

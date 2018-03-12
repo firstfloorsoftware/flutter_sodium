@@ -25,7 +25,7 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
       switch(call.method) {
         case "crypto_shorthash": crypto_shorthash(call, result); break;
         case "crypto_shorthash_keygen": crypto_shorthash_keygen(call, result); break;
-        
+
         case "randombytes_buf": randombytes_buf(call, result); break;
         case "randombytes_buf_deterministic": randombytes_buf_deterministic(call, result); break;
         case "randombytes_random": randombytes_random(call, result); break;
@@ -66,7 +66,7 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
 
   private void crypto_shorthash_keygen(MethodCall call, Result result)
   {
-    // FIXME: falling back to randombytes_buf, crypto_shorthash_keygen not implemented in libsodium-jni
+    // FIXME: crypto_shorthash_keygen not implemented in libsodium-jni, falling back to randombytes_buf
     byte[] k = new byte[sodium().crypto_shorthash_keybytes()];
     sodium().randombytes_buf(k, k.length);
     result.success(k);
