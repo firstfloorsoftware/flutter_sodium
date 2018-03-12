@@ -2,6 +2,25 @@ import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 
+secretKeyAuthentication() async {
+  // https://download.libsodium.org/doc/secret-key_cryptography/secret-key_authentication.html
+  printHeader('Secret key authentication');
+
+  try {
+    final message = UTF8.encode('test');
+    final key = await Sodium.cryptoAuthKeygen();
+    final mac = await Sodium.cryptoAuth(message, key);
+
+    print('mac: ${hex.encode(mac)}');
+    
+    final isValid = await Sodium.cryptoAuthVerify(mac, message, key);
+
+    assert(isValid);
+  } catch (e) {
+    print(e);
+  }
+}
+
 shortInputHashing() async {
   // https://download.libsodium.org/doc/hashing/short-input_hashing.html
 

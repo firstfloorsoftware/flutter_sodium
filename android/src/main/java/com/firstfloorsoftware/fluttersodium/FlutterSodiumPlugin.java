@@ -23,6 +23,10 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
   public void onMethodCall(MethodCall call, Result result) {
     try{
       switch(call.method) {
+        case "crypto_auth": crypto_auth(call, result); break;
+        case "crypto_auth_verify": crypto_auth_verify(call, result); break;
+        case "crypto_auth_keygen": crypto_auth_keygen(call, result); break;
+
         case "crypto_shorthash": crypto_shorthash(call, result); break;
         case "crypto_shorthash_keygen": crypto_shorthash_keygen(call, result); break;
 
@@ -50,6 +54,34 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
     {
       throw new Exception("result " + ret);
     }
+  }
+
+  private void crypto_auth(MethodCall call, Result result) throws Exception
+  {
+    byte[] in = call.argument("in");
+    byte[] k = call.argument("k");
+    byte[] out = new byte[sodium().crypto_auth_bytes()];
+
+    requireSuccess(sodium().crypto_auth(out, in, in.length, k));
+    result.success(out); 
+  }
+
+  private void crypto_auth_verify(MethodCall call, Result result)
+  {
+    byte[] h = call.argument("h");
+    byte[] in = call.argument("in");
+    byte[] k = call.argument("k");
+
+    int ret = sodium().crypto_auth_verify(h, in, in.length, k);
+    result.success(ret == 0); 
+  }
+
+  private void crypto_auth_keygen(MethodCall call, Result result)
+  {
+    // FIXME: crypto_auth_keygen not implemented in libsodium-jni, falling back to randombytes_buf
+    byte[] k = new byte[sodium().crypto_auth_keybytes()];
+    sodium().randombytes_buf(k, k.length);
+    result.success(k);
   }
 
   private void crypto_shorthash(MethodCall call, Result result) throws Exception

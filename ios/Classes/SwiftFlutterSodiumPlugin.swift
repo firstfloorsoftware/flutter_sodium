@@ -19,6 +19,10 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     }
 
     switch call.method {
+      case "crypto_auth": result(crypto_auth(call:call))
+      case "crypto_auth_verify": result(crypto_auth_verify(call:call))
+      case "crypto_auth_keygen": result(crypto_auth_keygen(call:call))
+
       case "crypto_shorthash": result(crypto_shorthash(call: call))
       case "crypto_shorthash_keygen": result(crypto_shorthash_keygen(call: call))
 
@@ -41,6 +45,50 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       return FlutterError.init(code: "Failure", message: "\(function) returns \(ret)", details: nil)
     }
     return nil
+  }
+
+  private func crypto_auth(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let i = (args["in"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var out = Data(count: flutter_sodium.crypto_auth_bytes());
+
+    let ret = out.withUnsafeMutableBytes { outPtr in
+      i.withUnsafeBytes { iPtr in 
+        k.withUnsafeBytes { kPtr in
+          flutter_sodium.crypto_auth(outPtr, iPtr, CUnsignedLongLong(i.count), kPtr)
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+  }
+
+  private func crypto_auth_verify(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let h = (args["h"] as! FlutterStandardTypedData).data
+    let i = (args["in"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+    
+    let ret = h.withUnsafeBytes { hPtr in
+      i.withUnsafeBytes { iPtr in
+        k.withUnsafeBytes { kPtr in 
+          flutter_sodium.crypto_auth_verify(hPtr, iPtr, CUnsignedLongLong(i.count), kPtr)
+        }
+      }
+    }
+    return ret == 0
+  }
+
+  private func crypto_auth_keygen(call: FlutterMethodCall) -> Any
+  {
+    var k = Data(count: flutter_sodium.crypto_auth_keybytes())
+    k.withUnsafeMutableBytes { kPtr in
+      flutter_sodium.crypto_auth_keygen(kPtr)
+    }
+    return FlutterStandardTypedData.init(bytes: k)
   }
 
   private func crypto_shorthash(call: FlutterMethodCall) -> Any

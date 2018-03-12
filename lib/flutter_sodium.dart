@@ -8,6 +8,21 @@ class Sodium {
   static const MethodChannel _channel = const MethodChannel('flutter_sodium');
 
   //
+  // crypto_auth
+  //
+  /// Computes a tag for specified input and key.
+  static Future<Uint8List> cryptoAuth(Uint8List i, Uint8List k) =>
+      _channel.invokeMethod('crypto_auth', {'in': i, 'k': k});
+
+  /// Verifies that the tag stored at h is a valid tag for the input and key.
+  static Future<bool> cryptoAuthVerify(Uint8List h, Uint8List i, Uint8List k) =>
+      _channel.invokeMethod('crypto_auth_verify', {'h': h, 'in': i, 'k': k});
+
+  /// Generates a random key.
+  static Future<Uint8List> cryptoAuthKeygen() =>
+      _channel.invokeMethod('crypto_auth_keygen');
+
+  //
   // crypto_shorthash
   //
   /// Computes a fixed-size fingerprint for specified input and key.

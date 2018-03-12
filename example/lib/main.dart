@@ -8,6 +8,7 @@ class MyApp extends StatelessWidget {
     var stopwatch = new Stopwatch()..start();
     print('Running sodium samples');
 
+    await secretKeyAuthentication();
     await shortInputHashing();
     await generatingRandomData();
 
