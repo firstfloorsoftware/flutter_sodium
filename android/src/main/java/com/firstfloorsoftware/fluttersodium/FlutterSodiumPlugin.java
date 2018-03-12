@@ -88,7 +88,9 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
 
   private void randombytes_random(MethodCall call, Result result)
   {
-    result.success(sodium().randombytes_random());
+    int rnd = sodium().randombytes_random();
+    // convert result to unsigned long
+    result.success(rnd & 0xFFFFFFFFL);
   }
 
   private void randombytes_uniform(MethodCall call, Result result)
