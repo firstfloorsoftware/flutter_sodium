@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
+export 'src/constants.dart';
 
 /// Sodium is a modern, easy-to-use software library for encryption, decryption, signatures, password hashing and more.
 class Sodium {
