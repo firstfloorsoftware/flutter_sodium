@@ -19,6 +19,9 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     }
 
     switch call.method {
+      case "crypto_shorthash": result(crypto_shorthash(call: call))
+      case "crypto_shorthash_keygen": result(crypto_shorthash_keygen(call: call))
+
       case "randombytes_buf": result(randombytes_buf(call: call))
       case "randombytes_buf_deterministic": result(randombytes_buf_deterministic(call: call))
       case "randombytes_random": result(randombytes_random(call: call))
@@ -30,6 +33,40 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       
       default: result(FlutterMethodNotImplemented)
     }
+  }
+
+  private func error(ret: Int32, function: String = #function) -> FlutterError?
+  {
+    if (ret != 0) {
+      return FlutterError.init(code: "Failure", message: "\(function) returns \(ret)", details: nil)
+    }
+    return nil
+  }
+
+  private func crypto_shorthash(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let i = (args["in"] as! FlutterStandardTypedData).data
+    let key = (args["k"] as! FlutterStandardTypedData).data
+    var out = Data(count: flutter_sodium.crypto_shorthash_bytes());
+
+    let ret = out.withUnsafeMutableBytes { outPtr in
+      i.withUnsafeBytes { iPtr in 
+        key.withUnsafeBytes { keyPtr in
+          flutter_sodium.crypto_shorthash(outPtr, iPtr, CUnsignedLongLong(i.count), keyPtr)
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+  }
+
+  private func crypto_shorthash_keygen(call: FlutterMethodCall) -> Any
+  {
+    var k = Data(count: flutter_sodium.crypto_shorthash_keybytes())
+    k.withUnsafeMutableBytes { kPtr in
+      flutter_sodium.crypto_shorthash_keygen(kPtr)
+    }
+    return FlutterStandardTypedData.init(bytes: k)
   }
 
   private func randombytes_buf(call: FlutterMethodCall) -> Any

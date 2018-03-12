@@ -6,7 +6,18 @@ import 'package:flutter/services.dart';
 class Sodium {
   static const MethodChannel _channel = const MethodChannel('flutter_sodium');
 
-//
+  //
+  // crypto_shorthash
+  //
+  /// Computes a fixed-size fingerprint specified input and key.
+  static Future<Uint8List> cryptoShorthash(Uint8List i, Uint8List k) =>
+      _channel.invokeMethod('crypto_shorthash', {'in': i, 'k': k});
+
+  /// Generates a random key.
+  static Future<Uint8List> cryptoShorthashKeygen() =>
+      _channel.invokeMethod('crypto_shorthash_keygen');
+
+  //
   // randombytes
   //
   /// Returns an unpredictable sequence of bytes of size [size].
