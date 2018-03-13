@@ -27,6 +27,11 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
         case "crypto_auth_verify": crypto_auth_verify(call, result); break;
         case "crypto_auth_keygen": crypto_auth_keygen(call, result); break;
 
+        case "crypto_pwhash": crypto_pwhash(call, result); break;
+        case "crypto_pwhash_str": crypto_pwhash_str(call, result); break;
+        case "crypto_pwhash_str_verify": crypto_pwhash_str_verify(call, result); break;
+        case "crypto_pwhash_str_needs_rehash": crypto_pwhash_str_needs_rehash(call, result); break;
+
         case "crypto_shorthash": crypto_shorthash(call, result); break;
         case "crypto_shorthash_keygen": crypto_shorthash_keygen(call, result); break;
 
@@ -82,6 +87,49 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
     byte[] k = new byte[sodium().crypto_auth_keybytes()];
     sodium().randombytes_buf(k, k.length);
     result.success(k);
+  }
+
+  private void crypto_pwhash(MethodCall call, Result result) throws Exception
+  {
+    int outlen = call.argument("outlen");
+    byte[] passwd = call.argument("passwd");
+    byte[] salt = call.argument("salt");
+    int opslimit = call.argument("opslimit");
+    int memlimit = call.argument("memlimit");
+    int alg = call.argument("alg");
+
+    byte[] out = new byte[outlen];
+
+    requireSuccess(sodium().crypto_pwhash(out, outlen, passwd, passwd.length, salt, opslimit, memlimit, alg));
+    result.success(out);
+  }
+
+  private void crypto_pwhash_str(MethodCall call, Result result) throws Exception
+  {
+    byte[] passwd = call.argument("passwd");
+    int opslimit = call.argument("opslimit");
+    int memlimit = call.argument("memlimit");
+
+    byte[] out = new byte[sodium().crypto_pwhash_strbytes()];
+
+    requireSuccess(sodium().crypto_pwhash_str(out, passwd, passwd.length, opslimit, memlimit));
+    result.success(out);
+  }
+
+  private void crypto_pwhash_str_verify(MethodCall call, Result result)
+  {
+    byte[] str = call.argument("str");
+    byte[] passwd = call.argument("passwd");
+
+    int ret = sodium().crypto_pwhash_str_verify(str, passwd, passwd.length);
+
+    result.success(ret == 0);
+  }
+
+  private void crypto_pwhash_str_needs_rehash(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_pwhash_str_needs_rehash not implemented in libsodium-jni
+    result.notImplemented();
   }
 
   private void crypto_shorthash(MethodCall call, Result result) throws Exception

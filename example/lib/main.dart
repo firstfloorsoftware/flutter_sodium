@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'samples.dart';
+import 'package:flutter_sodium/flutter_sodium.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
   runSamples() async {
-    var stopwatch = new Stopwatch()..start();
-    print('Running sodium samples');
+    final version = await Sodium.sodiumVersionString();
 
+    print('Sodium $version');
+
+    await passwordHashingKeyDerivation();
+    await passwordHashingStorage();
     await secretKeyAuthentication();
     await shortInputHashing();
     await generatingRandomData();
 
-    print('Samples took ${stopwatch.elapsedMilliseconds}ms');
+    print('Samples completed');
   }
 
   @override

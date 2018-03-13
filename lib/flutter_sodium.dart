@@ -23,6 +23,41 @@ class Sodium {
       _channel.invokeMethod('crypto_auth_keygen');
 
   //
+  // crypto_pwhash
+  //
+  /// Derives a key from a password and a salt.
+  static Future<Uint8List> cryptoPwhash(int outlen, Uint8List passwd,
+          Uint8List salt, int opslimit, int memlimit, int alg) =>
+      _channel.invokeMethod('crypto_pwhash', {
+        'outlen': outlen,
+        'passwd': passwd,
+        'salt': salt,
+        'opslimit': opslimit,
+        'memlimit': memlimit,
+        'alg': alg
+      });
+
+  /// Derives an ASCII encoded string containing a hash, automatically generated salt, and other parameters required to verify the password.
+  static Future<Uint8List> cryptoPwhashStr(
+          Uint8List passwd, int opslimit, int memlimit) =>
+      _channel.invokeMethod('crypto_pwhash_str', {
+        'passwd': passwd,
+        'opslimit': opslimit,
+        'memlimit': memlimit,
+      });
+
+  /// Verifies that str is a valid password verification string.
+  static Future<bool> cryptoPwhashStrVerify(Uint8List str, Uint8List passwd) =>
+      _channel.invokeMethod(
+          'crypto_pwhash_str_verify', {'str': str, 'passwd': passwd});
+
+  /// Check if a password verification string matches the parameters opslimit and memlimit, and the current default algorithm.
+  static Future<bool> cryptoPwhashStrNeedsRehash(
+          Uint8List str, int opslimit, int memlimit) =>
+      _channel.invokeMethod('crypto_pwhash_str_needs_rehash',
+          {'str': str, 'opslimit': opslimit, 'memlimit': memlimit});
+
+  //
   // crypto_shorthash
   //
   /// Computes a fixed-size fingerprint for specified input and key.

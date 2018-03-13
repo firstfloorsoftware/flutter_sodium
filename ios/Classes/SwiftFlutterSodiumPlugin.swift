@@ -23,6 +23,11 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       case "crypto_auth_verify": result(crypto_auth_verify(call:call))
       case "crypto_auth_keygen": result(crypto_auth_keygen(call:call))
 
+      case "crypto_pwhash": result(crypto_pwhash(call: call))
+      case "crypto_pwhash_str": result(crypto_pwhash_str(call: call))
+      case "crypto_pwhash_str_verify": result(crypto_pwhash_str_verify(call: call))
+      case "crypto_pwhash_str_needs_rehash": result(crypto_pwhash_str_needs_rehash(call: call))
+
       case "crypto_shorthash": result(crypto_shorthash(call: call))
       case "crypto_shorthash_keygen": result(crypto_shorthash_keygen(call: call))
 
@@ -90,6 +95,82 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     }
     return FlutterStandardTypedData.init(bytes: k)
   }
+
+  private func crypto_pwhash(call: FlutterMethodCall) -> Any
+  {
+      let args = call.arguments as! NSDictionary
+      let outlen = args["outlen"] as! Int
+      let passwd = (args["passwd"] as! FlutterStandardTypedData).data
+      let salt = (args["salt"] as! FlutterStandardTypedData).data
+      let opslimit = args["opslimit"] as! Int
+      let memlimit = args["memlimit"] as! Int
+      let alg = args["alg"] as! Int32
+      var out = Data(count: outlen)
+      
+      let ret = out.withUnsafeMutableBytes { outPtr in
+          passwd.withUnsafeBytes { passwdPtr in
+            salt.withUnsafeBytes { saltPtr in
+              flutter_sodium.crypto_pwhash(outPtr, 
+                                            CUnsignedLongLong(outlen),
+                                            passwdPtr, 
+                                            CUnsignedLongLong(passwd.count), 
+                                            saltPtr, 
+                                            CUnsignedLongLong(opslimit),
+                                            size_t(memlimit), 
+                                            alg)
+            }
+          }
+      }
+      return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+  }
+  
+  private func crypto_pwhash_str(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let passwd = (args["passwd"] as! FlutterStandardTypedData).data
+    let opslimit = args["opslimit"] as! Int
+    let memlimit = args["memlimit"] as! Int
+    var out = Data(count: flutter_sodium.crypto_pwhash_strbytes())
+    
+    let ret = out.withUnsafeMutableBytes { outPtr in
+      passwd.withUnsafeBytes { passwdPtr in
+        flutter_sodium.crypto_pwhash_str(outPtr, 
+                                         passwdPtr, 
+                                         CUnsignedLongLong(passwd.count), 
+                                         CUnsignedLongLong(opslimit), 
+                                         size_t(memlimit))
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+  }
+  
+  private func crypto_pwhash_str_verify(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let str = (args["str"] as! FlutterStandardTypedData).data
+    let passwd = (args["passwd"] as! FlutterStandardTypedData).data
+    
+    let ret = str.withUnsafeBytes { strPtr in
+      passwd.withUnsafeBytes { passwdPtr in
+        flutter_sodium.crypto_pwhash_str_verify(strPtr, passwdPtr, CUnsignedLongLong(passwd.count))
+      }
+    }
+    return ret == 0
+  }
+  
+  private func crypto_pwhash_str_needs_rehash(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let str = (args["str"] as! FlutterStandardTypedData).data
+    let opslimit = args["opslimit"] as! Int
+    let memlimit = args["memlimit"] as! Int
+    
+    let ret = str.withUnsafeBytes { strPtr in
+      flutter_sodium.crypto_pwhash_str_needs_rehash(strPtr, CUnsignedLongLong(opslimit), size_t(memlimit))
+    }
+    return ret != 0
+  }
+
 
   private func crypto_shorthash(call: FlutterMethodCall) -> Any
   {
