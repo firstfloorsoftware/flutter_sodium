@@ -10,6 +10,9 @@ class MyApp extends StatelessWidget {
 
     print('Sodium $version');
 
+    await genericHashingSinglePartWithoutKey();
+    await genericHashingSinglePartWithKey();
+    await genericHashingMultiPartWithKey();
     await passwordHashingKeyDerivation();
     await passwordHashingStorage();
     await secretKeyAuthentication();

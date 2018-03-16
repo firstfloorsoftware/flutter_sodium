@@ -26,6 +26,22 @@ const int crypto_box_curve25519xsalsa20poly1305_NONCEBYTES = 24;
 const int crypto_box_curve25519xsalsa20poly1305_MACBYTES = 16;
 const int crypto_box_curve25519xsalsa20poly1305_BOXZEROBYTES = 16;
 
+const int crypto_generichash_BYTES_MIN = crypto_generichash_blake2b_BYTES_MIN;
+const int crypto_generichash_BYTES_MAX = crypto_generichash_blake2b_BYTES_MAX;
+const int crypto_generichash_BYTES = crypto_generichash_blake2b_BYTES;
+const int crypto_generichash_KEYBYTES_MIN =
+    crypto_generichash_blake2b_KEYBYTES_MIN;
+const int crypto_generichash_KEYBYTES_MAX =
+    crypto_generichash_blake2b_KEYBYTES_MAX;
+const int crypto_generichash_KEYBYTES = crypto_generichash_blake2b_KEYBYTES;
+
+const int crypto_generichash_blake2b_BYTES_MIN = 16;
+const int crypto_generichash_blake2b_BYTES_MAX = 64;
+const int crypto_generichash_blake2b_BYTES = 32;
+const int crypto_generichash_blake2b_KEYBYTES_MIN = 16;
+const int crypto_generichash_blake2b_KEYBYTES_MAX = 64;
+const int crypto_generichash_blake2b_KEYBYTES = 32;
+
 const int crypto_pwhash_ALG_ARGON2I13 = crypto_pwhash_argon2i_ALG_ARGON2I13;
 const int crypto_pwhash_ALG_ARGON2ID13 = crypto_pwhash_argon2id_ALG_ARGON2ID13;
 const int crypto_pwhash_ALG_DEFAULT = crypto_pwhash_ALG_ARGON2ID13;

@@ -23,6 +23,12 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       case "crypto_auth_verify": result(crypto_auth_verify(call:call))
       case "crypto_auth_keygen": result(crypto_auth_keygen(call:call))
 
+      case "crypto_generichash": result(crypto_generichash(call: call))
+      case "crypto_generichash_init": result(crypto_generichash_init(call: call))
+      case "crypto_generichash_update": result(crypto_generichash_update(call: call))
+      case "crypto_generichash_final": result(crypto_generichash_final(call: call))
+      case "crypto_generichash_keygen": result(crypto_generichash_keygen(call: call))
+
       case "crypto_pwhash": result(crypto_pwhash(call: call))
       case "crypto_pwhash_str": result(crypto_pwhash_str(call: call))
       case "crypto_pwhash_str_verify": result(crypto_pwhash_str_verify(call: call))
@@ -92,6 +98,70 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var k = Data(count: flutter_sodium.crypto_auth_keybytes())
     k.withUnsafeMutableBytes { kPtr in
       flutter_sodium.crypto_auth_keygen(kPtr)
+    }
+    return FlutterStandardTypedData.init(bytes: k)
+  }
+
+  private func crypto_generichash(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let outlen = args["outlen"] as! Int
+    let i = (args["in"] as! FlutterStandardTypedData).data
+    let key: Data? = (args["key"] as? FlutterStandardTypedData)?.data
+    var out = Data(count: outlen)
+    var ret: Int32 = -1
+    
+    if let key = key {
+      ret = out.withUnsafeMutableBytes { outPtr in
+        i.withUnsafeBytes { inPtr in
+          key.withUnsafeBytes { keyPtr in
+            flutter_sodium.crypto_generichash(outPtr, outlen, inPtr, CUnsignedLongLong(i.count), keyPtr, key.count)
+          }
+        }
+      }
+    }
+    else {
+      ret = out.withUnsafeMutableBytes { outPtr in
+        i.withUnsafeBytes { iPtr in
+          flutter_sodium.crypto_generichash(outPtr, outlen, iPtr, CUnsignedLongLong(i.count), nil, 0)
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+  }
+    
+  private func crypto_generichash_init(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let key: Data? = (args["key"] as? FlutterStandardTypedData)?.data
+    let outlen = args["outlen"] as! Int
+    
+    return FlutterMethodNotImplemented
+  }
+  
+  private func crypto_generichash_update(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let state = (args["state"] as! FlutterStandardTypedData).data
+    let i = (args["in"] as! FlutterStandardTypedData).data
+
+    return FlutterMethodNotImplemented
+  }
+  
+  private func crypto_generichash_final(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let state = (args["state"] as! FlutterStandardTypedData).data
+    let outlen = args["outlen"] as! Int
+
+    return FlutterMethodNotImplemented
+  }
+  
+  private func crypto_generichash_keygen(call: FlutterMethodCall) -> Any
+  {
+    var k = Data(count: crypto_generichash_keybytes())
+    k.withUnsafeMutableBytes { kPtr in
+        flutter_sodium.crypto_generichash_keygen(kPtr)
     }
     return FlutterStandardTypedData.init(bytes: k)
   }

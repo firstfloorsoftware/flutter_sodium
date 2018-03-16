@@ -2,6 +2,57 @@ import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 
+genericHashingSinglePartWithoutKey() async {
+  // https://download.libsodium.org/doc/hashing/generic_hashing.html
+  printHeader('Generic hashing single part without key');
+  try {
+    final message = UTF8.encode('Arbitrary data to hash');
+    final hash =
+        await Sodium.cryptoGenerichash(crypto_generichash_BYTES, message, null);
+
+    print('generichash: ${hex.encode(hash)}');
+  } catch (e) {
+    print(e);
+  }
+}
+
+genericHashingSinglePartWithKey() async {
+  // https://download.libsodium.org/doc/hashing/generic_hashing.html
+  printHeader('Generic hashing single part with key');
+  try {
+    final message = UTF8.encode('Arbitrary data to hash');
+    final key = await Sodium.cryptoGenerichashKeygen();
+    final hash =
+        await Sodium.cryptoGenerichash(crypto_generichash_BYTES, message, key);
+
+    print('generichash: ${hex.encode(hash)}');
+  } catch (e) {
+    print(e);
+  }
+}
+
+genericHashingMultiPartWithKey() async {
+  // https://download.libsodium.org/doc/hashing/generic_hashing.html
+  printHeader('Generic hashing multi part with key');
+
+  try {
+    final messagePart1 = UTF8.encode('Arbitrary data to hash');
+    final messagePart2 = UTF8.encode('is longer than expected');
+    final key = await Sodium.cryptoGenerichashKeygen();
+    var state =
+        await Sodium.cryptoGenerichashInit(key, crypto_generichash_BYTES);
+
+    state = await Sodium.cryptoGenerichashUpdate(state, messagePart1);
+    state = await Sodium.cryptoGenerichashUpdate(state, messagePart2);
+    final hash =
+        await Sodium.cryptoGenerichashFinal(state, crypto_generichash_BYTES);
+
+    print('generichash: ${hex.encode(hash)}');
+  } catch (e) {
+    print(e);
+  }
+}
+
 passwordHashingKeyDerivation() async {
   // https://download.libsodium.org/doc/password_hashing/the_argon2i_function.html
   printHeader('Password hashing key derivation');

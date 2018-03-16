@@ -23,6 +23,36 @@ class Sodium {
       _channel.invokeMethod('crypto_auth_keygen');
 
   //
+  // crypto_generichash
+  //
+  /// Computes a fingerprint of specified length for given input and key.
+  static Future<Uint8List> cryptoGenerichash(
+          int outlen, Uint8List i, Uint8List key) =>
+      _channel.invokeMethod(
+          'crypto_generichash', {'outlen': outlen, 'in': i, 'key': key});
+
+  /// Initializes the hash state for the streaming API.
+  static Future<Uint8List> cryptoGenerichashInit(Uint8List key, int outlen) =>
+      _channel.invokeMethod(
+          'crypto_generichash_init', {'key': key, 'outlen': outlen});
+
+  /// Computes the hash for a part of a message.
+  static Future<Uint8List> cryptoGenerichashUpdate(
+          Uint8List state, Uint8List i) =>
+      _channel
+          .invokeMethod('crypto_generichash_update', {'state': state, 'in': i});
+
+  /// Completes the hash computation and returns the hash.
+  static Future<Uint8List> cryptoGenerichashFinal(
+          Uint8List state, int outlen) =>
+      _channel.invokeMethod(
+          'crypto_generichash_final', {'state': state, 'outlen': outlen});
+
+  /// Generates a random key for generic hashing.
+  static Future<Uint8List> cryptoGenerichashKeygen() =>
+      _channel.invokeMethod('crypto_generichash_keygen');
+
+  //
   // crypto_pwhash
   //
   /// Derives a key from a password and a salt.

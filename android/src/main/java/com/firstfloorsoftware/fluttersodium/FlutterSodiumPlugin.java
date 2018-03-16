@@ -27,6 +27,12 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
         case "crypto_auth_verify": crypto_auth_verify(call, result); break;
         case "crypto_auth_keygen": crypto_auth_keygen(call, result); break;
 
+        case "crypto_generichash": crypto_generichash(call, result); break;
+        case "crypto_generichash_init": crypto_generichash_init(call, result); break;
+        case "crypto_generichash_update": crypto_generichash_update(call, result); break;
+        case "crypto_generichash_final": crypto_generichash_final(call, result); break;
+        case "crypto_generichash_keygen": crypto_generichash_keygen(call, result); break;
+
         case "crypto_pwhash": crypto_pwhash(call, result); break;
         case "crypto_pwhash_str": crypto_pwhash_str(call, result); break;
         case "crypto_pwhash_str_verify": crypto_pwhash_str_verify(call, result); break;
@@ -85,6 +91,68 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
   {
     // FIXME: crypto_auth_keygen not implemented in libsodium-jni, falling back to randombytes_buf
     byte[] k = new byte[sodium().crypto_auth_keybytes()];
+    sodium().randombytes_buf(k, k.length);
+    result.success(k);
+  }
+
+  private void crypto_generichash(MethodCall call, Result result) throws Exception
+  {
+    int outlen = call.argument("outlen");
+    byte[] in = call.argument("in");
+    byte[] key = call.argument("key");
+    if (key == null)
+    {
+      key = new byte[0];
+    }
+    byte[] out = new byte[outlen];
+
+    requireSuccess(sodium().crypto_generichash(out, outlen, in, in.length, key, key.length));
+
+    result.success(out);
+  }
+
+  private void crypto_generichash_init(MethodCall call, Result result) throws Exception
+  {
+    byte[] key = call.argument("key");
+    int outlen = call.argument("outlen");
+    
+    if (key == null)
+    {
+      key = new byte[0];
+    }
+    byte[] state = new byte[sodium().crypto_generichash_statebytes()];
+
+    requireSuccess(sodium().crypto_generichash_init(state, key, key.length, outlen));
+
+    result.success(state);
+  }
+
+  private void crypto_generichash_update(MethodCall call, Result result) throws Exception
+  {
+    byte[] state = call.argument("state");
+    byte[] in = call.argument("in");
+
+    requireSuccess(sodium().crypto_generichash_update(state, in, in.length));
+
+    result.success(state);
+  }
+
+  private void crypto_generichash_final(MethodCall call, Result result) throws Exception
+  {
+    byte[] state = call.argument("state");
+    int outlen = call.argument("outlen");
+    
+    byte[] out = new byte[outlen];
+
+    requireSuccess(sodium().crypto_generichash_final(state, out, outlen));
+
+    result.success(out);
+  }
+
+  private void crypto_generichash_keygen(MethodCall call, Result result)
+  {
+    // FIXME: crypto_generichash_keygen not implemented in libsodium-jni, falling back to randombytes_buf
+    byte[] k = new byte[sodium().crypto_generichash_keybytes()];
     sodium().randombytes_buf(k, k.length);
     result.success(k);
   }
