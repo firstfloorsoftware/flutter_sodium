@@ -5,6 +5,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import java.util.HashMap;
 import static org.libsodium.jni.NaCl.sodium;
 
 /**
@@ -26,6 +27,12 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
         case "crypto_auth": crypto_auth(call, result); break;
         case "crypto_auth_verify": crypto_auth_verify(call, result); break;
         case "crypto_auth_keygen": crypto_auth_keygen(call, result); break;
+
+        case "crypto_box_seed_keypair": crypto_box_seed_keypair(call, result); break;
+        case "crypto_box_keypair": crypto_box_keypair(call, result); break;
+
+        case "crypto_box_seal": crypto_box_seal(call, result); break;
+        case "crypto_box_seal_open": crypto_box_seal_open(call, result); break;
 
         case "crypto_generichash": crypto_generichash(call, result); break;
         case "crypto_generichash_init": crypto_generichash_init(call, result); break;
@@ -93,6 +100,56 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
     byte[] k = new byte[sodium().crypto_auth_keybytes()];
     sodium().randombytes_buf(k, k.length);
     result.success(k);
+  }
+
+  private void crypto_box_seed_keypair(MethodCall call, Result result) throws Exception
+  {
+    byte[] seed = call.argument("seed");
+    byte[] pk = new byte[sodium().crypto_box_publickeybytes()];
+    byte[] sk = new byte[sodium().crypto_box_secretkeybytes()];
+
+    requireSuccess(sodium().crypto_box_seed_keypair(pk, sk, seed));
+    HashMap map = new HashMap();
+    map.put("pk", pk);
+    map.put("sk", sk);
+    result.success(map);
+  }
+
+  private void crypto_box_keypair(MethodCall call, Result result) throws Exception
+  {
+    byte[] pk = new byte[sodium().crypto_box_publickeybytes()];
+    byte[] sk = new byte[sodium().crypto_box_secretkeybytes()];
+
+    requireSuccess(sodium().crypto_box_keypair(pk, sk));
+    HashMap map = new HashMap();
+    map.put("pk", pk);
+    map.put("sk", sk);
+    result.success(map);
+  }
+
+  private void crypto_box_seal(MethodCall call, Result result) throws Exception
+  {
+    byte[] m = call.argument("m");
+    byte[] pk = call.argument("pk");
+
+    byte[] c = new byte[sodium().crypto_box_sealbytes() + m.length];
+
+    requireSuccess(sodium().crypto_box_seal(c, m, m.length, pk));
+
+    result.success(c);
+  }
+
+  private void crypto_box_seal_open(MethodCall call, Result result) throws Exception
+  {
+    byte[] c = call.argument("c");
+    byte[] pk = call.argument("pk");
+    byte[] sk = call.argument("sk");
+
+    byte[] m = new byte[c.length - sodium().crypto_box_sealbytes()];
+
+    requireSuccess(sodium().crypto_box_seal_open(m, c, c.length, pk, sk));
+
+    result.success(m);
   }
 
   private void crypto_generichash(MethodCall call, Result result) throws Exception

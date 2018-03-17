@@ -23,6 +23,30 @@ class Sodium {
       _channel.invokeMethod('crypto_auth_keygen');
 
   //
+  // crypto_box
+  //
+  /// Deterministically derive a key pair from a single key seed.
+  static Future<Map<String, Uint8List>> cryptoBoxSeedKeypair(Uint8List seed) =>
+      _channel.invokeMethod('crypto_box_seed_keypair', {'seed': seed});
+
+  /// Generates a random secret key and a corresponding public key.
+  static Future<Map<String, Uint8List>> cryptoBoxKeypair() =>
+      _channel.invokeMethod('crypto_box_keypair');
+
+  //
+  // crypto_box_seal
+  //
+  /// Encrypts a message for a recipient whose public key is pk
+  static Future<Uint8List> cryptoBoxSeal(Uint8List m, Uint8List pk) =>
+      _channel.invokeMethod('crypto_box_seal', {'m': m, 'pk': pk});
+
+  /// Decrypts the ciphertext using specified key pair.
+  static Future<Uint8List> cryptoBoxSealOpen(
+          Uint8List c, Uint8List pk, Uint8List sk) =>
+      _channel
+          .invokeMethod('crypto_box_seal_open', {'c': c, 'pk': pk, 'sk': sk});
+
+  //
   // crypto_generichash
   //
   /// Computes a fingerprint of specified length for given input and key.

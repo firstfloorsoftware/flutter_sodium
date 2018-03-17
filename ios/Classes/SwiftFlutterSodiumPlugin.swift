@@ -23,6 +23,12 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       case "crypto_auth_verify": result(crypto_auth_verify(call:call))
       case "crypto_auth_keygen": result(crypto_auth_keygen(call:call))
 
+      case "crypto_box_seed_keypair": result(crypto_box_seed_keypair(call: call))
+      case "crypto_box_keypair": result(crypto_box_keypair(call: call))
+
+      case "crypto_box_seal": result(crypto_box_seal(call: call))
+      case "crypto_box_seal_open": result(crypto_box_seal_open(call: call))
+
       case "crypto_generichash": result(crypto_generichash(call: call))
       case "crypto_generichash_init": result(crypto_generichash_init(call: call))
       case "crypto_generichash_update": result(crypto_generichash_update(call: call))
@@ -100,6 +106,80 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       flutter_sodium.crypto_auth_keygen(kPtr)
     }
     return FlutterStandardTypedData.init(bytes: k)
+  }
+
+  private func crypto_box_seed_keypair(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let seed = (args["seed"] as! FlutterStandardTypedData).data
+    
+    var pk = Data(count: flutter_sodium.crypto_box_publickeybytes())
+    var sk = Data(count: flutter_sodium.crypto_box_secretkeybytes())
+    let ret = pk.withUnsafeMutableBytes { pkPtr in
+      sk.withUnsafeMutableBytes { skPtr in
+        seed.withUnsafeBytes { seedPtr in
+          flutter_sodium.crypto_box_seed_keypair(pkPtr, skPtr, seedPtr)
+        }
+      }
+    }
+    return error(ret: ret) ?? [
+      "pk": FlutterStandardTypedData.init(bytes: pk),
+      "sk": FlutterStandardTypedData.init(bytes: sk)
+    ]
+  }
+  
+  private func crypto_box_keypair(call: FlutterMethodCall) -> Any
+  {
+    var pk = Data(count: flutter_sodium.crypto_box_publickeybytes())
+    var sk = Data(count: flutter_sodium.crypto_box_secretkeybytes())
+    let ret = pk.withUnsafeMutableBytes { pkPtr in
+      sk.withUnsafeMutableBytes { skPtr in
+        flutter_sodium.crypto_box_keypair(pkPtr, skPtr)
+      }
+    }
+    return error(ret: ret) ?? [
+      "pk": FlutterStandardTypedData.init(bytes: pk),
+      "sk": FlutterStandardTypedData.init(bytes: sk)
+    ]
+  }
+  
+  private func crypto_box_seal(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let m = (args["m"] as! FlutterStandardTypedData).data
+    let pk = (args["pk"] as! FlutterStandardTypedData).data
+    
+    var c = Data(count: m.count + flutter_sodium.crypto_box_sealbytes())
+    
+    let ret = c.withUnsafeMutableBytes { cPtr in
+      m.withUnsafeBytes { mPtr in
+        pk.withUnsafeBytes { pkPtr in
+          flutter_sodium.crypto_box_seal(cPtr, mPtr, CUnsignedLongLong(m.count), pkPtr)
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+  }
+  
+  private func crypto_box_seal_open(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let c = (args["c"] as! FlutterStandardTypedData).data
+    let pk = (args["pk"] as! FlutterStandardTypedData).data
+    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    
+    var m = Data(count: c.count - flutter_sodium.crypto_box_sealbytes())
+    
+    let ret = m.withUnsafeMutableBytes { mPtr in
+      c.withUnsafeBytes { cPtr in
+        pk.withUnsafeBytes { pkPtr in
+          sk.withUnsafeBytes { skPtr in
+            flutter_sodium.crypto_box_seal_open(mPtr, cPtr, CUnsignedLongLong(c.count), pkPtr, skPtr)
+          }
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
   }
 
   private func crypto_generichash(call: FlutterMethodCall) -> Any

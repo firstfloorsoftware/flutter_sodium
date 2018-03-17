@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
     await genericHashingMultiPartWithKey();
     await passwordHashingKeyDerivation();
     await passwordHashingStorage();
+    await sealedBoxes();
     await secretKeyAuthentication();
     await shortInputHashing();
     await generatingRandomData();

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
+import 'package:collection/collection.dart';
 
 genericHashingSinglePartWithoutKey() async {
   // https://download.libsodium.org/doc/hashing/generic_hashing.html
@@ -91,6 +92,24 @@ passwordHashingStorage() async {
 
     assert(valid);
     //assert(!needsRehash);
+  } catch (e) {
+    print(e);
+  }
+}
+
+sealedBoxes() async {
+  // https://download.libsodium.org/doc/public-key_cryptography/sealed_boxes.html
+  printHeader('Sealed boxes');
+
+  try {
+    final message = UTF8.encode('Message');
+    final recipientKeypair = await Sodium.cryptoBoxKeypair();
+    final cipherText =
+        await Sodium.cryptoBoxSeal(message, recipientKeypair['pk']);
+    final decrypted = await Sodium.cryptoBoxSealOpen(
+        cipherText, recipientKeypair['pk'], recipientKeypair['sk']);
+
+    assert(const ListEquality().equals(message, decrypted));
   } catch (e) {
     print(e);
   }
