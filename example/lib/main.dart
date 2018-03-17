@@ -16,6 +16,8 @@ class MyApp extends StatelessWidget {
     await passwordHashingKeyDerivation();
     await passwordHashingStorage();
     await sealedBoxes();
+    await secretKeyAuthenticatedEncryption();
+    await secretKeyAuthenticatedEncryptionDetached();
     await secretKeyAuthentication();
     await shortInputHashing();
     await generatingRandomData();

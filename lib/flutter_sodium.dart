@@ -112,6 +112,36 @@ class Sodium {
           {'str': str, 'opslimit': opslimit, 'memlimit': memlimit});
 
   //
+  // crypto_secretbox
+  //
+  /// Encrypts a message with a key and a nonce.
+  static Future<Uint8List> cryptoSecretboxEasy(
+          Uint8List m, Uint8List n, Uint8List k) =>
+      _channel.invokeMethod('crypto_secretbox_easy', {'m': m, 'n': n, 'k': k});
+
+  /// Verifies and decrypts a ciphertext produced by [cryptoSecretboxEasy].
+  static Future<Uint8List> cryptoSecretboxOpenEasy(
+          Uint8List c, Uint8List n, Uint8List k) =>
+      _channel
+          .invokeMethod('crypto_secretbox_open_easy', {'c': c, 'n': n, 'k': k});
+
+  /// Encrypts a message with a key and a nonce, and returns the encrypted message and mac.
+  static Future<Map<String, Uint8List>> cryptoSecretboxDetached(
+          Uint8List m, Uint8List n, Uint8List k) =>
+      _channel
+          .invokeMethod('crypto_secretbox_detached', {'m': m, 'n': n, 'k': k});
+
+  /// Verifies and decrypts an encrypted message.
+  static Future<Uint8List> cryptoSecretboxOpenDetached(
+          Uint8List c, Uint8List mac, Uint8List n, Uint8List k) =>
+      _channel.invokeMethod('crypto_secretbox_open_detached',
+          {'c': c, 'mac': mac, 'n': n, 'k': k});
+
+  /// Creates a random key
+  static Future<Uint8List> cryptoSecretboxKeygen() =>
+      _channel.invokeMethod('crypto_secretbox_keygen');
+
+  //
   // crypto_shorthash
   //
   /// Computes a fixed-size fingerprint for specified input and key.

@@ -40,6 +40,12 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       case "crypto_pwhash_str_verify": result(crypto_pwhash_str_verify(call: call))
       case "crypto_pwhash_str_needs_rehash": result(crypto_pwhash_str_needs_rehash(call: call))
 
+      case "crypto_secretbox_easy": result(crypto_secretbox_easy(call: call))
+      case "crypto_secretbox_open_easy": result(crypto_secretbox_open_easy(call: call))
+      case "crypto_secretbox_detached": result(crypto_secretbox_detached(call: call))
+      case "crypto_secretbox_open_detached": result(crypto_secretbox_open_detached(call: call))
+      case "crypto_secretbox_keygen": result(crypto_secretbox_keygen(call: call))
+
       case "crypto_shorthash": result(crypto_shorthash(call: call))
       case "crypto_shorthash_keygen": result(crypto_shorthash_keygen(call: call))
 
@@ -321,6 +327,126 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     return ret != 0
   }
 
+  private func crypto_secretbox_easy(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let m = (args["m"] as! FlutterStandardTypedData).data
+    let n = (args["n"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var c = Data(count: crypto_secretbox_macbytes() + m.count)
+    
+    let ret = c.withUnsafeMutableBytes { cPtr in
+          m.withUnsafeBytes { mPtr in
+            n.withUnsafeBytes { nPtr in
+              k.withUnsafeBytes { kPtr in
+                flutter_sodium.crypto_secretbox_easy(cPtr,
+                                              mPtr, 
+                                              CUnsignedLongLong(m.count), 
+                                              nPtr, 
+                                              kPtr)
+              }
+            }
+          }
+        }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+  }
+
+  private func crypto_secretbox_open_easy(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let c = (args["c"] as! FlutterStandardTypedData).data
+    let n = (args["n"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var m = Data(count: c.count - crypto_secretbox_macbytes())
+
+    let ret = m.withUnsafeMutableBytes { mPtr in
+          c.withUnsafeBytes { cPtr in
+            n.withUnsafeBytes { nPtr in
+              k.withUnsafeBytes { kPtr in
+                flutter_sodium.crypto_secretbox_open_easy(mPtr,
+                                              cPtr, 
+                                              CUnsignedLongLong(c.count), 
+                                              nPtr, 
+                                              kPtr)
+              }
+            }
+          }
+        }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+  }
+
+  private func crypto_secretbox_detached(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let m = (args["m"] as! FlutterStandardTypedData).data
+    let n = (args["n"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var c = Data(count: m.count);
+    var mac = Data(count: crypto_secretbox_macbytes());
+
+    let ret = c.withUnsafeMutableBytes { cPtr in
+          mac.withUnsafeMutableBytes { macPtr in
+            m.withUnsafeBytes { mPtr in
+              n.withUnsafeBytes { nPtr in
+                k.withUnsafeBytes { kPtr in
+                  flutter_sodium.crypto_secretbox_detached(cPtr,
+                                                macPtr, 
+                                                mPtr,
+                                                CUnsignedLongLong(m.count), 
+                                                nPtr, 
+                                                kPtr)
+                }
+              }
+            }
+          }
+        }
+
+    return error(ret: ret) ?? [
+      "c": FlutterStandardTypedData.init(bytes: c),
+      "mac": FlutterStandardTypedData.init(bytes: mac)
+    ]
+  }
+
+  private func crypto_secretbox_open_detached(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let c = (args["c"] as! FlutterStandardTypedData).data
+    let mac = (args["mac"] as! FlutterStandardTypedData).data
+    let n = (args["n"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var m = Data(count: c.count)
+
+    let ret = m.withUnsafeMutableBytes { mPtr in
+          c.withUnsafeBytes { cPtr in
+            mac.withUnsafeBytes { macPtr in 
+              n.withUnsafeBytes { nPtr in
+                k.withUnsafeBytes { kPtr in
+                  flutter_sodium.crypto_secretbox_open_detached(mPtr,
+                                                cPtr, 
+                                                macPtr,
+                                                CUnsignedLongLong(c.count), 
+                                                nPtr, 
+                                                kPtr)
+                }
+              }
+            }
+          }
+        }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+  }
+
+  private func crypto_secretbox_keygen(call: FlutterMethodCall) -> Any
+  {
+    var k = Data(count: crypto_secretbox_keybytes())
+    k.withUnsafeMutableBytes { kPtr in
+        flutter_sodium.crypto_secretbox_keygen(kPtr)
+    }
+    return FlutterStandardTypedData.init(bytes: k)
+  }
 
   private func crypto_shorthash(call: FlutterMethodCall) -> Any
   {

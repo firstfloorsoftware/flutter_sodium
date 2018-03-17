@@ -104,6 +104,17 @@ const int crypto_pwhash_argon2id_MEMLIMIT_MODERATE = 268435456;
 const int crypto_pwhash_argon2id_OPSLIMIT_SENSITIVE = 4;
 const int crypto_pwhash_argon2id_MEMLIMIT_SENSITIVE = 1073741824;
 
+const int crypto_secretbox_KEYBYTES =
+    crypto_secretbox_xsalsa20poly1305_KEYBYTES;
+const int crypto_secretbox_NONCEBYTES =
+    crypto_secretbox_xsalsa20poly1305_NONCEBYTES;
+const int crypto_secretbox_MACBYTES =
+    crypto_secretbox_xsalsa20poly1305_MACBYTES;
+
+const int crypto_secretbox_xsalsa20poly1305_KEYBYTES = 32;
+const int crypto_secretbox_xsalsa20poly1305_NONCEBYTES = 24;
+const int crypto_secretbox_xsalsa20poly1305_MACBYTES = 16;
+
 const int crypto_shorthash_BYTES = crypto_shorthash_siphash24_BYTES;
 const int crypto_shorthash_KEYBYTES = crypto_shorthash_siphash24_KEYBYTES;
 

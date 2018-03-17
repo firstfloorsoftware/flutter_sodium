@@ -8,6 +8,7 @@ At this point in time flutter_sodium implements the following libsodium APIs:
 - crypto_box_seal
 - crypto_generichash
 - crypto_pwhash
+- crypto_secretbox
 - crypto_shorthash
 - randombytes
 - sodium_version

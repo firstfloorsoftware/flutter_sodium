@@ -45,6 +45,12 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
         case "crypto_pwhash_str_verify": crypto_pwhash_str_verify(call, result); break;
         case "crypto_pwhash_str_needs_rehash": crypto_pwhash_str_needs_rehash(call, result); break;
 
+        case "crypto_secretbox_easy": crypto_secretbox_easy(call, result); break;
+        case "crypto_secretbox_open_easy": crypto_secretbox_open_easy(call, result); break;
+        case "crypto_secretbox_detached": crypto_secretbox_detached(call, result); break;
+        case "crypto_secretbox_open_detached": crypto_secretbox_open_detached(call, result); break;
+        case "crypto_secretbox_keygen": crypto_secretbox_keygen(call, result); break;
+
         case "crypto_shorthash": crypto_shorthash(call, result); break;
         case "crypto_shorthash_keygen": crypto_shorthash_keygen(call, result); break;
 
@@ -255,6 +261,65 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
   {
     // FIXME: crypto_pwhash_str_needs_rehash not implemented in libsodium-jni
     result.notImplemented();
+  }
+
+  private void crypto_secretbox_easy(MethodCall call, Result result) throws Exception
+  {
+    byte[] m = call.argument("m");
+    byte[] n = call.argument("n");
+    byte[] k = call.argument("k");
+    byte[] c = new byte[sodium().crypto_secretbox_macbytes() + m.length];
+
+    requireSuccess(sodium().crypto_secretbox_easy(c, m, m.length, n, k));
+    result.success(c);
+  }
+
+  private void crypto_secretbox_open_easy(MethodCall call, Result result) throws Exception
+  {
+    byte[] c = call.argument("c");
+    byte[] n = call.argument("n");
+    byte[] k = call.argument("k");
+    byte[] m = new byte[c.length - sodium().crypto_secretbox_macbytes()];
+
+    requireSuccess(sodium().crypto_secretbox_open_easy(m, c, c.length, n, k));
+    result.success(m);
+  }
+
+  private void crypto_secretbox_detached(MethodCall call, Result result) throws Exception
+  {
+    byte[] m = call.argument("m");
+    byte[] n = call.argument("n");
+    byte[] k = call.argument("k");
+    byte[] c = new byte[m.length];
+    byte[] mac = new byte[sodium().crypto_secretbox_macbytes()];
+
+    requireSuccess(sodium().crypto_secretbox_detached(c, mac, m, m.length, n, k));
+
+    HashMap map = new HashMap();
+    map.put("c", c);
+    map.put("mac", mac);
+    result.success(map);
+  }
+
+  private void crypto_secretbox_open_detached(MethodCall call, Result result) throws Exception
+  {
+    byte[] c = call.argument("c");
+    byte[] mac = call.argument("mac");
+    byte[] n = call.argument("n");
+    byte[] k = call.argument("k");
+    byte[] m = new byte[c.length];
+
+    requireSuccess(sodium().crypto_secretbox_open_detached(m, c, mac, c.length, n, k));
+
+    result.success(m);
+  }
+
+  private void crypto_secretbox_keygen(MethodCall call, Result result)
+  {
+    // FIXME: crypto_secretbox_keygen not implemented in libsodium-jni, falling back to randombytes_buf
+    byte[] k = new byte[sodium().crypto_secretbox_keybytes()];
+    sodium().randombytes_buf(k, k.length);
+    result.success(k);
   }
 
   private void crypto_shorthash(MethodCall call, Result result) throws Exception

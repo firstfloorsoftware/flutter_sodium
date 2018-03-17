@@ -115,6 +115,42 @@ sealedBoxes() async {
   }
 }
 
+secretKeyAuthenticatedEncryption() async {
+  // https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html
+  printHeader('Secret key authenticated encryption (combined mode)');
+
+  try {
+    final message = UTF8.encode('test');
+    final key = await Sodium.cryptoSecretboxKeygen();
+    final nonce = await Sodium.randombytesBuf(crypto_secretbox_NONCEBYTES);
+    final cipherText = await Sodium.cryptoSecretboxEasy(message, nonce, key);
+    final decrypted =
+        await Sodium.cryptoSecretboxOpenEasy(cipherText, nonce, key);
+
+    assert(const ListEquality().equals(message, decrypted));
+  } catch (e) {
+    print(e);
+  }
+}
+
+secretKeyAuthenticatedEncryptionDetached() async {
+  // https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html
+  printHeader('Secret key authenticated encryption (detached mode)');
+
+  try {
+    final message = UTF8.encode('test');
+    final key = await Sodium.cryptoSecretboxKeygen();
+    final nonce = await Sodium.randombytesBuf(crypto_secretbox_NONCEBYTES);
+    final result = await Sodium.cryptoSecretboxDetached(message, nonce, key);
+    final decrypted =
+        await Sodium.cryptoSecretboxOpenDetached(result['c'], result['mac'], nonce, key);
+
+    assert(const ListEquality().equals(message, decrypted));
+  } catch (e) {
+    print(e);
+  }
+}
+
 secretKeyAuthentication() async {
   // https://download.libsodium.org/doc/secret-key_cryptography/secret-key_authentication.html
   printHeader('Secret key authentication');
