@@ -54,6 +54,13 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
         case "crypto_kx_client_session_keys": crypto_kx_client_session_keys(call, result); break;
         case "crypto_kx_server_session_keys": crypto_kx_server_session_keys(call, result); break;
 
+        case "crypto_onetimeauth": crypto_onetimeauth(call, result); break;
+        case "crypto_onetimeauth_verify": crypto_onetimeauth_verify(call, result); break;
+        case "crypto_onetimeauth_init": crypto_onetimeauth_init(call, result); break;
+        case "crypto_onetimeauth_update": crypto_onetimeauth_update(call, result); break;
+        case "crypto_onetimeauth_final": crypto_onetimeauth_final(call, result); break;
+        case "crypto_onetimeauth_keygen": crypto_onetimeauth_keygen(call, result); break;
+
         case "crypto_pwhash": crypto_pwhash(call, result); break;
         case "crypto_pwhash_str": crypto_pwhash_str(call, result); break;
         case "crypto_pwhash_str_verify": crypto_pwhash_str_verify(call, result); break;
@@ -412,6 +419,64 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
     map.put("rx", rx);
     map.put("tx", tx);
     result.success(map);
+  }
+
+  private void crypto_onetimeauth(MethodCall call, Result result) throws Exception
+  {
+    byte[] in = call.argument("in");
+    byte[] k = call.argument("k");
+
+    byte[] out = new byte[sodium().crypto_onetimeauth_bytes()];
+    requireSuccess(sodium().crypto_onetimeauth(out, in, in.length, k));
+    result.success(out);
+  }
+
+  private void crypto_onetimeauth_verify(MethodCall call, Result result)
+  {
+    byte[] h = call.argument("h");
+    byte[] in = call.argument("in");
+    byte[] k = call.argument("k");
+
+    int ret = sodium().crypto_onetimeauth_verify(h, in, in.length, k);
+    result.success(ret == 0);
+  }
+
+  private void crypto_onetimeauth_init(MethodCall call, Result result) throws Exception
+  {
+    byte[] key = call.argument("key");
+    byte[] state = new byte[sodium().crypto_onetimeauth_statebytes()];
+
+    requireSuccess(sodium().crypto_onetimeauth_init(state, key));
+
+    result.success(state);
+  }
+
+  private void crypto_onetimeauth_update(MethodCall call, Result result) throws Exception
+  {
+    byte[] state = call.argument("state");
+    byte[] in = call.argument("in");
+
+    requireSuccess(sodium().crypto_onetimeauth_update(state, in, in.length));
+
+    result.success(state);
+  }
+
+  private void crypto_onetimeauth_final(MethodCall call, Result result) throws Exception
+  {
+    byte[] state = call.argument("state");    
+    byte[] out = new byte[sodium().crypto_onetimeauth_bytes()];
+
+    requireSuccess(sodium().crypto_onetimeauth_final(state, out));
+
+    result.success(out);
+  }
+
+  private void crypto_onetimeauth_keygen(MethodCall call, Result result)
+  {
+    // FIXME: crypto_onetimeauth_keygen not implemented in libsodium-jni, falling back to randombytes_buf
+    byte[] k = new byte[sodium().crypto_onetimeauth_keybytes()];
+    sodium().randombytes_buf(k, k.length);
+    result.success(k);
   }
 
   private void crypto_pwhash(MethodCall call, Result result) throws Exception

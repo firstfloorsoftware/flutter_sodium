@@ -49,6 +49,13 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       case "crypto_kx_client_session_keys": result(crypto_kx_client_session_keys(call: call))
       case "crypto_kx_server_session_keys": result(crypto_kx_server_session_keys(call: call))
 
+      case "crypto_onetimeauth": result(crypto_onetimeauth(call: call))
+      case "crypto_onetimeauth_verify": result(crypto_onetimeauth_verify(call: call))
+      case "crypto_onetimeauth_init": result(crypto_onetimeauth_init(call: call))
+      case "crypto_onetimeauth_update": result(crypto_onetimeauth_update(call: call))
+      case "crypto_onetimeauth_final": result(crypto_onetimeauth_final(call: call))
+      case "crypto_onetimeauth_keygen": result(crypto_onetimeauth_keygen(call: call))
+
       case "crypto_pwhash": result(crypto_pwhash(call: call))
       case "crypto_pwhash_str": result(crypto_pwhash_str(call: call))
       case "crypto_pwhash_str_verify": result(crypto_pwhash_str_verify(call: call))
@@ -569,6 +576,78 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       "rx": FlutterStandardTypedData.init(bytes: rx),
       "tx": FlutterStandardTypedData.init(bytes: tx)
     ]
+  }
+
+  private func crypto_onetimeauth(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let i = (args["in"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var out = Data(count: flutter_sodium.crypto_onetimeauth_bytes())
+
+    let ret = out.withUnsafeMutableBytes { outPtr in
+      i.withUnsafeBytes { iPtr in 
+        k.withUnsafeBytes { kPtr in 
+          flutter_sodium.crypto_onetimeauth(outPtr, iPtr, CUnsignedLongLong(i.count), kPtr)
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+  }
+
+  private func crypto_onetimeauth_verify(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let h = (args["h"] as! FlutterStandardTypedData).data
+    let i = (args["in"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    let ret = h.withUnsafeBytes { hPtr in
+      i.withUnsafeBytes { iPtr in 
+        k.withUnsafeBytes { kPtr in 
+          flutter_sodium.crypto_onetimeauth_verify(hPtr, iPtr, CUnsignedLongLong(i.count), kPtr)
+        }
+      }
+    }
+    return ret == 0
+  }
+
+  private func crypto_onetimeauth_init(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let key = (args["key"] as! FlutterStandardTypedData).data
+
+    // FIXME: implement crypto_onetimeauth_init
+    return FlutterMethodNotImplemented
+  }
+
+  private func crypto_onetimeauth_update(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let state = (args["state"] as! FlutterStandardTypedData).data
+    let i = (args["in"] as! FlutterStandardTypedData).data
+
+    // FIXME: implement crypto_onetimeauth_update
+    return FlutterMethodNotImplemented
+  }
+
+  private func crypto_onetimeauth_final(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let state = (args["state"] as! FlutterStandardTypedData).data
+
+    // FIXME: implement crypto_onetimeauth_final
+    return FlutterMethodNotImplemented
+  }
+
+  private func crypto_onetimeauth_keygen(call: FlutterMethodCall) -> Any
+  {
+    var k = Data(count: crypto_onetimeauth_keybytes())
+    k.withUnsafeMutableBytes { kPtr in
+        flutter_sodium.crypto_onetimeauth_keygen(kPtr)
+    }
+    return FlutterStandardTypedData.init(bytes: k)
   }
   
   private func crypto_pwhash(call: FlutterMethodCall) -> Any

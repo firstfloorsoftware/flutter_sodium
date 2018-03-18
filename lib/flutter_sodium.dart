@@ -158,6 +158,37 @@ class Sodium {
       });
 
   //
+  // crypto_onetimeauth
+  //
+  /// Authenticates a message using a secret key.
+  static Future<Uint8List> cryptoOnetimeauth(Uint8List i, Uint8List k) =>
+      _channel.invokeMethod('crypto_onetimeauth', {'in': i, 'k': k});
+
+  /// Verifies that h is a correct authenticator for the message using given secret key.
+  static Future<bool> cryptoOnetimeauthVerify(
+          Uint8List h, Uint8List i, Uint8List k) =>
+      _channel
+          .invokeMethod('crypto_onetimeauth_verify', {'h': h, 'in': i, 'k': k});
+
+  /// Initializes the authentication state for the streaming API.
+  static Future<Uint8List> cryptoOnetimeauthInit(Uint8List key) =>
+      _channel.invokeMethod('crypto_onetimeauth_init', {'key': key});
+
+  /// Computes the authenticator from sequential chunks of the message.
+  static Future<Uint8List> cryptoOnetimeauthUpdate(
+          Uint8List state, Uint8List i) =>
+      _channel
+          .invokeMethod('crypto_onetimeauth_update', {'state': state, 'in': i});
+
+  /// Completes the computation and returns the authenticator.
+  static Future<Uint8List> cryptoOnetimeauthFinal(Uint8List state) =>
+      _channel.invokeMethod('crypto_onetimeauth_final', {'state': state});
+
+  /// Generates a random key for use in onetime authentication.
+  static Future<Uint8List> cryptoOnetimeauthKeygen() =>
+      _channel.invokeMethod('crypto_onetimeauth_keygen');
+
+  //
   // crypto_pwhash
   //
   /// Derives a key from a password and a salt.

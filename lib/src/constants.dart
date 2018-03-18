@@ -47,6 +47,12 @@ const int crypto_kx_SECRETKEYBYTES = 32;
 const int crypto_kx_SEEDBYTES = 32;
 const int crypto_kx_SESSIONKEYBYTES = 32;
 
+const int crypto_onetimeauth_BYTES = crypto_onetimeauth_poly1305_BYTES;
+const int crypto_onetimeauth_KEYBYTES = crypto_onetimeauth_poly1305_KEYBYTES;
+
+const int crypto_onetimeauth_poly1305_BYTES = 16;
+const int crypto_onetimeauth_poly1305_KEYBYTES = 32;
+
 const int crypto_pwhash_ALG_ARGON2I13 = crypto_pwhash_argon2i_ALG_ARGON2I13;
 const int crypto_pwhash_ALG_ARGON2ID13 = crypto_pwhash_argon2id_ALG_ARGON2ID13;
 const int crypto_pwhash_ALG_DEFAULT = crypto_pwhash_ALG_ARGON2ID13;

@@ -201,9 +201,46 @@ exampleCryptoKx() async {
   }
 }
 
+exampleCryptoOnetimeauth() async {
+  // https://download.libsodium.org/doc/advanced/poly1305.html
+  printHeader('Secret-key single-message authentication');
+
+  try {
+    final message = UTF8.encode('Data to authenticate');
+    final key = await Sodium.cryptoOnetimeauthKeygen();
+    final out = await Sodium.cryptoOnetimeauth(message, key);
+    final valid = await Sodium.cryptoOnetimeauthVerify(out, message, key);
+
+    assert(valid);
+  } catch(e) {
+    print(e);
+  }
+}
+
+exampleCryptoOnetimeauthStream() async {
+  // https://download.libsodium.org/doc/advanced/poly1305.html
+  printHeader('Secret-key single-message authentication (streaming)');
+
+  try {
+    final message1 = UTF8.encode('Multi-part');
+    final message2 = UTF8.encode('data');
+    final key = await Sodium.cryptoOnetimeauthKeygen();
+
+    var state = await Sodium.cryptoOnetimeauthInit(key);
+    state = await Sodium.cryptoOnetimeauthUpdate(state, message1);
+    state = await Sodium.cryptoOnetimeauthUpdate(state, message2);
+    final out = await Sodium.cryptoOnetimeauthFinal(state);
+    
+    print('out: ${hex.encode(out)}');
+  } catch(e) {
+    print(e);
+  }
+}
+
 exampleCryptoPwhash() async {
   // https://download.libsodium.org/doc/password_hashing/the_argon2i_function.html
   printHeader('Password hashing key derivation');
+
   try {
     final password = UTF8.encode('Correct Horse Battery Staple');
     final salt = await Sodium.randombytesBuf(crypto_pwhash_SALTBYTES);
@@ -282,8 +319,8 @@ exampleCryptoSecretboxDetached() async {
 
 exampleCryptoShorthash() async {
   // https://download.libsodium.org/doc/hashing/short-input_hashing.html
-
   printHeader('Short input hashing');
+
   try {
     final data = UTF8.encode('Sparkling water');
     final key = await Sodium.cryptoShorthashKeygen();
@@ -297,8 +334,8 @@ exampleCryptoShorthash() async {
 
 exampleRandombytes() async {
   // https://download.libsodium.org/doc/generating_random_data/
-
   printHeader('Generating random data');
+  
   try {
     final rnd = await Sodium.randombytesRandom();
     final rndUniform = await Sodium.randombytesUniform(100);
