@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
     await exampleCryptoGenerichash();
     await exampleCryptoGenericHashNoKey();
     await exampleCryptoGenerichashStream();
+    await exampleCryptoKx();
     await exampleCryptoPwhash();
     await exampleCryptoPwhashStr();
     await exampleCryptoSecretbox();

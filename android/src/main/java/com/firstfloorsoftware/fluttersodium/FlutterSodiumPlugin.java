@@ -49,6 +49,11 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
         case "crypto_generichash_final": crypto_generichash_final(call, result); break;
         case "crypto_generichash_keygen": crypto_generichash_keygen(call, result); break;
 
+        case "crypto_kx_keypair": crypto_kx_keypair(call, result); break;
+        case "crypto_kx_seed_keypair": crypto_kx_seed_keypair(call, result); break;
+        case "crypto_kx_client_session_keys": crypto_kx_client_session_keys(call, result); break;
+        case "crypto_kx_server_session_keys": crypto_kx_server_session_keys(call, result); break;
+
         case "crypto_pwhash": crypto_pwhash(call, result); break;
         case "crypto_pwhash_str": crypto_pwhash_str(call, result); break;
         case "crypto_pwhash_str_verify": crypto_pwhash_str_verify(call, result); break;
@@ -349,6 +354,64 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
     byte[] k = new byte[sodium().crypto_generichash_keybytes()];
     sodium().randombytes_buf(k, k.length);
     result.success(k);
+  }
+
+  private void crypto_kx_keypair(MethodCall call, Result result) throws Exception
+  {
+    byte[] pk = new byte[32];
+    byte[] sk = new byte[32];
+
+    requireSuccess(sodium().crypto_kx_keypair(pk, sk));
+    HashMap map = new HashMap();
+    map.put("pk", pk);
+    map.put("sk", sk);
+    result.success(map);
+  }
+
+  private void crypto_kx_seed_keypair(MethodCall call, Result result) throws Exception
+  {
+    byte[] seed = call.argument("seed");
+
+    byte[] pk = new byte[32];
+    byte[] sk = new byte[32];
+
+    requireSuccess(sodium().crypto_kx_seed_keypair(pk, sk, seed));
+    HashMap map = new HashMap();
+    map.put("pk", pk);
+    map.put("sk", sk);
+    result.success(map);
+  }
+
+  private void crypto_kx_client_session_keys(MethodCall call, Result result) throws Exception
+  {
+    byte[] client_pk = call.argument("client_pk");
+    byte[] client_sk = call.argument("client_sk");
+    byte[] server_pk = call.argument("server_pk");
+    
+    byte[] rx = new byte[32];
+    byte[] tx = new byte[32];
+    
+    requireSuccess(sodium().crypto_kx_client_session_keys(rx, tx, client_pk, client_sk, server_pk));
+    HashMap map = new HashMap();
+    map.put("rx", rx);
+    map.put("tx", tx);
+    result.success(map);
+  }
+
+  private void crypto_kx_server_session_keys(MethodCall call, Result result) throws Exception
+  {
+    byte[] server_pk = call.argument("server_pk");
+    byte[] server_sk = call.argument("server_sk");
+    byte[] client_pk = call.argument("client_pk");
+    
+    byte[] rx = new byte[32];
+    byte[] tx = new byte[32];
+    
+    requireSuccess(sodium().crypto_kx_server_session_keys(rx, tx, server_pk, server_sk, client_pk));
+    HashMap map = new HashMap();
+    map.put("rx", rx);
+    map.put("tx", tx);
+    result.success(map);
   }
 
   private void crypto_pwhash(MethodCall call, Result result) throws Exception

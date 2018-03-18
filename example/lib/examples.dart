@@ -53,8 +53,8 @@ exampleCryptoBoxDetached() async {
     final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
     final result = await Sodium.cryptoBoxDetached(
         message, nonce, bobKeypair['pk'], aliceKeypair['sk']);
-    final decrypted = await Sodium.cryptoBoxOpenDetached(
-        result['c'], result['mac'] , nonce, aliceKeypair['pk'], bobKeypair['sk']);
+    final decrypted = await Sodium.cryptoBoxOpenDetached(result['c'],
+        result['mac'], nonce, aliceKeypair['pk'], bobKeypair['sk']);
 
     assert(const ListEquality().equals(message, decrypted));
   } catch (e) {
@@ -71,13 +71,15 @@ exampleCryptoBoxPrecalculated() async {
     final aliceKeypair = await Sodium.cryptoBoxKeypair();
     final bobKeypair = await Sodium.cryptoBoxKeypair();
     final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
-    final aliceShared = await Sodium.cryptoBoxBeforenm(bobKeypair['pk'], aliceKeypair['sk']);
-    final bobShared = await Sodium.cryptoBoxBeforenm(aliceKeypair['pk'], bobKeypair['sk']);
+    final aliceShared =
+        await Sodium.cryptoBoxBeforenm(bobKeypair['pk'], aliceKeypair['sk']);
+    final bobShared =
+        await Sodium.cryptoBoxBeforenm(aliceKeypair['pk'], bobKeypair['sk']);
 
-    final cipherText = await Sodium.cryptoBoxEasyAfternm(
-        message, nonce, aliceShared);
-    final decrypted = await Sodium.cryptoBoxOpenEasyAfternm(
-        cipherText, nonce, bobShared);
+    final cipherText =
+        await Sodium.cryptoBoxEasyAfternm(message, nonce, aliceShared);
+    final decrypted =
+        await Sodium.cryptoBoxOpenEasyAfternm(cipherText, nonce, bobShared);
 
     assert(const ListEquality().equals(message, decrypted));
   } catch (e) {
@@ -94,13 +96,15 @@ exampleCryptoBoxPrecalculatedDetached() async {
     final aliceKeypair = await Sodium.cryptoBoxKeypair();
     final bobKeypair = await Sodium.cryptoBoxKeypair();
     final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
-    final aliceShared = await Sodium.cryptoBoxBeforenm(bobKeypair['pk'], aliceKeypair['sk']);
-    final bobShared = await Sodium.cryptoBoxBeforenm(aliceKeypair['pk'], bobKeypair['sk']);
+    final aliceShared =
+        await Sodium.cryptoBoxBeforenm(bobKeypair['pk'], aliceKeypair['sk']);
+    final bobShared =
+        await Sodium.cryptoBoxBeforenm(aliceKeypair['pk'], bobKeypair['sk']);
 
-    final result = await Sodium.cryptoBoxDetachedAfternm(
-        message, nonce, aliceShared);
+    final result =
+        await Sodium.cryptoBoxDetachedAfternm(message, nonce, aliceShared);
     final decrypted = await Sodium.cryptoBoxOpenDetachedAfternm(
-        result['c'], result['mac'] , nonce, bobShared);
+        result['c'], result['mac'], nonce, bobShared);
 
     assert(const ListEquality().equals(message, decrypted));
   } catch (e) {
@@ -172,6 +176,26 @@ exampleCryptoGenerichashStream() async {
         await Sodium.cryptoGenerichashFinal(state, crypto_generichash_BYTES);
 
     print('generichash: ${hex.encode(hash)}');
+  } catch (e) {
+    print(e);
+  }
+}
+
+exampleCryptoKx() async {
+  // https://download.libsodium.org/doc/key_exchange/
+  printHeader('Key exchange');
+
+  try {
+    final clientKeypair = await Sodium.cryptoKxKeypair();
+    final serverKeypair = await Sodium.cryptoKxKeypair();
+
+    final clientKeys = await Sodium.cryptoKxClientSessionKeys(
+        clientKeypair['pk'], clientKeypair['sk'], serverKeypair['pk']);
+    final serverKeys = await Sodium.cryptoKxServerSessionKeys(
+        serverKeypair['pk'], serverKeypair['sk'], clientKeypair['pk']);
+
+    assert(const ListEquality().equals(clientKeys['rx'], serverKeys['tx']));
+    assert(const ListEquality().equals(clientKeys['tx'], serverKeys['rx']));
   } catch (e) {
     print(e);
   }

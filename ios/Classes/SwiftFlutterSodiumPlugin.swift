@@ -44,6 +44,11 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       case "crypto_generichash_final": result(crypto_generichash_final(call: call))
       case "crypto_generichash_keygen": result(crypto_generichash_keygen(call: call))
 
+      case "crypto_kx_keypair": result(crypto_kx_keypair(call: call))
+      case "crypto_kx_seed_keypair": result(crypto_kx_seed_keypair(call: call))
+      case "crypto_kx_client_session_keys": result(crypto_kx_client_session_keys(call: call))
+      case "crypto_kx_server_session_keys": result(crypto_kx_server_session_keys(call: call))
+
       case "crypto_pwhash": result(crypto_pwhash(call: call))
       case "crypto_pwhash_str": result(crypto_pwhash_str(call: call))
       case "crypto_pwhash_str_verify": result(crypto_pwhash_str_verify(call: call))
@@ -479,6 +484,93 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     return FlutterStandardTypedData.init(bytes: k)
   }
 
+  private func crypto_kx_keypair(call: FlutterMethodCall) -> Any
+  {
+    var pk = Data(count: flutter_sodium.crypto_kx_publickeybytes())
+    var sk = Data(count: flutter_sodium.crypto_kx_secretkeybytes())
+    let ret = pk.withUnsafeMutableBytes { pkPtr in
+      sk.withUnsafeMutableBytes { skPtr in
+        flutter_sodium.crypto_kx_keypair(pkPtr, skPtr)
+      }
+    }
+    return error(ret: ret) ?? [
+      "pk": FlutterStandardTypedData.init(bytes: pk),
+      "sk": FlutterStandardTypedData.init(bytes: sk)
+    ]
+  }
+
+  private func crypto_kx_seed_keypair(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let seed = (args["seed"] as! FlutterStandardTypedData).data
+
+    var pk = Data(count: flutter_sodium.crypto_kx_publickeybytes())
+    var sk = Data(count: flutter_sodium.crypto_kx_secretkeybytes())
+    let ret = pk.withUnsafeMutableBytes { pkPtr in
+      sk.withUnsafeMutableBytes { skPtr in
+        seed.withUnsafeBytes { seedPtr in
+          flutter_sodium.crypto_kx_seed_keypair(pkPtr, skPtr, seedPtr)
+        }
+      }
+    }
+    return error(ret: ret) ?? [
+      "pk": FlutterStandardTypedData.init(bytes: pk),
+      "sk": FlutterStandardTypedData.init(bytes: sk)
+    ]
+  }
+
+  private func crypto_kx_client_session_keys(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let client_pk = (args["client_pk"] as! FlutterStandardTypedData).data
+    let client_sk = (args["client_sk"] as! FlutterStandardTypedData).data
+    let server_pk = (args["server_pk"] as! FlutterStandardTypedData).data
+
+    var rx = Data(count: flutter_sodium.crypto_kx_sessionkeybytes())
+    var tx = Data(count: flutter_sodium.crypto_kx_sessionkeybytes())
+    let ret = rx.withUnsafeMutableBytes { rxPtr in
+      tx.withUnsafeMutableBytes { txPtr in
+        client_pk.withUnsafeBytes { client_pkPtr in
+          client_sk.withUnsafeBytes { client_skPtr in
+            server_pk.withUnsafeBytes { server_pkPtr in
+              flutter_sodium.crypto_kx_client_session_keys(rxPtr, txPtr, client_pkPtr, client_skPtr, server_pkPtr)
+            }
+          }
+        }
+      }
+    }
+    return error(ret: ret) ?? [
+      "rx": FlutterStandardTypedData.init(bytes: rx),
+      "tx": FlutterStandardTypedData.init(bytes: tx)
+    ]
+  }
+
+  private func crypto_kx_server_session_keys(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let server_pk = (args["server_pk"] as! FlutterStandardTypedData).data
+    let server_sk = (args["server_sk"] as! FlutterStandardTypedData).data
+    let client_pk = (args["client_pk"] as! FlutterStandardTypedData).data
+
+    var rx = Data(count: flutter_sodium.crypto_kx_sessionkeybytes())
+    var tx = Data(count: flutter_sodium.crypto_kx_sessionkeybytes())
+    let ret = rx.withUnsafeMutableBytes { rxPtr in
+      tx.withUnsafeMutableBytes { txPtr in
+        server_pk.withUnsafeBytes { server_pkPtr in
+          server_sk.withUnsafeBytes { server_skPtr in
+            client_pk.withUnsafeBytes { client_pkPtr in
+              flutter_sodium.crypto_kx_server_session_keys(rxPtr, txPtr, server_pkPtr, server_skPtr, client_pkPtr)
+            }
+          }
+        }
+      }
+    }
+    return error(ret: ret) ?? [
+      "rx": FlutterStandardTypedData.init(bytes: rx),
+      "tx": FlutterStandardTypedData.init(bytes: tx)
+    ]
+  }
+  
   private func crypto_pwhash(call: FlutterMethodCall) -> Any
   {
       let args = call.arguments as! NSDictionary

@@ -129,6 +129,35 @@ class Sodium {
       _channel.invokeMethod('crypto_generichash_keygen');
 
   //
+  // crypto_kx
+  //
+  /// Creates a new key pair.
+  static Future<Map<String, Uint8List>> cryptoKxKeypair() =>
+      _channel.invokeMethod('crypto_kx_keypair');
+
+  /// Computes a deterministic key pair from the seed.
+  static Future<Map<String, Uint8List>> cryptoKxSeedKeypair(Uint8List seed) =>
+      _channel.invokeMethod('crypto_kx_seed_keypair', {'seed': seed});
+
+  /// Computes a pair of shared keys (rx and tx) using the client's public key, the client's secret key and the server's public key.
+  static Future<Map<String, Uint8List>> cryptoKxClientSessionKeys(
+          Uint8List clientPk, Uint8List clientSk, Uint8List serverPk) =>
+      _channel.invokeMethod('crypto_kx_client_session_keys', {
+        'client_pk': clientPk,
+        'client_sk': clientSk,
+        'server_pk': serverPk
+      });
+
+  /// Computes a pair of shared keys (rx and tx) using the server's public key, the server's secret key and the client's public key.
+  static Future<Map<String, Uint8List>> cryptoKxServerSessionKeys(
+          Uint8List serverPk, Uint8List serverSk, Uint8List clientPk) =>
+      _channel.invokeMethod('crypto_kx_server_session_keys', {
+        'server_pk': serverPk,
+        'server_sk': serverSk,
+        'client_pk': clientPk
+      });
+
+  //
   // crypto_pwhash
   //
   /// Derives a key from a password and a salt.
