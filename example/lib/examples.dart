@@ -3,21 +3,44 @@ import 'package:convert/convert.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 import 'package:collection/collection.dart';
 
-genericHashingSinglePartWithoutKey() async {
-  // https://download.libsodium.org/doc/hashing/generic_hashing.html
-  printHeader('Generic hashing single part without key');
-  try {
-    final message = UTF8.encode('Arbitrary data to hash');
-    final hash =
-        await Sodium.cryptoGenerichash(crypto_generichash_BYTES, message, null);
+exampleCryptoAuth() async {
+  // https://download.libsodium.org/doc/secret-key_cryptography/secret-key_authentication.html
+  printHeader('Secret key authentication');
 
-    print('generichash: ${hex.encode(hash)}');
+  try {
+    final message = UTF8.encode('test');
+    final key = await Sodium.cryptoAuthKeygen();
+    final mac = await Sodium.cryptoAuth(message, key);
+
+    print('mac: ${hex.encode(mac)}');
+
+    final isValid = await Sodium.cryptoAuthVerify(mac, message, key);
+
+    assert(isValid);
   } catch (e) {
     print(e);
   }
 }
 
-genericHashingSinglePartWithKey() async {
+exampleCryptoBoxSeal() async {
+  // https://download.libsodium.org/doc/public-key_cryptography/sealed_boxes.html
+  printHeader('Sealed boxes');
+
+  try {
+    final message = UTF8.encode('Message');
+    final recipientKeypair = await Sodium.cryptoBoxKeypair();
+    final cipherText =
+        await Sodium.cryptoBoxSeal(message, recipientKeypair['pk']);
+    final decrypted = await Sodium.cryptoBoxSealOpen(
+        cipherText, recipientKeypair['pk'], recipientKeypair['sk']);
+
+    assert(const ListEquality().equals(message, decrypted));
+  } catch (e) {
+    print(e);
+  }
+}
+
+exampleCryptoGenerichash() async {
   // https://download.libsodium.org/doc/hashing/generic_hashing.html
   printHeader('Generic hashing single part with key');
   try {
@@ -32,7 +55,21 @@ genericHashingSinglePartWithKey() async {
   }
 }
 
-genericHashingMultiPartWithKey() async {
+exampleCryptoGenericHashNoKey() async {
+  // https://download.libsodium.org/doc/hashing/generic_hashing.html
+  printHeader('Generic hashing single part without key');
+  try {
+    final message = UTF8.encode('Arbitrary data to hash');
+    final hash =
+        await Sodium.cryptoGenerichash(crypto_generichash_BYTES, message, null);
+
+    print('generichash: ${hex.encode(hash)}');
+  } catch (e) {
+    print(e);
+  }
+}
+
+exampleCryptoGenerichashStream() async {
   // https://download.libsodium.org/doc/hashing/generic_hashing.html
   printHeader('Generic hashing multi part with key');
 
@@ -54,7 +91,7 @@ genericHashingMultiPartWithKey() async {
   }
 }
 
-passwordHashingKeyDerivation() async {
+exampleCryptoPwhash() async {
   // https://download.libsodium.org/doc/password_hashing/the_argon2i_function.html
   printHeader('Password hashing key derivation');
   try {
@@ -74,7 +111,7 @@ passwordHashingKeyDerivation() async {
   }
 }
 
-passwordHashingStorage() async {
+exampleCryptoPwhashStr() async {
   // https://download.libsodium.org/doc/password_hashing/the_argon2i_function.html
   printHeader('Password hashing storage');
 
@@ -97,25 +134,7 @@ passwordHashingStorage() async {
   }
 }
 
-sealedBoxes() async {
-  // https://download.libsodium.org/doc/public-key_cryptography/sealed_boxes.html
-  printHeader('Sealed boxes');
-
-  try {
-    final message = UTF8.encode('Message');
-    final recipientKeypair = await Sodium.cryptoBoxKeypair();
-    final cipherText =
-        await Sodium.cryptoBoxSeal(message, recipientKeypair['pk']);
-    final decrypted = await Sodium.cryptoBoxSealOpen(
-        cipherText, recipientKeypair['pk'], recipientKeypair['sk']);
-
-    assert(const ListEquality().equals(message, decrypted));
-  } catch (e) {
-    print(e);
-  }
-}
-
-secretKeyAuthenticatedEncryption() async {
+exampleCryptoSecretbox() async {
   // https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html
   printHeader('Secret key authenticated encryption (combined mode)');
 
@@ -133,7 +152,7 @@ secretKeyAuthenticatedEncryption() async {
   }
 }
 
-secretKeyAuthenticatedEncryptionDetached() async {
+exampleCryptoSecretboxDetached() async {
   // https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html
   printHeader('Secret key authenticated encryption (detached mode)');
 
@@ -151,26 +170,7 @@ secretKeyAuthenticatedEncryptionDetached() async {
   }
 }
 
-secretKeyAuthentication() async {
-  // https://download.libsodium.org/doc/secret-key_cryptography/secret-key_authentication.html
-  printHeader('Secret key authentication');
-
-  try {
-    final message = UTF8.encode('test');
-    final key = await Sodium.cryptoAuthKeygen();
-    final mac = await Sodium.cryptoAuth(message, key);
-
-    print('mac: ${hex.encode(mac)}');
-
-    final isValid = await Sodium.cryptoAuthVerify(mac, message, key);
-
-    assert(isValid);
-  } catch (e) {
-    print(e);
-  }
-}
-
-shortInputHashing() async {
+exampleCryptoShorthash() async {
   // https://download.libsodium.org/doc/hashing/short-input_hashing.html
 
   printHeader('Short input hashing');
@@ -185,7 +185,7 @@ shortInputHashing() async {
   }
 }
 
-generatingRandomData() async {
+exampleRandombytes() async {
   // https://download.libsodium.org/doc/generating_random_data/
 
   printHeader('Generating random data');

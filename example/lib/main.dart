@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
-import 'samples.dart';
+import 'examples.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
-  runSamples() async {
+  runExamples() async {
     final version = await Sodium.sodiumVersionString();
 
     print('Sodium $version');
 
-    await genericHashingSinglePartWithoutKey();
-    await genericHashingSinglePartWithKey();
-    await genericHashingMultiPartWithKey();
-    await passwordHashingKeyDerivation();
-    await passwordHashingStorage();
-    await sealedBoxes();
-    await secretKeyAuthenticatedEncryption();
-    await secretKeyAuthenticatedEncryptionDetached();
-    await secretKeyAuthentication();
-    await shortInputHashing();
-    await generatingRandomData();
+    await exampleCryptoAuth();
+    await exampleCryptoBoxSeal();
+    await exampleCryptoGenerichash();
+    await exampleCryptoGenericHashNoKey();
+    await exampleCryptoGenerichashStream();
+    await exampleCryptoPwhash();
+    await exampleCryptoPwhashStr();
+    await exampleCryptoSecretbox();
+    await exampleCryptoSecretboxDetached();
+    await exampleCryptoShorthash();
+    await exampleRandombytes();
 
-    print('Samples completed');
+    print('Examples completed');
   }
 
   @override
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           ),
           body: new Center(
               child: new RaisedButton(
-                  child: new Text('Run samples'), onPressed: runSamples))),
+                  child: new Text('Run samples'), onPressed: runExamples))),
     );
   }
 }
