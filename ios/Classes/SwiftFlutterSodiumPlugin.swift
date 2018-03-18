@@ -446,6 +446,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let key: Data? = (args["key"] as? FlutterStandardTypedData)?.data
     let outlen = args["outlen"] as! Int
     
+    // FIXME: implement crypto_generichash_init
     return FlutterMethodNotImplemented
   }
   
@@ -455,6 +456,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let state = (args["state"] as! FlutterStandardTypedData).data
     let i = (args["in"] as! FlutterStandardTypedData).data
 
+    // FIXME: implement crypto_generichash_update
     return FlutterMethodNotImplemented
   }
   
@@ -464,6 +466,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let state = (args["state"] as! FlutterStandardTypedData).data
     let outlen = args["outlen"] as! Int
 
+    // FIXME: implement crypto_generichash_final
     return FlutterMethodNotImplemented
   }
   
