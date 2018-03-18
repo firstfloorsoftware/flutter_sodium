@@ -1,12 +1,13 @@
 # flutter_sodium
 
-A serious framework needs a serious cryptographic library. With flutter_sodium you get access to the modern, easy-to-use [libsodium](https://download.libsodium.org/doc/) crypto library in your [Flutter](https://flutter.io) apps. One set of crypto APIs supporting both Android and iOS.
+With flutter_sodium you get access to the modern, easy-to-use [libsodium](https://download.libsodium.org/doc/) crypto library in your [Flutter](https://flutter.io) apps. One set of crypto APIs supporting both Android and iOS.
 
 ## API coverage
 At this point in time flutter_sodium implements the following libsodium APIs:
 - crypto_auth
 - crypto_box
 - crypto_generichash
+- crypto_kx
 - crypto_pwhash
 - crypto_secretbox
 - crypto_shorthash
