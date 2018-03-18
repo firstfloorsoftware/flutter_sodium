@@ -30,6 +30,15 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
 
         case "crypto_box_seed_keypair": crypto_box_seed_keypair(call, result); break;
         case "crypto_box_keypair": crypto_box_keypair(call, result); break;
+        case "crypto_box_easy": crypto_box_easy(call, result); break;
+        case "crypto_box_open_easy": crypto_box_open_easy(call, result); break;
+        case "crypto_box_detached": crypto_box_detached(call, result); break;
+        case "crypto_box_open_detached": crypto_box_open_detached(call, result); break;
+        case "crypto_box_beforenm": crypto_box_beforenm(call, result); break;
+        case "crypto_box_easy_afternm": crypto_box_easy_afternm(call, result); break;
+        case "crypto_box_open_easy_afternm": crypto_box_open_easy_afternm(call, result); break;
+        case "crypto_box_detached_afternm": crypto_box_detached_afternm(call, result); break;
+        case "crypto_box_open_detached_afternm": crypto_box_open_detached_afternm(call, result); break;
 
         case "crypto_box_seal": crypto_box_seal(call, result); break;
         case "crypto_box_seal_open": crypto_box_seal_open(call, result); break;
@@ -131,6 +140,128 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
     map.put("pk", pk);
     map.put("sk", sk);
     result.success(map);
+  }
+
+  private void crypto_box_easy(MethodCall call, Result result) throws Exception
+  {
+    byte[] m = call.argument("m");
+    byte[] n = call.argument("n");
+    byte[] pk = call.argument("pk");
+    byte[] sk = call.argument("sk");
+    byte[] c = new byte[sodium().crypto_box_macbytes() + m.length];
+
+    requireSuccess(sodium().crypto_box_easy(c, m, m.length, n, pk, sk));
+    result.success(c);
+  }
+
+  private void crypto_box_open_easy(MethodCall call, Result result) throws Exception
+  {
+    byte[] c = call.argument("c");
+    byte[] n = call.argument("n");
+    byte[] pk = call.argument("pk");
+    byte[] sk = call.argument("sk");
+    byte[] m = new byte[c.length - sodium().crypto_box_macbytes()];
+
+    requireSuccess(sodium().crypto_box_open_easy(m, c, c.length, n, pk, sk));
+    result.success(m);
+  }
+
+  private void crypto_box_detached(MethodCall call, Result result) throws Exception
+  {
+    byte[] m = call.argument("m");
+    byte[] n = call.argument("n");
+    byte[] pk = call.argument("pk");
+    byte[] sk = call.argument("sk");
+
+    byte[] c = new byte[m.length];
+    byte[] mac = new byte[sodium().crypto_box_macbytes()];
+
+    requireSuccess(sodium().crypto_box_detached(c, mac, m, m.length, n, pk, sk));
+
+    HashMap map = new HashMap();
+    map.put("c", c);
+    map.put("mac", mac);
+    result.success(map);
+  }
+
+  private void crypto_box_open_detached(MethodCall call, Result result) throws Exception
+  {
+    byte[] c = call.argument("c");
+    byte[] mac = call.argument("mac");
+    byte[] n = call.argument("n");
+    byte[] pk = call.argument("pk");
+    byte[] sk = call.argument("sk");
+
+    byte[] m = new byte[c.length];
+
+    requireSuccess(sodium().crypto_box_open_detached(m, c, mac, c.length, n, pk, sk));
+
+    result.success(m);
+  }
+
+  private void crypto_box_beforenm(MethodCall call, Result result) throws Exception
+  {
+    byte[] pk = call.argument("pk");
+    byte[] sk = call.argument("sk");
+
+    byte[] k = new byte[sodium().crypto_box_beforenmbytes()];
+
+    requireSuccess(sodium().crypto_box_beforenm(k, pk, sk));
+
+    result.success(k);
+  }
+
+  private void crypto_box_easy_afternm(MethodCall call, Result result) throws Exception
+  {
+    byte[] m = call.argument("m");
+    byte[] n = call.argument("n");
+    byte[] k = call.argument("k");
+    byte[] c = new byte[sodium().crypto_box_macbytes() + m.length];
+
+    requireSuccess(sodium().crypto_box_easy_afternm(c, m, m.length, n, k));
+    result.success(c);
+  }
+
+  private void crypto_box_open_easy_afternm(MethodCall call, Result result) throws Exception
+  {
+    byte[] c = call.argument("c");
+    byte[] n = call.argument("n");
+    byte[] k = call.argument("k");
+    byte[] m = new byte[c.length - sodium().crypto_box_macbytes()];
+
+    requireSuccess(sodium().crypto_box_open_easy_afternm(m, c, c.length, n, k));
+    result.success(m);
+  }
+
+  private void crypto_box_detached_afternm(MethodCall call, Result result) throws Exception
+  {
+    byte[] m = call.argument("m");
+    byte[] n = call.argument("n");
+    byte[] k = call.argument("k");
+
+    byte[] c = new byte[m.length];
+    byte[] mac = new byte[sodium().crypto_box_macbytes()];
+
+    requireSuccess(sodium().crypto_box_detached_afternm(c, mac, m, m.length, n, k));
+
+    HashMap map = new HashMap();
+    map.put("c", c);
+    map.put("mac", mac);
+    result.success(map);
+  }
+
+  private void crypto_box_open_detached_afternm(MethodCall call, Result result) throws Exception
+  {
+    byte[] c = call.argument("c");
+    byte[] mac = call.argument("mac");
+    byte[] n = call.argument("n");
+    byte[] k = call.argument("k");
+
+    byte[] m = new byte[c.length];
+
+    requireSuccess(sodium().crypto_box_open_detached_afternm(m, c, mac, c.length, n, k));
+
+    result.success(m);
   }
 
   private void crypto_box_seal(MethodCall call, Result result) throws Exception

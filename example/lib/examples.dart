@@ -22,6 +22,92 @@ exampleCryptoAuth() async {
   }
 }
 
+exampleCryptoBox() async {
+  // https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption.html
+  printHeader('Public key authenticated encryption');
+
+  try {
+    final message = UTF8.encode('test');
+    final aliceKeypair = await Sodium.cryptoBoxKeypair();
+    final bobKeypair = await Sodium.cryptoBoxKeypair();
+    final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
+    final cipherText = await Sodium.cryptoBoxEasy(
+        message, nonce, bobKeypair['pk'], aliceKeypair['sk']);
+    final decrypted = await Sodium.cryptoBoxOpenEasy(
+        cipherText, nonce, aliceKeypair['pk'], bobKeypair['sk']);
+
+    assert(const ListEquality().equals(message, decrypted));
+  } catch (e) {
+    print(e);
+  }
+}
+
+exampleCryptoBoxDetached() async {
+  // https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption.html
+  printHeader('Public key authenticated encryption (detached)');
+
+  try {
+    final message = UTF8.encode('test');
+    final aliceKeypair = await Sodium.cryptoBoxKeypair();
+    final bobKeypair = await Sodium.cryptoBoxKeypair();
+    final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
+    final result = await Sodium.cryptoBoxDetached(
+        message, nonce, bobKeypair['pk'], aliceKeypair['sk']);
+    final decrypted = await Sodium.cryptoBoxOpenDetached(
+        result['c'], result['mac'] , nonce, aliceKeypair['pk'], bobKeypair['sk']);
+
+    assert(const ListEquality().equals(message, decrypted));
+  } catch (e) {
+    print(e);
+  }
+}
+
+exampleCryptoBoxPrecalculated() async {
+  // https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption.html
+  printHeader('Public key authenticated encryption (precalculated)');
+
+  try {
+    final message = UTF8.encode('test');
+    final aliceKeypair = await Sodium.cryptoBoxKeypair();
+    final bobKeypair = await Sodium.cryptoBoxKeypair();
+    final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
+    final aliceShared = await Sodium.cryptoBoxBeforenm(bobKeypair['pk'], aliceKeypair['sk']);
+    final bobShared = await Sodium.cryptoBoxBeforenm(aliceKeypair['pk'], bobKeypair['sk']);
+
+    final cipherText = await Sodium.cryptoBoxEasyAfternm(
+        message, nonce, aliceShared);
+    final decrypted = await Sodium.cryptoBoxOpenEasyAfternm(
+        cipherText, nonce, bobShared);
+
+    assert(const ListEquality().equals(message, decrypted));
+  } catch (e) {
+    print(e);
+  }
+}
+
+exampleCryptoBoxPrecalculatedDetached() async {
+  // https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption.html
+  printHeader('Public key authenticated encryption (precalculated detached)');
+
+  try {
+    final message = UTF8.encode('test');
+    final aliceKeypair = await Sodium.cryptoBoxKeypair();
+    final bobKeypair = await Sodium.cryptoBoxKeypair();
+    final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
+    final aliceShared = await Sodium.cryptoBoxBeforenm(bobKeypair['pk'], aliceKeypair['sk']);
+    final bobShared = await Sodium.cryptoBoxBeforenm(aliceKeypair['pk'], bobKeypair['sk']);
+
+    final result = await Sodium.cryptoBoxDetachedAfternm(
+        message, nonce, aliceShared);
+    final decrypted = await Sodium.cryptoBoxOpenDetachedAfternm(
+        result['c'], result['mac'] , nonce, bobShared);
+
+    assert(const ListEquality().equals(message, decrypted));
+  } catch (e) {
+    print(e);
+  }
+}
+
 exampleCryptoBoxSeal() async {
   // https://download.libsodium.org/doc/public-key_cryptography/sealed_boxes.html
   printHeader('Sealed boxes');
@@ -161,8 +247,8 @@ exampleCryptoSecretboxDetached() async {
     final key = await Sodium.cryptoSecretboxKeygen();
     final nonce = await Sodium.randombytesBuf(crypto_secretbox_NONCEBYTES);
     final result = await Sodium.cryptoSecretboxDetached(message, nonce, key);
-    final decrypted =
-        await Sodium.cryptoSecretboxOpenDetached(result['c'], result['mac'], nonce, key);
+    final decrypted = await Sodium.cryptoSecretboxOpenDetached(
+        result['c'], result['mac'], nonce, key);
 
     assert(const ListEquality().equals(message, decrypted));
   } catch (e) {

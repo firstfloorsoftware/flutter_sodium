@@ -11,6 +11,10 @@ class MyApp extends StatelessWidget {
     print('Sodium $version');
 
     await exampleCryptoAuth();
+    await exampleCryptoBox();
+    await exampleCryptoBoxDetached();
+    await exampleCryptoBoxPrecalculated();
+    await exampleCryptoBoxPrecalculatedDetached();
     await exampleCryptoBoxSeal();
     await exampleCryptoGenerichash();
     await exampleCryptoGenericHashNoKey();

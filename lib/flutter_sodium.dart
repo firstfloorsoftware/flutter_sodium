@@ -33,6 +33,58 @@ class Sodium {
   static Future<Map<String, Uint8List>> cryptoBoxKeypair() =>
       _channel.invokeMethod('crypto_box_keypair');
 
+  /// Encrypts a message with a recipient's public key, a sender's secret key and a nonce.
+  static Future<Uint8List> cryptoBoxEasy(
+          Uint8List m, Uint8List n, Uint8List pk, Uint8List sk) =>
+      _channel.invokeMethod(
+          'crypto_box_easy', {'m': m, 'n': n, 'pk': pk, 'sk': sk});
+
+  /// Verifies and decrypts a ciphertext produced by [cryptoBoxEasy].
+  static Future<Uint8List> cryptoBoxOpenEasy(
+          Uint8List c, Uint8List n, Uint8List pk, Uint8List sk) =>
+      _channel.invokeMethod(
+          'crypto_box_open_easy', {'c': c, 'n': n, 'pk': pk, 'sk': sk});
+
+  /// Encrypts a message with a recipient's public key, a sender's secret key and a nonce. Returns the encrypted message and mac.
+  static Future<Map<String, Uint8List>> cryptoBoxDetached(
+          Uint8List m, Uint8List n, Uint8List pk, Uint8List sk) =>
+      _channel.invokeMethod(
+          'crypto_box_detached', {'m': m, 'n': n, 'pk': pk, 'sk': sk});
+
+  /// Verifies and decrypts a ciphertext produced by [cryptoBoxDetached].
+  static Future<Uint8List> cryptoBoxOpenDetached(Uint8List c, Uint8List mac,
+          Uint8List n, Uint8List pk, Uint8List sk) =>
+      _channel.invokeMethod('crypto_box_open_detached',
+          {'c': c, 'mac': mac, 'n': n, 'pk': pk, 'sk': sk});
+
+  /// Computes a shared secret key given a public key and a secret key.
+  static Future<Uint8List> cryptoBoxBeforenm(Uint8List pk, Uint8List sk) =>
+      _channel.invokeMethod('crypto_box_beforenm', {'pk': pk, 'sk': sk});
+
+  /// Encrypts a message with a shared secret key and a nonce.
+  static Future<Uint8List> cryptoBoxEasyAfternm(
+          Uint8List m, Uint8List n, Uint8List k) =>
+      _channel
+          .invokeMethod('crypto_box_easy_afternm', {'m': m, 'n': n, 'k': k});
+
+  /// Verifies and decrypts a ciphertext with a shared secret key and a nonce.
+  static Future<Uint8List> cryptoBoxOpenEasyAfternm(
+          Uint8List c, Uint8List n, Uint8List k) =>
+      _channel.invokeMethod(
+          'crypto_box_open_easy_afternm', {'c': c, 'n': n, 'k': k});
+
+  /// Encrypts a message with a shared secret key and a nonce. Returns the encrypted message and mac.
+  static Future<Map<String, Uint8List>> cryptoBoxDetachedAfternm(
+          Uint8List m, Uint8List n, Uint8List k) =>
+      _channel.invokeMethod(
+          'crypto_box_detached_afternm', {'m': m, 'n': n, 'k': k});
+
+  /// Verifies and decrypts a ciphertext with a mac, a shared secret key and a nonce.
+  static Future<Uint8List> cryptoBoxOpenDetachedAfternm(
+          Uint8List c, Uint8List mac, Uint8List n, Uint8List k) =>
+      _channel.invokeMethod('crypto_box_open_detached_afternm',
+          {'c': c, 'mac': mac, 'n': n, 'k': k});
+
   //
   // crypto_box_seal
   //
