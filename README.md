@@ -5,7 +5,7 @@ A serious framework needs a serious cryptographic library. With flutter_sodium y
 ## API coverage
 At this point in time flutter_sodium implements the following libsodium APIs:
 - crypto_auth
-- crypto_box_seal
+- crypto_box
 - crypto_generichash
 - crypto_pwhash
 - crypto_secretbox
