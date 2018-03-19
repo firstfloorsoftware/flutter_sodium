@@ -148,4 +148,14 @@ const int crypto_shorthash_KEYBYTES = crypto_shorthash_siphash24_KEYBYTES;
 const int crypto_shorthash_siphash24_BYTES = 8;
 const int crypto_shorthash_siphash24_KEYBYTES = 16;
 
+const int crypto_sign_BYTES = crypto_sign_ed25519_BYTES;
+const int crypto_sign_SEEDBYTES = crypto_sign_ed25519_SEEDBYTES;
+const int crypto_sign_PUBLICKEYBYTES = crypto_sign_ed25519_PUBLICKEYBYTES;
+const int crypto_sign_SECRETKEYBYTES = crypto_sign_ed25519_SECRETKEYBYTES;
+
+const int crypto_sign_ed25519_BYTES = 64;
+const int crypto_sign_ed25519_SEEDBYTES = 32;
+const int crypto_sign_ed25519_PUBLICKEYBYTES = 32;
+const int crypto_sign_ed25519_SECRETKEYBYTES = 64;
+
 const int randombytes_SEEDBYTES = 32;

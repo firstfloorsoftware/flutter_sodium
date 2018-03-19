@@ -159,7 +159,7 @@ exampleCryptoGenericHashNoKey() async {
   }
 }
 
-exampleCryptoGenerichashStream() async {
+exampleCryptoGenerichashMultiPart() async {
   // https://download.libsodium.org/doc/hashing/generic_hashing.html
   printHeader('Generic hashing multi part with key');
 
@@ -195,7 +195,6 @@ exampleCryptoKdf() async {
     print('subkey1: ${hex.encode(subkey1)}');
     print('subkey2: ${hex.encode(subkey2)}');
     print('subkey3: ${hex.encode(subkey3)}');
-
   } catch (e) {
     print(e);
   }
@@ -232,14 +231,14 @@ exampleCryptoOnetimeauth() async {
     final valid = await Sodium.cryptoOnetimeauthVerify(out, message, key);
 
     assert(valid);
-  } catch(e) {
+  } catch (e) {
     print(e);
   }
 }
 
-exampleCryptoOnetimeauthStream() async {
+exampleCryptoOnetimeauthMultiPart() async {
   // https://download.libsodium.org/doc/advanced/poly1305.html
-  printHeader('Secret-key single-message authentication (streaming)');
+  printHeader('Secret-key single-message authentication (multi-part)');
 
   try {
     final message1 = UTF8.encode('Multi-part');
@@ -250,9 +249,9 @@ exampleCryptoOnetimeauthStream() async {
     state = await Sodium.cryptoOnetimeauthUpdate(state, message1);
     state = await Sodium.cryptoOnetimeauthUpdate(state, message2);
     final out = await Sodium.cryptoOnetimeauthFinal(state);
-    
+
     print('out: ${hex.encode(out)}');
-  } catch(e) {
+  } catch (e) {
     print(e);
   }
 }
@@ -307,30 +306,36 @@ exampleCryptoScalarmult() async {
 
   try {
     /* Create client's secret and public keys */
-    final clientSecretkey = await Sodium.randombytesBuf(crypto_box_SECRETKEYBYTES);
+    final clientSecretkey =
+        await Sodium.randombytesBuf(crypto_box_SECRETKEYBYTES);
     final clientPublickey = await Sodium.cryptoScalarmultBase(clientSecretkey);
 
     /* Create server's secret and public keys */
-    final serverSecretkey = await Sodium.randombytesBuf(crypto_box_SECRETKEYBYTES);
+    final serverSecretkey =
+        await Sodium.randombytesBuf(crypto_box_SECRETKEYBYTES);
     final serverPublickey = await Sodium.cryptoScalarmultBase(serverSecretkey);
 
     /* The client derives a shared key from its secret key and the server's public key */
     /* shared key = h(q ‖ client_publickey ‖ server_publickey) */
-    final scalarmultQByClient = await Sodium.cryptoScalarmult(clientSecretkey, serverPublickey);
+    final scalarmultQByClient =
+        await Sodium.cryptoScalarmult(clientSecretkey, serverPublickey);
     var h = await Sodium.cryptoGenerichashInit(null, crypto_generichash_BYTES);
     h = await Sodium.cryptoGenerichashUpdate(h, scalarmultQByClient);
     h = await Sodium.cryptoGenerichashUpdate(h, clientPublickey);
     h = await Sodium.cryptoGenerichashUpdate(h, serverPublickey);
-    final sharedkeyByClient = await Sodium.cryptoGenerichashFinal(h, crypto_generichash_BYTES);
+    final sharedkeyByClient =
+        await Sodium.cryptoGenerichashFinal(h, crypto_generichash_BYTES);
 
     /* The server derives a shared key from its secret key and the client's public key */
     /* shared key = h(q ‖ client_publickey ‖ server_publickey) */
-    final scalarMultQByServer = await Sodium.cryptoScalarmult(serverSecretkey, clientPublickey);
+    final scalarMultQByServer =
+        await Sodium.cryptoScalarmult(serverSecretkey, clientPublickey);
     h = await Sodium.cryptoGenerichashInit(null, crypto_generichash_BYTES);
     h = await Sodium.cryptoGenerichashUpdate(h, scalarMultQByServer);
     h = await Sodium.cryptoGenerichashUpdate(h, clientPublickey);
     h = await Sodium.cryptoGenerichashUpdate(h, serverPublickey);
-    final sharedkeyByServer = await Sodium.cryptoGenerichashFinal(h, crypto_generichash_BYTES);
+    final sharedkeyByServer =
+        await Sodium.cryptoGenerichashFinal(h, crypto_generichash_BYTES);
 
     /* sharedkey_by_client and sharedkey_by_server are identical */
     assert(const ListEquality().equals(sharedkeyByClient, sharedkeyByServer));
@@ -390,10 +395,71 @@ exampleCryptoShorthash() async {
   }
 }
 
+exampleCryptoSign() async {
+  // https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures.html
+  printHeader('Public key signature combined');
+
+  try {
+    final message = UTF8.encode('test');
+    final keypair = await Sodium.cryptoSignKeypair();
+    final signedMessage = await Sodium.cryptoSign(message, keypair['sk']);
+    final unsignedMessage =
+        await Sodium.cryptoSignOpen(signedMessage, keypair['pk']);
+
+    assert(const ListEquality().equals(message, unsignedMessage));
+  } catch (e) {
+    print(e);
+  }
+}
+
+exampleCryptoSignDetached() async {
+  // https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures.html
+  printHeader('Public key signature detached');
+  try {
+    final message = UTF8.encode('test');
+    final keypair = await Sodium.cryptoSignKeypair();
+    final sig = await Sodium.cryptoSignDetached(message, keypair['sk']);
+
+    final valid =
+        await Sodium.cryptoSignVerifyDetached(sig, message, keypair['pk']);
+
+    assert(valid);
+  } catch (e) {
+    print(e);
+  }
+}
+
+exampleCryptoSignMultiPart() async {
+  // https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures.html
+  printHeader('Public key signature multi-part');
+  try {
+    final messagePart1 = UTF8.encode('Arbitrary data to hash');
+    final messagePart2 = UTF8.encode('is longer than expected');
+
+    final keypair = await Sodium.cryptoSignKeypair();
+
+    /* signature creation */
+    var state = await Sodium.cryptoSignInit();
+    state = await Sodium.cryptoSignUpdate(state, messagePart1);
+    state = await Sodium.cryptoSignUpdate(state, messagePart2);
+    final sig = await Sodium.cryptoSignFinalCreate(state, keypair['sk']);
+
+    /* signature verification */
+    state = await Sodium.cryptoSignInit();
+    state = await Sodium.cryptoSignUpdate(state, messagePart1);
+    state = await Sodium.cryptoSignUpdate(state, messagePart2);
+    final valid = await Sodium.cryptoSignFinalVerify(state, sig, keypair['pk']);
+
+    assert(valid);
+  } catch (e) {
+    print(e);
+  }
+}
+
 exampleRandombytes() async {
   // https://download.libsodium.org/doc/generating_random_data/
   printHeader('Generating random data');
-  
+
   try {
     final rnd = await Sodium.randombytesRandom();
     final rndUniform = await Sodium.randombytesUniform(100);

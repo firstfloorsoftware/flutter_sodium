@@ -76,6 +76,17 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       case "crypto_shorthash": result(crypto_shorthash(call: call))
       case "crypto_shorthash_keygen": result(crypto_shorthash_keygen(call: call))
 
+      case "crypto_sign_seed_keypair": result(crypto_sign_seed_keypair(call: call))
+      case "crypto_sign_keypair": result(crypto_sign_keypair(call: call))
+      case "crypto_sign": result(crypto_sign(call: call))
+      case "crypto_sign_open": result(crypto_sign_open(call: call))
+      case "crypto_sign_detached": result(crypto_sign_detached(call: call))
+      case "crypto_sign_verify_detached": result(crypto_sign_verify_detached(call: call))
+      case "crypto_sign_init": result(crypto_sign_init(call: call))
+      case "crypto_sign_update": result(crypto_sign_update(call: call))
+      case "crypto_sign_final_create": result(crypto_sign_final_create(call: call))
+      case "crypto_sign_final_verify": result(crypto_sign_final_verify(call: call))
+
       case "randombytes_buf": result(randombytes_buf(call: call))
       case "randombytes_buf_deterministic": result(randombytes_buf_deterministic(call: call))
       case "randombytes_random": result(randombytes_random(call: call))
@@ -938,6 +949,149 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       flutter_sodium.crypto_shorthash_keygen(kPtr)
     }
     return FlutterStandardTypedData.init(bytes: k)
+  }
+
+  private func crypto_sign_seed_keypair(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let seed = (args["seed"] as! FlutterStandardTypedData).data
+    
+    var pk = Data(count: flutter_sodium.crypto_sign_publickeybytes())
+    var sk = Data(count: flutter_sodium.crypto_sign_secretkeybytes())
+    let ret = pk.withUnsafeMutableBytes { pkPtr in
+      sk.withUnsafeMutableBytes { skPtr in
+        seed.withUnsafeBytes { seedPtr in
+          flutter_sodium.crypto_sign_seed_keypair(pkPtr, skPtr, seedPtr)
+        }
+      }
+    }
+    return error(ret: ret) ?? [
+      "pk": FlutterStandardTypedData.init(bytes: pk),
+      "sk": FlutterStandardTypedData.init(bytes: sk)
+    ]
+  }
+
+  private func crypto_sign_keypair(call: FlutterMethodCall) -> Any
+  {
+    var pk = Data(count: flutter_sodium.crypto_sign_publickeybytes())
+    var sk = Data(count: flutter_sodium.crypto_sign_secretkeybytes())
+    let ret = pk.withUnsafeMutableBytes { pkPtr in
+      sk.withUnsafeMutableBytes { skPtr in
+        flutter_sodium.crypto_sign_keypair(pkPtr, skPtr)
+      }
+    }
+    return error(ret: ret) ?? [
+      "pk": FlutterStandardTypedData.init(bytes: pk),
+      "sk": FlutterStandardTypedData.init(bytes: sk)
+    ]
+  }
+
+  private func crypto_sign(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let m = (args["m"] as! FlutterStandardTypedData).data
+    let sk = (args["sk"] as! FlutterStandardTypedData).data
+
+    var sm = Data(count: m.count + flutter_sodium.crypto_sign_bytes())
+    let ret = sm.withUnsafeMutableBytes { smPtr in 
+      m.withUnsafeBytes { mPtr in
+        sk.withUnsafeBytes { skPtr in 
+          flutter_sodium.crypto_sign(smPtr, nil, mPtr, CUnsignedLongLong(m.count), skPtr)
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: sm)
+  }
+
+  private func crypto_sign_open(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let sm = (args["sm"] as! FlutterStandardTypedData).data
+    let pk = (args["pk"] as! FlutterStandardTypedData).data
+
+    var m = Data(count: sm.count - flutter_sodium.crypto_sign_bytes())
+    let ret = m.withUnsafeMutableBytes { mPtr in 
+      sm.withUnsafeBytes { smPtr in
+        pk.withUnsafeBytes { pkPtr in 
+          flutter_sodium.crypto_sign_open(mPtr, nil, smPtr, CUnsignedLongLong(sm.count), pkPtr)
+        }
+      }
+    }
+
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+  }
+
+  private func crypto_sign_detached(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let m = (args["m"] as! FlutterStandardTypedData).data
+    let sk = (args["sk"] as! FlutterStandardTypedData).data
+
+    var sig = Data(count: flutter_sodium.crypto_sign_bytes())
+    let ret = sig.withUnsafeMutableBytes { sigPtr in 
+      m.withUnsafeBytes { mPtr in
+        sk.withUnsafeBytes { skPtr in 
+          flutter_sodium.crypto_sign_detached(sigPtr, nil, mPtr, CUnsignedLongLong(m.count), skPtr)
+        }
+      }
+    }
+
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: sig)
+  }
+
+  private func crypto_sign_verify_detached(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let sig = (args["sig"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).data
+    let pk = (args["pk"] as! FlutterStandardTypedData).data
+
+    let ret = sig.withUnsafeBytes { sigPtr in 
+      m.withUnsafeBytes { mPtr in
+        pk.withUnsafeBytes { pkPtr in 
+          flutter_sodium.crypto_sign_verify_detached(sigPtr, mPtr, CUnsignedLongLong(m.count), pkPtr)
+        }
+      }
+    }
+
+    return ret == 0
+  }
+
+  private func crypto_sign_init(call: FlutterMethodCall) -> Any
+  {
+    // FIXME: implement crypto_sign_init
+    return FlutterMethodNotImplemented
+  }
+
+  private func crypto_sign_update(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let state = (args["state"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).data
+
+    // FIXME: implement crypto_sign_update
+    return FlutterMethodNotImplemented
+  }
+
+  private func crypto_sign_final_create(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let state = (args["state"] as! FlutterStandardTypedData).data
+    let sk = (args["sk"] as! FlutterStandardTypedData).data
+
+    // FIXME: implement crypto_sign_final_create
+    return FlutterMethodNotImplemented
+  }
+
+  private func crypto_sign_final_verify(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let state = (args["state"] as! FlutterStandardTypedData).data
+    let sig = (args["sig"] as! FlutterStandardTypedData).data
+    let pk = (args["pk"] as! FlutterStandardTypedData).data
+
+    // FIXME: implement crypto_sign_final_verify
+    return FlutterMethodNotImplemented
   }
 
   private func randombytes_buf(call: FlutterMethodCall) -> Any

@@ -293,6 +293,55 @@ class Sodium {
       _channel.invokeMethod('crypto_shorthash_keygen');
 
   //
+  // crypto_sign
+  //
+  /// Deterministically derives a key pair from a single seed.
+  static Future<Map<String, Uint8List>> cryptoSignSeedKeypair(Uint8List seed) =>
+      _channel.invokeMethod('crypto_sign_seed_keypair', {'seed': seed});
+
+  /// Randomly generates a secret key and a corresponding public key.
+  static Future<Map<String, Uint8List>> cryptoSignKeypair() =>
+      _channel.invokeMethod('crypto_sign_keypair');
+
+  /// Prepends a signature to a message using specified secret key.
+  static Future<Uint8List> cryptoSign(Uint8List m, Uint8List sk) =>
+      _channel.invokeMethod('crypto_sign', {'m': m, 'sk': sk});
+
+  /// Checks that the signed message has a valid signature for specified public key.
+  static Future<Uint8List> cryptoSignOpen(Uint8List sm, Uint8List pk) =>
+      _channel.invokeMethod('crypto_sign_open', {'sm': sm, 'pk': pk});
+
+  /// Computes a signature for given message.
+  static Future<Uint8List> cryptoSignDetached(Uint8List m, Uint8List sk) =>
+      _channel.invokeMethod('crypto_sign_detached', {'m': m, 'sk': sk});
+
+  /// Verifies that the signature is valid for given message and signer's public key.
+  static Future<bool> cryptoSignVerifyDetached(
+          Uint8List sig, Uint8List m, Uint8List pk) =>
+      _channel.invokeMethod(
+          'crypto_sign_verify_detached', {'sig': sig, 'm': m, 'pk': pk});
+
+  /// Initializes the sign state for the streaming API.
+  static Future<Uint8List> cryptoSignInit() =>
+      _channel.invokeMethod('crypto_sign_init');
+
+  /// Adds a new chunk to the message that will eventually be signed.
+  static Future<Uint8List> cryptoSignUpdate(Uint8List state, Uint8List m) =>
+      _channel.invokeMethod('crypto_sign_update', {'state': state, 'm': m});
+
+  /// Computes a signature for the previously supplied message, using the secret key.
+  static Future<Uint8List> cryptoSignFinalCreate(
+          Uint8List state, Uint8List sk) =>
+      _channel
+          .invokeMethod('crypto_sign_final_create', {'state': state, 'sk': sk});
+
+  /// Verifies whether the signature is valid for the message whose content has been previously supplied, using specified public key.
+  static Future<bool> cryptoSignFinalVerify(
+          Uint8List state, Uint8List sig, Uint8List pk) =>
+      _channel.invokeMethod(
+          'crypto_sign_final_verify', {'state': state, 'sig': sig, 'pk': pk});
+
+  //
   // randombytes
   //
   /// Returns an unpredictable sequence of bytes of size [size].

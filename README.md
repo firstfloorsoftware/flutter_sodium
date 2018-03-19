@@ -14,6 +14,7 @@ At this point in time flutter_sodium implements the following high-level libsodi
 - crypto_scalarmult
 - crypto_secretbox
 - crypto_shorthash
+- crypto_sign
 - randombytes
 - sodium_version
 

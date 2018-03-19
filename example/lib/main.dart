@@ -18,17 +18,20 @@ class MyApp extends StatelessWidget {
     await exampleCryptoBoxSeal();
     await exampleCryptoGenerichash();
     await exampleCryptoGenericHashNoKey();
-    await exampleCryptoGenerichashStream();
+    await exampleCryptoGenerichashMultiPart();
     await exampleCryptoKdf();
     await exampleCryptoKx();
     await exampleCryptoOnetimeauth();
-    await exampleCryptoOnetimeauthStream();
+    await exampleCryptoOnetimeauthMultiPart();
     await exampleCryptoPwhash();
     await exampleCryptoPwhashStr();
     await exampleCryptoScalarmult();
     await exampleCryptoSecretbox();
     await exampleCryptoSecretboxDetached();
     await exampleCryptoShorthash();
+    await exampleCryptoSign();
+    await exampleCryptoSignDetached();
+    await exampleCryptoSignMultiPart();
     await exampleRandombytes();
 
     print('Examples completed');

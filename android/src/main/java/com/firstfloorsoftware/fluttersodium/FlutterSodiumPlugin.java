@@ -81,6 +81,17 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
         case "crypto_shorthash": crypto_shorthash(call, result); break;
         case "crypto_shorthash_keygen": crypto_shorthash_keygen(call, result); break;
 
+        case "crypto_sign_seed_keypair": crypto_sign_seed_keypair(call, result); break;
+        case "crypto_sign_keypair": crypto_sign_keypair(call, result); break;
+        case "crypto_sign": crypto_sign(call, result); break;
+        case "crypto_sign_open": crypto_sign_open(call, result); break;
+        case "crypto_sign_detached": crypto_sign_detached(call, result); break;
+        case "crypto_sign_verify_detached": crypto_sign_verify_detached(call, result); break;
+        case "crypto_sign_init": crypto_sign_init(call, result); break;
+        case "crypto_sign_update": crypto_sign_update(call, result); break;
+        case "crypto_sign_final_create": crypto_sign_final_create(call, result); break;
+        case "crypto_sign_final_verify": crypto_sign_final_verify(call, result); break;
+
         case "randombytes_buf": randombytes_buf(call, result); break;
         case "randombytes_buf_deterministic": randombytes_buf_deterministic(call, result); break;
         case "randombytes_random": randombytes_random(call, result); break;
@@ -636,6 +647,124 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
     byte[] k = new byte[sodium().crypto_shorthash_keybytes()];
     sodium().randombytes_buf(k, k.length);
     result.success(k);
+  }
+
+  private void crypto_sign_seed_keypair(MethodCall call, Result result) throws Exception
+  {
+    byte[] seed = call.argument("seed");
+    byte[] pk = new byte[sodium().crypto_sign_publickeybytes()];
+    byte[] sk = new byte[sodium().crypto_sign_secretkeybytes()];
+
+    requireSuccess(sodium().crypto_sign_seed_keypair(pk, sk, seed));
+    HashMap map = new HashMap();
+    map.put("pk", pk);
+    map.put("sk", sk);
+    result.success(map);
+  }
+
+  private void crypto_sign_keypair(MethodCall call, Result result) throws Exception
+  {
+    byte[] pk = new byte[sodium().crypto_sign_publickeybytes()];
+    byte[] sk = new byte[sodium().crypto_sign_secretkeybytes()];
+
+    requireSuccess(sodium().crypto_sign_keypair(pk, sk));
+    HashMap map = new HashMap();
+    map.put("pk", pk);
+    map.put("sk", sk);
+    result.success(map);
+  }
+
+  private void crypto_sign(MethodCall call, Result result) throws Exception
+  {
+    byte[] m = call.argument("m");
+    byte[] sk = call.argument("sk");
+    byte[] sm = new byte[m.length + sodium().crypto_sign_bytes()];
+    int[] smlen = new int[1];
+
+    requireSuccess(sodium().crypto_sign(sm, smlen, m, m.length, sk));
+
+    result.success(sm);
+  }
+
+  private void crypto_sign_open(MethodCall call, Result result) throws Exception
+  {
+    byte[] sm = call.argument("sm");
+    byte[] pk = call.argument("pk");
+    byte[] m = new byte[sm.length - sodium().crypto_sign_bytes()];
+    int[] mlen = new int[1];
+    requireSuccess(sodium().crypto_sign_open(m, mlen, sm, sm.length, pk));
+
+    result.success(m);
+  }
+
+  private void crypto_sign_detached(MethodCall call, Result result) throws Exception
+  {
+    byte[] m = call.argument("m");
+    byte[] sk = call.argument("sk");
+    byte[] sig = new byte[sodium().crypto_sign_bytes()];
+    int[] siglen = new int[1];
+
+    requireSuccess(sodium().crypto_sign_detached(sig, siglen, m, m.length, sk));
+
+    result.success(sig);
+  }
+
+  private void crypto_sign_verify_detached(MethodCall call, Result result)
+  {
+    byte[] sig = call.argument("sig");
+    byte[] m = call.argument("m");
+    byte[] pk = call.argument("pk");
+
+    int ret = sodium().crypto_sign_verify_detached(sig, m, m.length, pk);
+    result.success(ret == 0); 
+  }
+
+  private void crypto_sign_init(MethodCall call, Result result) throws Exception
+  {
+    // byte[] state = new byte[sodium().crypto_sign_statebytes()];
+    // requireSuccess(sodium().crypto_sign_init(state));
+    // result.success(state);
+
+    // FIXME: crypto_sign_init not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_sign_update(MethodCall call, Result result) throws Exception
+  {
+    // byte[] state = call.argument("state");
+    // byte[] m = call.argument("m");
+    // requireSuccess(sodium().crypto_sign_update(state, m, m.length));
+    // result.success(state);
+
+    // FIXME: crypto_sign_update not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_sign_final_create(MethodCall call, Result result) throws Exception
+  {
+    // byte[] state = call.argument("state");
+    // byte[] sk = call.argument("sk");
+    // byte[] sig = new byte[sodium().crypto_sign_bytes()];
+    // int[] siglen = new int[1];
+
+    // requireSuccess(sodium().crypto_sign_final_create(state, sig, siglen, sk));
+    // result.success(sig);
+
+    // FIXME: crypto_sign_final_create not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_sign_final_verify(MethodCall call, Result result)
+  {
+    // byte[] state = call.argument("state");
+    // byte[] sig = call.argument("sig");
+    // byte[] pk = call.argument("pk");
+
+    // int ret = sodium().crypto_sign_final_verify(state, sig, pk);
+    // result.success(ret == 0);
+
+    // FIXME: crypto_sign_final_verify not implemented in libsodium-jni
+    result.notImplemented();
   }
 
   private void randombytes_buf(MethodCall call, Result result)
