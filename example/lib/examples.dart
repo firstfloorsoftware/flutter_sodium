@@ -445,9 +445,6 @@ exampleCryptoSignMultiPart() async {
     final sig = await Sodium.cryptoSignFinalCreate(state, keypair['sk']);
 
     /* signature verification */
-    state = await Sodium.cryptoSignInit();
-    state = await Sodium.cryptoSignUpdate(state, messagePart1);
-    state = await Sodium.cryptoSignUpdate(state, messagePart2);
     final valid = await Sodium.cryptoSignFinalVerify(state, sig, keypair['pk']);
 
     assert(valid);

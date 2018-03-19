@@ -1059,39 +1059,60 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
 
   private func crypto_sign_init(call: FlutterMethodCall) -> Any
   {
-    // FIXME: implement crypto_sign_init
-    return FlutterMethodNotImplemented
+    var state = Data(count: crypto_sign_statebytes())
+    let ret = state.withUnsafeMutableBytes { (statePtr : UnsafeMutablePointer<crypto_sign_state>) in
+      flutter_sodium.crypto_sign_init(statePtr)
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
 
   private func crypto_sign_update(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let state = (args["state"] as! FlutterStandardTypedData).data
+    var state = (args["state"] as! FlutterStandardTypedData).data
     let m = (args["m"] as! FlutterStandardTypedData).data
 
-    // FIXME: implement crypto_sign_update
-    return FlutterMethodNotImplemented
+    let ret = state.withUnsafeMutableBytes { (statePtr : UnsafeMutablePointer<crypto_sign_state>) in
+      m.withUnsafeBytes { mPtr in 
+        flutter_sodium.crypto_sign_update(statePtr, mPtr, CUnsignedLongLong(m.count))
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
 
   private func crypto_sign_final_create(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let state = (args["state"] as! FlutterStandardTypedData).data
+    var state = (args["state"] as! FlutterStandardTypedData).data
     let sk = (args["sk"] as! FlutterStandardTypedData).data
 
-    // FIXME: implement crypto_sign_final_create
-    return FlutterMethodNotImplemented
+    var sig = Data(count: crypto_sign_bytes())
+
+    let ret = state.withUnsafeMutableBytes { (statePtr : UnsafeMutablePointer<crypto_sign_state>) in
+      sig.withUnsafeMutableBytes { sigPtr in 
+        sk.withUnsafeBytes { skPtr in 
+          flutter_sodium.crypto_sign_final_create(statePtr, sigPtr, nil, skPtr)
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: sig)
   }
 
   private func crypto_sign_final_verify(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let state = (args["state"] as! FlutterStandardTypedData).data
-    let sig = (args["sig"] as! FlutterStandardTypedData).data
+    var state = (args["state"] as! FlutterStandardTypedData).data
+    var sig = (args["sig"] as! FlutterStandardTypedData).data
     let pk = (args["pk"] as! FlutterStandardTypedData).data
 
-    // FIXME: implement crypto_sign_final_verify
-    return FlutterMethodNotImplemented
+    let ret = state.withUnsafeMutableBytes { (statePtr : UnsafeMutablePointer<crypto_sign_state>) in
+      sig.withUnsafeMutableBytes { sigPtr in 
+        pk.withUnsafeBytes { pkPtr in 
+          flutter_sodium.crypto_sign_final_verify(statePtr, sigPtr, pkPtr)
+        }
+      }
+    }
+    return ret == 0
   }
 
   private func randombytes_buf(call: FlutterMethodCall) -> Any
