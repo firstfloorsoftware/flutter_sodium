@@ -474,29 +474,52 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let args = call.arguments as! NSDictionary
     let key: Data? = (args["key"] as? FlutterStandardTypedData)?.data
     let outlen = args["outlen"] as! Int
+    var ret: Int32 = -1
+    var state = Data(count: crypto_generichash_statebytes())
     
-    // FIXME: implement crypto_generichash_init
-    return FlutterMethodNotImplemented
+    if let key = key {
+      ret = state.withUnsafeMutableBytes { statePtr in 
+        key.withUnsafeBytes { keyPtr in 
+          flutter_sodium.crypto_generichash_init(statePtr, keyPtr, key.count, outlen)
+        }
+      }
+    }
+    else {
+      ret = state.withUnsafeMutableBytes { statePtr in 
+        flutter_sodium.crypto_generichash_init(statePtr, nil, 0, outlen)
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
   
   private func crypto_generichash_update(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let state = (args["state"] as! FlutterStandardTypedData).data
+    var state = (args["state"] as! FlutterStandardTypedData).data
     let i = (args["in"] as! FlutterStandardTypedData).data
 
-    // FIXME: implement crypto_generichash_update
-    return FlutterMethodNotImplemented
+    let ret = state.withUnsafeMutableBytes { statePtr in 
+      i.withUnsafeBytes { iPtr in 
+        flutter_sodium.crypto_generichash_update(statePtr, iPtr, CUnsignedLongLong(i.count))
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
   
   private func crypto_generichash_final(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let state = (args["state"] as! FlutterStandardTypedData).data
+    var state = (args["state"] as! FlutterStandardTypedData).data
     let outlen = args["outlen"] as! Int
 
-    // FIXME: implement crypto_generichash_final
-    return FlutterMethodNotImplemented
+    var out = Data(count: outlen)
+
+    let ret = state.withUnsafeMutableBytes { statePtr in 
+      out.withUnsafeMutableBytes { outPtr in 
+        flutter_sodium.crypto_generichash_final(statePtr, outPtr, outlen)
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
   }
   
   private func crypto_generichash_keygen(call: FlutterMethodCall) -> Any
@@ -664,27 +687,41 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let args = call.arguments as! NSDictionary
     let key = (args["key"] as! FlutterStandardTypedData).data
 
-    // FIXME: implement crypto_onetimeauth_init
-    return FlutterMethodNotImplemented
+    var state = Data(count: crypto_onetimeauth_statebytes())
+    let ret = state.withUnsafeMutableBytes { statePtr in
+      key.withUnsafeBytes { keyPtr in 
+        flutter_sodium.crypto_onetimeauth_init(statePtr, keyPtr)
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
 
   private func crypto_onetimeauth_update(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let state = (args["state"] as! FlutterStandardTypedData).data
+    var state = (args["state"] as! FlutterStandardTypedData).data
     let i = (args["in"] as! FlutterStandardTypedData).data
 
-    // FIXME: implement crypto_onetimeauth_update
-    return FlutterMethodNotImplemented
+    let ret = state.withUnsafeMutableBytes { statePtr in
+      i.withUnsafeBytes { iPtr in 
+        flutter_sodium.crypto_onetimeauth_update(statePtr, iPtr, CUnsignedLongLong(i.count))
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
 
   private func crypto_onetimeauth_final(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let state = (args["state"] as! FlutterStandardTypedData).data
+    var state = (args["state"] as! FlutterStandardTypedData).data
 
-    // FIXME: implement crypto_onetimeauth_final
-    return FlutterMethodNotImplemented
+    var out = Data(count: crypto_onetimeauth_bytes())
+    let ret = state.withUnsafeMutableBytes { statePtr in
+      out.withUnsafeMutableBytes { outPtr in 
+        flutter_sodium.crypto_onetimeauth_final(statePtr, outPtr)
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
   }
 
   private func crypto_onetimeauth_keygen(call: FlutterMethodCall) -> Any
