@@ -1060,7 +1060,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   private func crypto_sign_init(call: FlutterMethodCall) -> Any
   {
     var state = Data(count: crypto_sign_statebytes())
-    let ret = state.withUnsafeMutableBytes { (statePtr : UnsafeMutablePointer<crypto_sign_state>) in
+    let ret = state.withUnsafeMutableBytes { statePtr in
       flutter_sodium.crypto_sign_init(statePtr)
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
@@ -1072,7 +1072,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var state = (args["state"] as! FlutterStandardTypedData).data
     let m = (args["m"] as! FlutterStandardTypedData).data
 
-    let ret = state.withUnsafeMutableBytes { (statePtr : UnsafeMutablePointer<crypto_sign_state>) in
+    let ret = state.withUnsafeMutableBytes { statePtr in
       m.withUnsafeBytes { mPtr in 
         flutter_sodium.crypto_sign_update(statePtr, mPtr, CUnsignedLongLong(m.count))
       }
@@ -1088,7 +1088,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
 
     var sig = Data(count: crypto_sign_bytes())
 
-    let ret = state.withUnsafeMutableBytes { (statePtr : UnsafeMutablePointer<crypto_sign_state>) in
+    let ret = state.withUnsafeMutableBytes { statePtr in
       sig.withUnsafeMutableBytes { sigPtr in 
         sk.withUnsafeBytes { skPtr in 
           flutter_sodium.crypto_sign_final_create(statePtr, sigPtr, nil, skPtr)
@@ -1105,7 +1105,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var sig = (args["sig"] as! FlutterStandardTypedData).data
     let pk = (args["pk"] as! FlutterStandardTypedData).data
 
-    let ret = state.withUnsafeMutableBytes { (statePtr : UnsafeMutablePointer<crypto_sign_state>) in
+    let ret = state.withUnsafeMutableBytes { statePtr in
       sig.withUnsafeMutableBytes { sigPtr in 
         pk.withUnsafeBytes { pkPtr in 
           flutter_sodium.crypto_sign_final_verify(statePtr, sigPtr, pkPtr)
