@@ -44,6 +44,9 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       case "crypto_generichash_final": result(crypto_generichash_final(call: call))
       case "crypto_generichash_keygen": result(crypto_generichash_keygen(call: call))
 
+      case "crypto_kdf_keygen": result(crypto_kdf_keygen(call: call))
+      case "crypto_kdf_derive_from_key": result(crypto_kdf_derive_from_key(call: call))
+
       case "crypto_kx_keypair": result(crypto_kx_keypair(call: call))
       case "crypto_kx_seed_keypair": result(crypto_kx_seed_keypair(call: call))
       case "crypto_kx_client_session_keys": result(crypto_kx_client_session_keys(call: call))
@@ -489,6 +492,35 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         flutter_sodium.crypto_generichash_keygen(kPtr)
     }
     return FlutterStandardTypedData.init(bytes: k)
+  }
+
+  private func crypto_kdf_keygen(call: FlutterMethodCall) -> Any
+  {
+    var k = Data(count: crypto_kdf_keybytes())
+    k.withUnsafeMutableBytes { kPtr in
+        flutter_sodium.crypto_kdf_keygen(kPtr)
+    }
+    return FlutterStandardTypedData.init(bytes: k)
+  }
+
+  private func crypto_kdf_derive_from_key(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let subkey_len = args["subkey_len"] as! Int
+    let subkey_id = args["subkey_id"] as! UInt64
+    let ctx = (args["ctx"] as! FlutterStandardTypedData).data
+    let key = (args["key"] as! FlutterStandardTypedData).data
+
+    var subkey = Data(count: subkey_len);
+    let ret = subkey.withUnsafeMutableBytes { subkeyPtr in 
+      ctx.withUnsafeBytes { ctxPtr in 
+        key.withUnsafeBytes { keyPtr in 
+          flutter_sodium.crypto_kdf_derive_from_key(subkeyPtr, size_t(subkey_len), subkey_id, ctxPtr, keyPtr)
+        }
+      }
+    }
+
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: subkey)
   }
 
   private func crypto_kx_keypair(call: FlutterMethodCall) -> Any

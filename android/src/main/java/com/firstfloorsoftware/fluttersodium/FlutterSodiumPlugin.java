@@ -49,6 +49,9 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
         case "crypto_generichash_final": crypto_generichash_final(call, result); break;
         case "crypto_generichash_keygen": crypto_generichash_keygen(call, result); break;
 
+        case "crypto_kdf_keygen": crypto_kdf_keygen(call, result); break;
+        case "crypto_kdf_derive_from_key": crypto_kdf_derive_from_key(call, result); break;
+
         case "crypto_kx_keypair": crypto_kx_keypair(call, result); break;
         case "crypto_kx_seed_keypair": crypto_kx_seed_keypair(call, result); break;
         case "crypto_kx_client_session_keys": crypto_kx_client_session_keys(call, result); break;
@@ -361,6 +364,18 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
     byte[] k = new byte[sodium().crypto_generichash_keybytes()];
     sodium().randombytes_buf(k, k.length);
     result.success(k);
+  }
+
+  private void crypto_kdf_keygen(MethodCall call, Result result)
+  {
+    // FIXME: crypto_kdf_keygen not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_kdf_derive_from_key(MethodCall call, Result result)
+  {
+    // FIXME: crypto_kdf_derive_from_key not implemented in libsodium-jni
+    result.notImplemented();
   }
 
   private void crypto_kx_keypair(MethodCall call, Result result) throws Exception

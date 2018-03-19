@@ -42,6 +42,16 @@ const int crypto_generichash_blake2b_KEYBYTES_MIN = 16;
 const int crypto_generichash_blake2b_KEYBYTES_MAX = 64;
 const int crypto_generichash_blake2b_KEYBYTES = 32;
 
+const int crypto_kdf_BYTES_MIN = crypto_kdf_blake2b_BYTES_MIN;
+const int crypto_kdf_BYTES_MAX = crypto_kdf_blake2b_BYTES_MAX;
+const int crypto_kdf_CONTEXTBYTES = crypto_kdf_blake2b_CONTEXTBYTES;
+const int crypto_kdf_KEYBYTES = crypto_kdf_blake2b_KEYBYTES;
+
+const int crypto_kdf_blake2b_BYTES_MIN = 16;
+const int crypto_kdf_blake2b_BYTES_MAX = 64;
+const int crypto_kdf_blake2b_CONTEXTBYTES = 8;
+const int crypto_kdf_blake2b_KEYBYTES = 32;
+
 const int crypto_kx_PUBLICKEYBYTES = 32;
 const int crypto_kx_SECRETKEYBYTES = 32;
 const int crypto_kx_SEEDBYTES = 32;

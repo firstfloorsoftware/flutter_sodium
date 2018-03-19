@@ -181,6 +181,26 @@ exampleCryptoGenerichashStream() async {
   }
 }
 
+exampleCryptoKdf() async {
+  // https://download.libsodium.org/doc/key_derivation/
+  printHeader('Key derivation');
+
+  try {
+    final ctx = UTF8.encode('Examples');
+    final masterKey = await Sodium.cryptoKdfKeygen();
+    final subkey1 = await Sodium.cryptoKdfDeriveFromKey(32, 1, ctx, masterKey);
+    final subkey2 = await Sodium.cryptoKdfDeriveFromKey(32, 2, ctx, masterKey);
+    final subkey3 = await Sodium.cryptoKdfDeriveFromKey(64, 3, ctx, masterKey);
+
+    print('subkey1: ${hex.encode(subkey1)}');
+    print('subkey2: ${hex.encode(subkey2)}');
+    print('subkey3: ${hex.encode(subkey3)}');
+
+  } catch (e) {
+    print(e);
+  }
+}
+
 exampleCryptoKx() async {
   // https://download.libsodium.org/doc/key_exchange/
   printHeader('Key exchange');

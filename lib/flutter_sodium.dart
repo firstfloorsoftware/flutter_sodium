@@ -129,6 +129,23 @@ class Sodium {
       _channel.invokeMethod('crypto_generichash_keygen');
 
   //
+  // crypto_kdf
+  //
+  /// Creates a master key.
+  static Future<Uint8List> cryptoKdfKeygen() =>
+      _channel.invokeMethod('crypto_kdf_keygen');
+
+  /// Derives a subkey using a master key and a context.
+  static Future<Uint8List> cryptoKdfDeriveFromKey(
+          int subkeyLen, int subkeyId, Uint8List ctx, Uint8List key) =>
+      _channel.invokeMethod('crypto_kdf_derive_from_key', {
+        'subkey_len': subkeyLen,
+        'subkey_id': subkeyId,
+        'ctx': ctx,
+        'key': key
+      });
+
+  //
   // crypto_kx
   //
   /// Creates a new key pair.
