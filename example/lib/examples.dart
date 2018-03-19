@@ -301,6 +301,44 @@ exampleCryptoPwhashStr() async {
   }
 }
 
+exampleCryptoScalarmult() async {
+  // https://download.libsodium.org/doc/advanced/scalar_multiplication.html
+  printHeader('Diffie-Hellman function');
+
+  try {
+    /* Create client's secret and public keys */
+    final clientSecretkey = await Sodium.randombytesBuf(crypto_box_SECRETKEYBYTES);
+    final clientPublickey = await Sodium.cryptoScalarmultBase(clientSecretkey);
+
+    /* Create server's secret and public keys */
+    final serverSecretkey = await Sodium.randombytesBuf(crypto_box_SECRETKEYBYTES);
+    final serverPublickey = await Sodium.cryptoScalarmultBase(serverSecretkey);
+
+    /* The client derives a shared key from its secret key and the server's public key */
+    /* shared key = h(q ‖ client_publickey ‖ server_publickey) */
+    final scalarmultQByClient = await Sodium.cryptoScalarmult(clientSecretkey, serverPublickey);
+    var h = await Sodium.cryptoGenerichashInit(null, crypto_generichash_BYTES);
+    h = await Sodium.cryptoGenerichashUpdate(h, scalarmultQByClient);
+    h = await Sodium.cryptoGenerichashUpdate(h, clientPublickey);
+    h = await Sodium.cryptoGenerichashUpdate(h, serverPublickey);
+    final sharedkeyByClient = await Sodium.cryptoGenerichashFinal(h, crypto_generichash_BYTES);
+
+    /* The server derives a shared key from its secret key and the client's public key */
+    /* shared key = h(q ‖ client_publickey ‖ server_publickey) */
+    final scalarMultQByServer = await Sodium.cryptoScalarmult(serverSecretkey, clientPublickey);
+    h = await Sodium.cryptoGenerichashInit(null, crypto_generichash_BYTES);
+    h = await Sodium.cryptoGenerichashUpdate(h, scalarMultQByServer);
+    h = await Sodium.cryptoGenerichashUpdate(h, clientPublickey);
+    h = await Sodium.cryptoGenerichashUpdate(h, serverPublickey);
+    final sharedkeyByServer = await Sodium.cryptoGenerichashFinal(h, crypto_generichash_BYTES);
+
+    /* sharedkey_by_client and sharedkey_by_server are identical */
+    assert(const ListEquality().equals(sharedkeyByClient, sharedkeyByServer));
+  } catch (e) {
+    print(e);
+  }
+}
+
 exampleCryptoSecretbox() async {
   // https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html
   printHeader('Secret key authenticated encryption (combined mode)');

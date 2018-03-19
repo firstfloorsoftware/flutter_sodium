@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
     await exampleCryptoOnetimeauthStream();
     await exampleCryptoPwhash();
     await exampleCryptoPwhashStr();
+    await exampleCryptoScalarmult();
     await exampleCryptoSecretbox();
     await exampleCryptoSecretboxDetached();
     await exampleCryptoShorthash();

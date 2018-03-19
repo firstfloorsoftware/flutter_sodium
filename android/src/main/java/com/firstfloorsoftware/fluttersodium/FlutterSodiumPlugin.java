@@ -69,6 +69,9 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
         case "crypto_pwhash_str_verify": crypto_pwhash_str_verify(call, result); break;
         case "crypto_pwhash_str_needs_rehash": crypto_pwhash_str_needs_rehash(call, result); break;
 
+        case "crypto_scalarmult_base": crypto_scalarmult_base(call, result); break;
+        case "crypto_scalarmult": crypto_scalarmult(call, result); break;
+
         case "crypto_secretbox_easy": crypto_secretbox_easy(call, result); break;
         case "crypto_secretbox_open_easy": crypto_secretbox_open_easy(call, result); break;
         case "crypto_secretbox_detached": crypto_secretbox_detached(call, result); break;
@@ -535,6 +538,25 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
   {
     // FIXME: crypto_pwhash_str_needs_rehash not implemented in libsodium-jni
     result.notImplemented();
+  }
+
+  private void crypto_scalarmult_base(MethodCall call, Result result) throws Exception
+  {
+    byte[] n = call.argument("n");
+    byte[] q = new byte[sodium().crypto_scalarmult_bytes()];
+
+    requireSuccess(sodium().crypto_scalarmult_base(q, n));
+    result.success(q);
+  }
+
+  private void crypto_scalarmult(MethodCall call, Result result) throws Exception
+  {
+    byte[] n = call.argument("n");
+    byte[] p = call.argument("p");
+    byte[] q = new byte[sodium().crypto_scalarmult_bytes()];
+
+    requireSuccess(sodium().crypto_scalarmult(q, n, p));
+    result.success(q);
   }
 
   private void crypto_secretbox_easy(MethodCall call, Result result) throws Exception

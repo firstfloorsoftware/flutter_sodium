@@ -271,6 +271,17 @@ class Sodium {
       _channel.invokeMethod('crypto_secretbox_keygen');
 
   //
+  // crypto_scalarmult
+  //
+  /// Computes a public key given specified secret key.
+  static Future<Uint8List> cryptoScalarmultBase(Uint8List n) =>
+      _channel.invokeMethod('crypto_scalarmult_base', {'n': n});
+
+  /// Computes a shared secret given a user's secret key and another user's public key.
+  static Future<Uint8List> cryptoScalarmult(Uint8List n, Uint8List p) =>
+      _channel.invokeMethod('crypto_scalarmult', {'n': n, 'p': p});
+
+  //
   // crypto_shorthash
   //
   /// Computes a fixed-size fingerprint for specified input and key.

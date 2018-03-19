@@ -64,6 +64,9 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       case "crypto_pwhash_str_verify": result(crypto_pwhash_str_verify(call: call))
       case "crypto_pwhash_str_needs_rehash": result(crypto_pwhash_str_needs_rehash(call: call))
 
+      case "crypto_scalarmult_base": result(crypto_scalarmult_base(call: call))
+      case "crypto_scalarmult": result(crypto_scalarmult(call: call))
+
       case "crypto_secretbox_easy": result(crypto_secretbox_easy(call: call))
       case "crypto_secretbox_open_easy": result(crypto_secretbox_open_easy(call: call))
       case "crypto_secretbox_detached": result(crypto_secretbox_detached(call: call))
@@ -100,7 +103,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let i = (args["in"] as! FlutterStandardTypedData).data
     let k = (args["k"] as! FlutterStandardTypedData).data
 
-    var out = Data(count: flutter_sodium.crypto_auth_bytes());
+    var out = Data(count: flutter_sodium.crypto_auth_bytes())
 
     let ret = out.withUnsafeMutableBytes { outPtr in
       i.withUnsafeBytes { iPtr in 
@@ -511,7 +514,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ctx = (args["ctx"] as! FlutterStandardTypedData).data
     let key = (args["key"] as! FlutterStandardTypedData).data
 
-    var subkey = Data(count: subkey_len);
+    var subkey = Data(count: subkey_len)
     let ret = subkey.withUnsafeMutableBytes { subkeyPtr in 
       ctx.withUnsafeBytes { ctxPtr in 
         key.withUnsafeBytes { keyPtr in 
@@ -757,6 +760,39 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     return ret != 0
   }
 
+  private func crypto_scalarmult_base(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let n = (args["n"] as! FlutterStandardTypedData).data
+
+    var q = Data(count: crypto_scalarmult_bytes())
+    let ret = q.withUnsafeMutableBytes { qPtr in
+      n.withUnsafeBytes { nPtr in 
+        flutter_sodium.crypto_scalarmult_base(qPtr, nPtr)
+      }
+    }
+
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: q)
+  }
+
+  private func crypto_scalarmult(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let n = (args["n"] as! FlutterStandardTypedData).data
+    let p = (args["p"] as! FlutterStandardTypedData).data
+
+    var q = Data(count: crypto_scalarmult_bytes())
+    let ret = q.withUnsafeMutableBytes { qPtr in
+      n.withUnsafeBytes { nPtr in 
+        p.withUnsafeBytes { pPtr in 
+          flutter_sodium.crypto_scalarmult(qPtr, nPtr, pPtr)
+        }
+      }
+    }
+
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: q)
+  }
+
   private func crypto_secretbox_easy(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
@@ -814,8 +850,8 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let n = (args["n"] as! FlutterStandardTypedData).data
     let k = (args["k"] as! FlutterStandardTypedData).data
 
-    var c = Data(count: m.count);
-    var mac = Data(count: crypto_secretbox_macbytes());
+    var c = Data(count: m.count)
+    var mac = Data(count: crypto_secretbox_macbytes())
 
     let ret = c.withUnsafeMutableBytes { cPtr in
           mac.withUnsafeMutableBytes { macPtr in
@@ -883,7 +919,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let args = call.arguments as! NSDictionary
     let i = (args["in"] as! FlutterStandardTypedData).data
     let key = (args["k"] as! FlutterStandardTypedData).data
-    var out = Data(count: flutter_sodium.crypto_shorthash_bytes());
+    var out = Data(count: flutter_sodium.crypto_shorthash_bytes())
 
     let ret = out.withUnsafeMutableBytes { outPtr in
       i.withUnsafeBytes { iPtr in 
