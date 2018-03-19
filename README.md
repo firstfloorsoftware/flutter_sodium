@@ -3,7 +3,7 @@
 With flutter_sodium you get access to the modern, easy-to-use [libsodium](https://download.libsodium.org/doc/) crypto library in your [Flutter](https://flutter.io) apps. One set of crypto APIs supporting both Android and iOS.
 
 ## API coverage
-At this point in time flutter_sodium implements the following libsodium APIs:
+At this point in time flutter_sodium implements the following high-level libsodium APIs:
 - crypto_auth
 - crypto_box
 - crypto_generichash
@@ -19,7 +19,7 @@ At this point in time flutter_sodium implements the following libsodium APIs:
 
 ## Roadmap
 1) A core API that maps 1:1 to libsodium functions. Should cover the entire high-level API.
-2) Add argument checks
+2) Proper argument checks
 3) A Dart-friendly, opinionated API wrapping the core API. Should work with types other than Uint8List such as strings, streams, etc.
 
 ## How it works
