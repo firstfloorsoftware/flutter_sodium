@@ -4,5 +4,5 @@ Demonstrates how to use the flutter_sodium plugin.
 
 ## Getting Started
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+For help getting started with flutter_sodium, view the online
+[documentation](https://github.com/firstfloorsoftware).
