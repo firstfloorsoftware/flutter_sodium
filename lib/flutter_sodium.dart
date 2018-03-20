@@ -379,6 +379,7 @@ class Sodium {
   //
   // sodium_version
   //
+  /// Retrieves the version of the loaded libsodium library (currently 1.0.16).
   static Future<String> sodiumVersionString() =>
       _channel.invokeMethod('sodium_version_string');
 }
