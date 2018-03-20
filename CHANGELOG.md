@@ -1,3 +1,3 @@
-## [0.0.1] - TODO: Add release date.
+## [0.0.1] - March 20, 2018
 
-* TODO: Describe initial release.
+* Initial release with core libsodium API support.

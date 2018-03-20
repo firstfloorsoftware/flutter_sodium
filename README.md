@@ -24,9 +24,35 @@ At this point in time flutter_sodium implements the following high-level libsodi
 3) Fix missing API functions (such as crypto_pwhash_str_needs_rehash)
 4) A Dart-friendly, opinionated API wrapping the core API. Should work with types other than Uint8List such as strings, streams, etc.
 
-## How it works
-The flutter_sodium plugin includes the native libsodium binaries compiled for Android and iOS. Since Flutter does not support native binaries (see also https://github.com/flutter/flutter/issues/7053), a [platform channel](https://flutter.io/platform-channels/) is established to enable native function invocation. One side effect of this approach is that the entire flutter_sodium API is asynchronous. This is great for potential long-running operations such as Argon password hashing, but does not make much sense for other short-running functions.
-
 ## Getting Started
 
-This plugin is very much work in progress, and not available yet in [Dart Pub](https://pub.dartlang.org/).
+In your flutter project add the dependency:
+
+```yml
+dependencies:
+  ...
+  flutter_sodium: any
+```
+
+## Usage example
+
+```dart
+import 'package:flutter_sodium/flutter_sodium.dart';
+
+// Password hashing (using Argon)
+const opslimit = crypto_pwhash_OPSLIMIT_INTERACTIVE;
+const memlimit = crypto_pwhash_MEMLIMIT_INTERACTIVE;
+final password = UTF8.encode('my password');
+final str = await Sodium.cryptoPwhashStr(password, opslimit, memlimit);
+
+print('Password hash str: ${ascii.decode(str)}');
+
+// verify hash str
+final valid = await Sodium.cryptoPwhashStrVerify(str, password);
+
+assert(valid);
+```
+
+## Current issues
+- Some APIs are not available yet in Android
+- Since Flutter does not support native binaries (see also https://github.com/flutter/flutter/issues/7053), a [platform channel](https://flutter.io/platform-channels/) is established to enable native function invocation. One side effect of this approach is that the entire flutter_sodium API is asynchronous. This is great for potential long-running operations such as Argon password hashing, but does not make much sense for other short-running functions.
