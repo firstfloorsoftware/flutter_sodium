@@ -42,7 +42,7 @@ import 'package:flutter_sodium/flutter_sodium.dart';
 // Password hashing (using Argon)
 const opslimit = crypto_pwhash_OPSLIMIT_INTERACTIVE;
 const memlimit = crypto_pwhash_MEMLIMIT_INTERACTIVE;
-final password = UTF8.encode('my password');
+final password = utf8.encode('my password');
 final str = await Sodium.cryptoPwhashStr(password, opslimit, memlimit);
 
 print('Password hash str: ${ascii.decode(str)}');
