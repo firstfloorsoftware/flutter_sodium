@@ -256,7 +256,7 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
-				"${PODS_ROOT}/../../../../flutter/bin/cache/artifacts/engine/ios/Flutter.framework",
+				"${PODS_ROOT}/.symlinks/flutter/ios/Flutter.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_sodium/flutter_sodium.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
