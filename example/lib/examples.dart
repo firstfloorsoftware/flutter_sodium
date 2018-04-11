@@ -8,7 +8,7 @@ exampleCryptoAuth() async {
   printHeader('Secret key authentication');
 
   try {
-    final message = UTF8.encode('test');
+    final message = utf8.encode('test');
     final key = await Sodium.cryptoAuthKeygen();
     final mac = await Sodium.cryptoAuth(message, key);
 
@@ -27,7 +27,7 @@ exampleCryptoBox() async {
   printHeader('Public key authenticated encryption');
 
   try {
-    final message = UTF8.encode('test');
+    final message = utf8.encode('test');
     final aliceKeypair = await Sodium.cryptoBoxKeypair();
     final bobKeypair = await Sodium.cryptoBoxKeypair();
     final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
@@ -47,7 +47,7 @@ exampleCryptoBoxDetached() async {
   printHeader('Public key authenticated encryption (detached)');
 
   try {
-    final message = UTF8.encode('test');
+    final message = utf8.encode('test');
     final aliceKeypair = await Sodium.cryptoBoxKeypair();
     final bobKeypair = await Sodium.cryptoBoxKeypair();
     final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
@@ -67,7 +67,7 @@ exampleCryptoBoxPrecalculated() async {
   printHeader('Public key authenticated encryption (precalculated)');
 
   try {
-    final message = UTF8.encode('test');
+    final message = utf8.encode('test');
     final aliceKeypair = await Sodium.cryptoBoxKeypair();
     final bobKeypair = await Sodium.cryptoBoxKeypair();
     final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
@@ -92,7 +92,7 @@ exampleCryptoBoxPrecalculatedDetached() async {
   printHeader('Public key authenticated encryption (precalculated detached)');
 
   try {
-    final message = UTF8.encode('test');
+    final message = utf8.encode('test');
     final aliceKeypair = await Sodium.cryptoBoxKeypair();
     final bobKeypair = await Sodium.cryptoBoxKeypair();
     final nonce = await Sodium.randombytesBuf(crypto_box_NONCEBYTES);
@@ -117,7 +117,7 @@ exampleCryptoBoxSeal() async {
   printHeader('Sealed boxes');
 
   try {
-    final message = UTF8.encode('Message');
+    final message = utf8.encode('Message');
     final recipientKeypair = await Sodium.cryptoBoxKeypair();
     final cipherText =
         await Sodium.cryptoBoxSeal(message, recipientKeypair['pk']);
@@ -134,7 +134,7 @@ exampleCryptoGenerichash() async {
   // https://download.libsodium.org/doc/hashing/generic_hashing.html
   printHeader('Generic hashing single part with key');
   try {
-    final message = UTF8.encode('Arbitrary data to hash');
+    final message = utf8.encode('Arbitrary data to hash');
     final key = await Sodium.cryptoGenerichashKeygen();
     final hash =
         await Sodium.cryptoGenerichash(crypto_generichash_BYTES, message, key);
@@ -149,7 +149,7 @@ exampleCryptoGenericHashNoKey() async {
   // https://download.libsodium.org/doc/hashing/generic_hashing.html
   printHeader('Generic hashing single part without key');
   try {
-    final message = UTF8.encode('Arbitrary data to hash');
+    final message = utf8.encode('Arbitrary data to hash');
     final hash =
         await Sodium.cryptoGenerichash(crypto_generichash_BYTES, message, null);
 
@@ -164,8 +164,8 @@ exampleCryptoGenerichashMultiPart() async {
   printHeader('Generic hashing multi part with key');
 
   try {
-    final messagePart1 = UTF8.encode('Arbitrary data to hash');
-    final messagePart2 = UTF8.encode('is longer than expected');
+    final messagePart1 = utf8.encode('Arbitrary data to hash');
+    final messagePart2 = utf8.encode('is longer than expected');
     final key = await Sodium.cryptoGenerichashKeygen();
     var state =
         await Sodium.cryptoGenerichashInit(key, crypto_generichash_BYTES);
@@ -186,7 +186,7 @@ exampleCryptoKdf() async {
   printHeader('Key derivation');
 
   try {
-    final ctx = UTF8.encode('Examples');
+    final ctx = utf8.encode('Examples');
     final masterKey = await Sodium.cryptoKdfKeygen();
     final subkey1 = await Sodium.cryptoKdfDeriveFromKey(32, 1, ctx, masterKey);
     final subkey2 = await Sodium.cryptoKdfDeriveFromKey(32, 2, ctx, masterKey);
@@ -225,7 +225,7 @@ exampleCryptoOnetimeauth() async {
   printHeader('Secret-key single-message authentication');
 
   try {
-    final message = UTF8.encode('Data to authenticate');
+    final message = utf8.encode('Data to authenticate');
     final key = await Sodium.cryptoOnetimeauthKeygen();
     final out = await Sodium.cryptoOnetimeauth(message, key);
     final valid = await Sodium.cryptoOnetimeauthVerify(out, message, key);
@@ -241,8 +241,8 @@ exampleCryptoOnetimeauthMultiPart() async {
   printHeader('Secret-key single-message authentication (multi-part)');
 
   try {
-    final message1 = UTF8.encode('Multi-part');
-    final message2 = UTF8.encode('data');
+    final message1 = utf8.encode('Multi-part');
+    final message2 = utf8.encode('data');
     final key = await Sodium.cryptoOnetimeauthKeygen();
 
     var state = await Sodium.cryptoOnetimeauthInit(key);
@@ -261,7 +261,7 @@ exampleCryptoPwhash() async {
   printHeader('Password hashing key derivation');
 
   try {
-    final password = UTF8.encode('Correct Horse Battery Staple');
+    final password = utf8.encode('Correct Horse Battery Staple');
     final salt = await Sodium.randombytesBuf(crypto_pwhash_SALTBYTES);
     final hash = await Sodium.cryptoPwhash(
         crypto_box_SEEDBYTES,
@@ -284,7 +284,7 @@ exampleCryptoPwhashStr() async {
   try {
     const opslimit = crypto_pwhash_OPSLIMIT_INTERACTIVE;
     const memlimit = crypto_pwhash_MEMLIMIT_INTERACTIVE;
-    final password = UTF8.encode('Correct Horse Battery Staple');
+    final password = utf8.encode('Correct Horse Battery Staple');
     final str = await Sodium.cryptoPwhashStr(password, opslimit, memlimit);
     final valid = await Sodium.cryptoPwhashStrVerify(str, password);
 
@@ -349,7 +349,7 @@ exampleCryptoSecretbox() async {
   printHeader('Secret key authenticated encryption (combined mode)');
 
   try {
-    final message = UTF8.encode('test');
+    final message = utf8.encode('test');
     final key = await Sodium.cryptoSecretboxKeygen();
     final nonce = await Sodium.randombytesBuf(crypto_secretbox_NONCEBYTES);
     final cipherText = await Sodium.cryptoSecretboxEasy(message, nonce, key);
@@ -367,7 +367,7 @@ exampleCryptoSecretboxDetached() async {
   printHeader('Secret key authenticated encryption (detached mode)');
 
   try {
-    final message = UTF8.encode('test');
+    final message = utf8.encode('test');
     final key = await Sodium.cryptoSecretboxKeygen();
     final nonce = await Sodium.randombytesBuf(crypto_secretbox_NONCEBYTES);
     final result = await Sodium.cryptoSecretboxDetached(message, nonce, key);
@@ -385,7 +385,7 @@ exampleCryptoShorthash() async {
   printHeader('Short input hashing');
 
   try {
-    final data = UTF8.encode('Sparkling water');
+    final data = utf8.encode('Sparkling water');
     final key = await Sodium.cryptoShorthashKeygen();
     final hash = await Sodium.cryptoShorthash(data, key);
 
@@ -400,7 +400,7 @@ exampleCryptoSign() async {
   printHeader('Public key signature combined');
 
   try {
-    final message = UTF8.encode('test');
+    final message = utf8.encode('test');
     final keypair = await Sodium.cryptoSignKeypair();
     final signedMessage = await Sodium.cryptoSign(message, keypair['sk']);
     final unsignedMessage =
@@ -416,7 +416,7 @@ exampleCryptoSignDetached() async {
   // https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures.html
   printHeader('Public key signature detached');
   try {
-    final message = UTF8.encode('test');
+    final message = utf8.encode('test');
     final keypair = await Sodium.cryptoSignKeypair();
     final sig = await Sodium.cryptoSignDetached(message, keypair['sk']);
 
@@ -433,8 +433,8 @@ exampleCryptoSignMultiPart() async {
   // https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures.html
   printHeader('Public key signature multi-part');
   try {
-    final messagePart1 = UTF8.encode('Arbitrary data to hash');
-    final messagePart2 = UTF8.encode('is longer than expected');
+    final messagePart1 = utf8.encode('Arbitrary data to hash');
+    final messagePart2 = utf8.encode('is longer than expected');
 
     final keypair = await Sodium.cryptoSignKeypair();
 
