@@ -4,19 +4,19 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - Flutter (from `/Users/kozw/Source/flutter/bin/cache/artifacts/engine/ios`)
-  - flutter_sodium (from `/Users/kozw/Source/flutter_sodium/ios`)
+  - Flutter (from `Pods/.symlinks/flutter/ios`)
+  - flutter_sodium (from `Pods/.symlinks/plugins/flutter_sodium/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: /Users/kozw/Source/flutter/bin/cache/artifacts/engine/ios
+    :path: Pods/.symlinks/flutter/ios
   flutter_sodium:
-    :path: /Users/kozw/Source/flutter_sodium/ios
+    :path: Pods/.symlinks/plugins/flutter_sodium/ios
 
 SPEC CHECKSUMS:
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
-  flutter_sodium: 78af2a44944ac4f641cc2909090a68ab3476170e
+  flutter_sodium: 469272ea82ca2eaae5614eafd619c04ccedb1d6b
 
-PODFILE CHECKSUM: cc70c01bca487bebd110b87397f017f3b76a89f1
+PODFILE CHECKSUM: b475a6d1abc0d39b6a870770e6ca2baf611c9919
 
 COCOAPODS: 1.4.0
