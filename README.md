@@ -55,4 +55,5 @@ assert(valid);
 
 ## Current issues
 - Some APIs are not available yet in Android
+- Getting a Swift plugin to work nicely with Flutter on iOS is a painful operation. See als https://github.com/flutter/flutter/issues/16049
 - Since Flutter does not support native binaries (see also https://github.com/flutter/flutter/issues/7053), a [platform channel](https://flutter.io/platform-channels/) is established to enable native function invocation. One side effect of this approach is that the entire flutter_sodium API is asynchronous. This is great for potential long-running operations such as Argon password hashing, but does not make much sense for other short-running functions.
