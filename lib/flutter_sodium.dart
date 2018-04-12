@@ -7,11 +7,6 @@ export 'src/constants.dart';
 class Sodium {
   static const MethodChannel _channel = const MethodChannel('flutter_sodium');
 
-  static Map<String, Uint8List> _castMap(Map<dynamic, dynamic> map)
-  {
-    return map.map<String, Uint8List>((k, v) => new MapEntry(k as String, v as Uint8List));
-  }
-
   //
   // crypto_auth
   //
@@ -44,14 +39,14 @@ class Sodium {
       Uint8List seed) async {
     final Map result =
         await _channel.invokeMethod('crypto_box_seed_keypair', {'seed': seed});
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   /// Generates a random secret key and a corresponding public key.
   static Future<Map<String, Uint8List>> cryptoBoxKeypair() async {
     final Map result =
         await _channel.invokeMethod('crypto_box_keypair');
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   /// Encrypts a message with a recipient's public key, a sender's secret key and a nonce.
@@ -75,7 +70,7 @@ class Sodium {
       Uint8List m, Uint8List n, Uint8List pk, Uint8List sk) async {
     final Map result = await _channel.invokeMethod(
         'crypto_box_detached', {'m': m, 'n': n, 'pk': pk, 'sk': sk});
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   /// Verifies and decrypts a ciphertext produced by [cryptoBoxDetached].
@@ -115,7 +110,7 @@ class Sodium {
       Uint8List m, Uint8List n, Uint8List k) async {
     final Map result = await _channel
         .invokeMethod('crypto_box_detached_afternm', {'m': m, 'n': n, 'k': k});
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   /// Verifies and decrypts a ciphertext with a mac, a shared secret key and a nonce.
@@ -216,7 +211,7 @@ class Sodium {
   static Future<Map<String, Uint8List>> cryptoKxKeypair() async {
     final Map result =
         await _channel.invokeMethod('crypto_kx_keypair');
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   /// Computes a deterministic key pair from the seed.
@@ -224,7 +219,7 @@ class Sodium {
       Uint8List seed) async {
     final Map result =
         await _channel.invokeMethod('crypto_kx_seed_keypair', {'seed': seed});
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   /// Computes a pair of shared keys (rx and tx) using the client's public key, the client's secret key and the server's public key.
@@ -233,7 +228,7 @@ class Sodium {
     final Map result = await _channel.invokeMethod(
         'crypto_kx_client_session_keys',
         {'client_pk': clientPk, 'client_sk': clientSk, 'server_pk': serverPk});
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   /// Computes a pair of shared keys (rx and tx) using the server's public key, the server's secret key and the client's public key.
@@ -242,7 +237,7 @@ class Sodium {
     final Map result = await _channel.invokeMethod(
         'crypto_kx_server_session_keys',
         {'server_pk': serverPk, 'server_sk': serverSk, 'client_pk': clientPk});
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   //
@@ -361,7 +356,7 @@ class Sodium {
       Uint8List m, Uint8List n, Uint8List k) async {
     final Map result = await _channel
         .invokeMethod('crypto_secretbox_detached', {'m': m, 'n': n, 'k': k});
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   /// Verifies and decrypts an encrypted message.
@@ -421,14 +416,14 @@ class Sodium {
       Uint8List seed) async {
     final Map result =
         await _channel.invokeMethod('crypto_sign_seed_keypair', {'seed': seed});
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   /// Randomly generates a secret key and a corresponding public key.
   static Future<Map<String, Uint8List>> cryptoSignKeypair() async {
     final Map result =
         await _channel.invokeMethod('crypto_sign_keypair');
-    return _castMap(result);
+    return result.retype<String, Uint8List>();
   }
 
   /// Prepends a signature to a message using specified secret key.
