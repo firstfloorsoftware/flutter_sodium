@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:convert/convert.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 import 'package:collection/collection.dart';
@@ -469,6 +470,55 @@ exampleRandombytes() async {
     print(e);
   }
 }
+
+// -- HIGH LEVEL API
+exampleGenericHash() async
+{
+  var key = await GenericHash.generateKey();
+  var hash = await GenericHash.hashString('hello world', key:key);
+
+  var data = ['hello', ' ', 'world'];
+  var stream = new Stream.fromIterable(data);
+  var hash2 = await GenericHash.hashStream(stream, key:key);
+
+  assert(const ListEquality().equals(hash, hash2));
+}
+
+examplePasswordHash() async
+{
+  var salt = await PasswordHash.generateSalt();
+  var hash = await PasswordHash.hash('hello world', salt);
+ 
+  print('hash: ${hex.encode(hash)}');
+}
+examplePasswordHashStorage() async
+{
+  var str = await PasswordHash.hashStorage('hello world');
+  var valid = await PasswordHash.verifyStorage(str, 'hello world');
+  print('str: $str');
+
+  assert(valid);
+}
+
+exampleSealedBox() async
+{
+  var keyPair = await SealedBox.generateKeyPair();
+  var message = 'hello world';
+  var encrypted = await SealedBox.sealString(message, keyPair.publicKey);
+  var decrypted = await SealedBox.openString(encrypted, keyPair);
+
+  assert(message == decrypted);
+}
+
+exampleShortHash() async
+{
+  var key = await ShortHash.generateKey();
+  var hash = await ShortHash.hashString('hello world', key);
+
+  print('hash: ${hex.encode(hash)}');
+}
+
+
 
 printHeader(String value) {
   print('--\n$value');

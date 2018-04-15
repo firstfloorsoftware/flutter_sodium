@@ -34,6 +34,13 @@ class MyApp extends StatelessWidget {
     await exampleCryptoSignMultiPart();
     await exampleRandombytes();
 
+    // high level api
+    await exampleGenericHash();
+    await examplePasswordHash();
+    await examplePasswordHashStorage();
+    await exampleSealedBox();
+    await exampleShortHash();
+
     print('Examples completed');
   }
 
