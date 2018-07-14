@@ -12,9 +12,7 @@ class ShortHash {
   static Future<Uint8List> hash(Uint8List value, Uint8List key) =>
       Sodium.cryptoShorthash(value, key);
 
-  /// Computes a fixed-size fingerprint for given value string and key.
-  static Future<Uint8List> hashString(String value, Uint8List key)
-  {
-      return Sodium.cryptoShorthash(utf8.encode(value), key);
-  }
+  /// Computes a fixed-size fingerprint for given string value and key.
+  static Future<Uint8List> hashString(String value, Uint8List key) =>
+      Sodium.cryptoShorthash(utf8.encode(value), key);
 }

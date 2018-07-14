@@ -14,7 +14,7 @@ class GenericHash {
           {Uint8List key, int outlen = crypto_generichash_BYTES}) =>
       Sodium.cryptoGenerichash(outlen, value, key);
 
-  /// Computes a generic hash of specified length for given value string and optional key.
+  /// Computes a generic hash of specified length for given string value and optional key.
   static Future<Uint8List> hashString(String value,
           {Uint8List key, int outlen = crypto_generichash_BYTES}) =>
       Sodium.cryptoGenerichash(outlen, utf8.encode(value), key);
