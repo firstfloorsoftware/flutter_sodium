@@ -518,7 +518,32 @@ exampleShortHash() async
   print('hash: ${hex.encode(hash)}');
 }
 
+exampleSecretKeyAuth() async
+{
+  var message = 'hello world';
+  var key = await SecretKeyAuth.generateKey();
+  var tag = await SecretKeyAuth.computeString(message, key);
 
+  var valid = await SecretKeyAuth.verifyString(tag, message, key);
+  assert(valid);
+}
+
+exampleOnetimeAuth() async
+{
+  var message = 'hello world';
+  var key = await OnetimeAuth.generateKey();
+  var tag = await OnetimeAuth.computeString(message, key);
+
+  // test streaming API
+  var data = ['hello', ' ', 'world'];
+  var stream = new Stream.fromIterable(data);
+  var tag2 = await OnetimeAuth.computeStream(stream, key);
+
+  assert(const ListEquality().equals(tag, tag2));
+
+  var valid = await OnetimeAuth.verifyString(tag, message, key);
+  assert(valid);
+}
 
 printHeader(String value) {
   print('--\n$value');

@@ -36,9 +36,11 @@ class MyApp extends StatelessWidget {
 
     // high level api
     await exampleGenericHash();
+    await exampleOnetimeAuth();
     await examplePasswordHash();
     await examplePasswordHashStorage();
     await exampleSealedBox();
+    await exampleSecretKeyAuth();
     await exampleShortHash();
 
     print('Examples completed');

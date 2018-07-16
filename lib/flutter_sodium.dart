@@ -4,9 +4,11 @@ import 'package:flutter/services.dart';
 export 'src/constants.dart';
 export 'src/generic_hash.dart';
 export 'src/key_pair.dart';
+export 'src/onetime_auth.dart';
 export 'src/password_hash.dart';
 export 'src/randombytes.dart';
 export 'src/sealed_box.dart';
+export 'src/secret_key_auth.dart';
 export 'src/short_hash.dart';
 
 /// Sodium is a modern, easy-to-use software library for encryption, decryption, signatures, password hashing and more.
