@@ -4,10 +4,8 @@ description: Demonstrates how to use the flutter_sodium plugin.
 dependencies:
   flutter:
     sdk: flutter
-  
-  convert: "^2.0.1"
-  
-  cupertino_icons: ^0.1.0
+    
+  cupertino_icons: ^0.1.2
 
 dev_dependencies:
   flutter_test:

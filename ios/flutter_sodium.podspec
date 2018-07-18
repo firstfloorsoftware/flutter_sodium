@@ -17,6 +17,5 @@ A new flutter plugin project.
   s.dependency 'Flutter'
   s.vendored_libraries = 'Classes/libsodium-ios/lib/libsodium.a'
   s.ios.deployment_target = '8.0'
-  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '3.2' }
 end
 
