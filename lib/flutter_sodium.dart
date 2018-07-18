@@ -12,6 +12,9 @@ export 'src/secret_key_auth.dart';
 export 'src/short_hash.dart';
 
 /// Sodium is a modern, easy-to-use software library for encryption, decryption, signatures, password hashing and more.
+///
+/// This class provides a 1:1 mapping of Dart to native libsodium API functions. You can use this
+/// low-level API directly, or choose to use the more Dart-friendly higher level API.
 class Sodium {
   static const MethodChannel _channel = const MethodChannel('flutter_sodium');
 
