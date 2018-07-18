@@ -500,34 +500,34 @@ examplePasswordHashStorage() async
   assert(valid);
 }
 
-examplePublicKeySign() async
+examplePublicKeySignCombined() async
 {
   final message = utf8.encode('hello world');
   final keypair = await PublicKeySign.generateKeyPair();
 
-  final signedMessage = await PublicKeySign.sign(message, keypair.secretKey);
+  final signedMessage = await PublicKeySign.signCombined(message, keypair.secretKey);
   final verifiedMessage = await PublicKeySign.open(signedMessage, keypair.publicKey);
 
   assert(const ListEquality().equals(message, verifiedMessage));
 }
 
-examplePublicKeySignDetached() async
+examplePublicKeySign() async
 {
   final message = 'hello world';
   final keypair = await PublicKeySign.generateKeyPair();
-  final signature = await PublicKeySign.signDetachedString(message, keypair.secretKey);
-  final valid = await PublicKeySign.verifyDetachedString(signature, message, keypair.publicKey);
+  final signature = await PublicKeySign.signString(message, keypair.secretKey);
+  final valid = await PublicKeySign.verifyString(signature, message, keypair.publicKey);
 
   assert(valid);
 }
 
-examplePublicKeySignDetachedStream() async
+examplePublicKeySignStream() async
 {
   final message = ['hello', ' ', 'world'];
   final keypair = await PublicKeySign.generateKeyPair();
-  final signature = await PublicKeySign.signDetachedStream(Stream.fromIterable(message), keypair.secretKey);
+  final signature = await PublicKeySign.signStream(Stream.fromIterable(message), keypair.secretKey);
 
-  final valid = await PublicKeySign.verifyDetachedStream(signature, Stream.fromIterable(message), keypair.publicKey);
+  final valid = await PublicKeySign.verifyStream(signature, Stream.fromIterable(message), keypair.publicKey);
 
   assert(valid);
 }

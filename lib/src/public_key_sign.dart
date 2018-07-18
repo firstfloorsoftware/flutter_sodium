@@ -12,21 +12,21 @@ class PublicKeySign {
   }
 
   /// Prepends a signature to specified message for given secret key.
-  static Future<Uint8List> sign(Uint8List message, Uint8List secretKey) =>
+  static Future<Uint8List> signCombined(Uint8List message, Uint8List secretKey) =>
       Sodium.cryptoSign(message, secretKey);
 
   /// Computes a signature for given message and secret key.
-  static Future<Uint8List> signDetached(
+  static Future<Uint8List> sign(
           Uint8List message, Uint8List secretKey) =>
       Sodium.cryptoSignDetached(message, secretKey);
 
   /// Computes a signature for given string value and secret key.
-  static Future<Uint8List> signDetachedString(
+  static Future<Uint8List> signString(
           String message, Uint8List secretKey) =>
       Sodium.cryptoSignDetached(utf8.encode(message), secretKey);
 
   /// Computes a signature for given stream value and secret key.
-  static Future<Uint8List> signDetachedStream(
+  static Future<Uint8List> signStream(
       Stream<String> stream, Uint8List secretKey) async {
     var state = await Sodium.cryptoSignInit();
     await for (var value in stream) {
@@ -40,18 +40,18 @@ class PublicKeySign {
       Sodium.cryptoSignOpen(signedMessage, publicKey);
 
   /// Verifies whether the signature is valid for given message using the signer's public key.
-  static Future<bool> verifyDetached(
+  static Future<bool> verify(
           Uint8List signature, Uint8List message, Uint8List publicKey) =>
       Sodium.cryptoSignVerifyDetached(signature, message, publicKey);
 
   /// Verifies whether the signature is valid for given string message using the signer's public key.
-  static Future<bool> verifyDetachedString(
+  static Future<bool> verifyString(
           Uint8List signature, String message, Uint8List publicKey) =>
       Sodium.cryptoSignVerifyDetached(
           signature, utf8.encode(message), publicKey);
 
   /// Verifies whether the signature is valid for given stream meage using the signer's public key.
-  static Future<bool> verifyDetachedStream(
+  static Future<bool> verifyStream(
       Uint8List signature, Stream<String> stream, Uint8List publicKey) async {
     var state = await Sodium.cryptoSignInit();
     await for (var value in stream) {
