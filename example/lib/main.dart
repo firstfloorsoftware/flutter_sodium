@@ -39,6 +39,9 @@ class MyApp extends StatelessWidget {
     await exampleOnetimeAuth();
     await examplePasswordHash();
     await examplePasswordHashStorage();
+    await examplePublicKeySign();
+    await examplePublicKeySignDetached();
+    await examplePublicKeySignDetachedStream();
     await exampleSealedBox();
     await exampleSecretKeyAuth();
     await exampleShortHash();

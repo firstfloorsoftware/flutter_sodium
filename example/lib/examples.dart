@@ -500,6 +500,38 @@ examplePasswordHashStorage() async
   assert(valid);
 }
 
+examplePublicKeySign() async
+{
+  final message = utf8.encode('hello world');
+  final keypair = await PublicKeySign.generateKeyPair();
+
+  final signedMessage = await PublicKeySign.sign(message, keypair.secretKey);
+  final verifiedMessage = await PublicKeySign.open(signedMessage, keypair.publicKey);
+
+  assert(const ListEquality().equals(message, verifiedMessage));
+}
+
+examplePublicKeySignDetached() async
+{
+  final message = 'hello world';
+  final keypair = await PublicKeySign.generateKeyPair();
+  final signature = await PublicKeySign.signDetachedString(message, keypair.secretKey);
+  final valid = await PublicKeySign.verifyDetachedString(signature, message, keypair.publicKey);
+
+  assert(valid);
+}
+
+examplePublicKeySignDetachedStream() async
+{
+  final message = ['hello', ' ', 'world'];
+  final keypair = await PublicKeySign.generateKeyPair();
+  final signature = await PublicKeySign.signDetachedStream(Stream.fromIterable(message), keypair.secretKey);
+
+  final valid = await PublicKeySign.verifyDetachedStream(signature, Stream.fromIterable(message), keypair.publicKey);
+
+  assert(valid);
+}
+
 exampleSealedBox() async
 {
   var keyPair = await SealedBox.generateKeyPair();

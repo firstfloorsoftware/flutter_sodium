@@ -6,6 +6,7 @@ export 'src/generic_hash.dart';
 export 'src/key_pair.dart';
 export 'src/onetime_auth.dart';
 export 'src/password_hash.dart';
+export 'src/public_key_sign.dart';
 export 'src/randombytes.dart';
 export 'src/sealed_box.dart';
 export 'src/secret_key_auth.dart';
