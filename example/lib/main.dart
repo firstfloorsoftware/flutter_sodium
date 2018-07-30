@@ -50,10 +50,47 @@ print(hex.encode(buffer));''', () async {
     // Example('Secret-key cryptography', isHeader: true),
     // Example('Authenticated encryption'),
     // Example('Authentication'),
-    // Example('Public-key cryptography', isHeader: true),
+    Example('Public-key cryptography', isHeader: true),
     // Example('Authenticated encryption'),
     // Example('Public-key signatures'),
-    // Example('Sealed boxes'),
+    Example('Sealed boxes',
+        description:
+            'Anonymously send encrypted messages to a recipient given its public key.',
+        docUrl:
+            'https://download.libsodium.org/doc/public-key_cryptography/sealed_boxes.html',
+        samples: [
+          Sample(
+              'Usage',
+              'Anonymous sender encrypts a message intended for recipient only.',
+              '''// Recipient creates a long-term key pair
+var keyPair = await SealedBox.generateKeyPair();
+
+// Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
+var msg = 'hello world';
+var cipher = await SealedBox.sealString(msg, keyPair.publicKey);
+
+print(hex.encode(cipher));
+
+// Recipient decrypts the ciphertext
+var decrypted = await SealedBox.openString(cipher, keyPair);
+
+assert(msg == decrypted);''', () async {
+            // Recipient creates a long-term key pair
+            var keyPair = await SealedBox.generateKeyPair();
+
+            // Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
+            var msg = 'hello world';
+            var cipher = await SealedBox.sealString(msg, keyPair.publicKey);
+
+            // Recipient decrypts the ciphertext
+            var decrypted = await SealedBox.openString(cipher, keyPair);
+
+            assert(msg == decrypted);
+
+            return hex.encode(cipher);
+          })
+        ]),
+
     Example('Hashing', isHeader: true),
     Example('Generic hashing',
         description:
@@ -62,7 +99,7 @@ print(hex.encode(buffer));''', () async {
             'https://download.libsodium.org/doc/hashing/generic_hashing.html',
         samples: [
           Sample(
-              'Hash string',
+              'Usage',
               'Computes a generic hash of specified length for given string value and optional key.',
               '''var value = 'hello world';
 var hash = await GenericHash.hashString(value);
@@ -80,7 +117,7 @@ print(hex.encode(hash));''', () async {
             'https://download.libsodium.org/doc/hashing/short-input_hashing.html',
         samples: [
           Sample(
-              'Hash string',
+              'Usage',
               'Computes a fixed-size fingerprint for given string value and key.',
               '''var value = 'hello world';
 var key = await ShortHash.generateKey();
@@ -128,9 +165,36 @@ var valid = await PasswordHash.verifyStorage(str, pw);''', () async {
     // Example('Key functions', isHeader: true),
     // Example('Key derivation'),
     // Example('Key exchange'),
-    // Example('Advanced', isHeader: true),
+    Example('Advanced', isHeader: true),
     // Example('Diffie-Hellman'),
-    // Example('One-time authentication'),
+    Example('One-time authentication',
+        description: 'Secret-key single-message authentication using Poly1305',
+        docUrl: 'https://download.libsodium.org/doc/advanced/poly1305.html',
+        samples: [
+          Sample(
+              'Usage',
+              'Computes and verifies a tag for given string value and key.',
+              '''var message = 'hello world';
+var key = await OnetimeAuth.generateKey();
+var tag = await OnetimeAuth.computeString(message, key);
+
+print(hex.encode(tag));
+
+// verify tag
+var valid = await OnetimeAuth.verifyString (tag, message, key);
+assert(valid);
+''', () async {
+            var message = 'hello world';
+            var key = await OnetimeAuth.generateKey();
+            var tag = await OnetimeAuth.computeString(message, key);
+
+// verify tag
+            var valid = await OnetimeAuth.verifyString(tag, message, key);
+            assert(valid);
+
+            return hex.encode(tag);
+          })
+        ]),
   ];
 
   Widget _buildListTile(BuildContext context, Example example) {

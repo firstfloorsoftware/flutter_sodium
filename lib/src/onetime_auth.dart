@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 import '../flutter_sodium.dart';
 
-/// One-time authentication.
+/// Secret-key single-message authentication using Poly1305.
 class OnetimeAuth {
   /// Generates a random key for use in onetime authentication.
   static Future<Uint8List> generateKey() => Sodium.cryptoOnetimeauthKeygen();
