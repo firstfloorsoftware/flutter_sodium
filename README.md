@@ -18,6 +18,10 @@ At this point in time flutter_sodium implements the following high-level libsodi
 - randombytes
 - sodium_version
 
+## Example app
+This project includes an extensive example app with runnable code samples. Be sure to check it out!
+![Screenshot](https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/develop/example/assets/screenshots/screenshot1.png)
+
 ## Roadmap
 1) A core API that maps 1:1 to libsodium functions. Should cover the entire high-level API.
 2) Proper argument checks
@@ -34,26 +38,26 @@ dependencies:
   flutter_sodium: any
 ```
 
+__Important:__ For iOS you'll need to [manually update](https://github.com/firstfloorsoftware/flutter_sodium/issues/1#issuecomment-403973858) the Podfile in your ios project.
+
 ## Usage example
 
 ```dart
 import 'package:flutter_sodium/flutter_sodium.dart';
 
 // Password hashing (using Argon)
-const opslimit = crypto_pwhash_OPSLIMIT_INTERACTIVE;
-const memlimit = crypto_pwhash_MEMLIMIT_INTERACTIVE;
-final password = utf8.encode('my password');
-final str = await Sodium.cryptoPwhashStr(password, opslimit, memlimit);
+final password = 'my password';
+final str = await PasswordHash.hashStorage(password);
 
-print('Password hash str: ${ascii.decode(str)}');
+print(str);
 
 // verify hash str
-final valid = await Sodium.cryptoPwhashStrVerify(str, password);
+final valid = await PasswordHash.verifyStorage(str, password);
 
 assert(valid);
 ```
 
 ## Current issues
 - Some APIs are not available yet in Android
-- Getting a Swift plugin to work nicely with Flutter on iOS is a painful operation. See als https://github.com/flutter/flutter/issues/16049
-- Since Flutter does not support native binaries (see also https://github.com/flutter/flutter/issues/7053), a [platform channel](https://flutter.io/platform-channels/) is established to enable native function invocation. One side effect of this approach is that the entire flutter_sodium API is asynchronous. This is great for potential long-running operations such as Argon password hashing, but does not make much sense for other short-running functions.
+- Using flutter_sodium in iOS doesn't work right out of the box. [Manual installation](https://github.com/firstfloorsoftware/flutter_sodium/issues/1#issuecomment-403973858) steps are required.
+- Since Flutter does [not support native binaries](https://github.com/flutter/flutter/issues/7053), a [platform channel](https://flutter.io/platform-channels/) is established to enable native function invocation. One side effect of this approach is that the entire flutter_sodium API is asynchronous. This is great for potential long-running operations such as Argon password hashing, but does not make much sense for other short-running functions.
