@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 import 'package:convert/convert.dart';
-import 'dart:async';
 import 'example.dart';
 import 'sample.dart';
 
