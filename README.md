@@ -20,7 +20,8 @@ At this point in time flutter_sodium implements the following high-level libsodi
 
 ## Example app
 This project includes an extensive example app with runnable code samples. Be sure to check it out!
-![Screenshot](https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/develop/example/assets/screenshots/screenshot1.png)
+
+<img src="https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/develop/example/assets/screenshots/screenshot1.png" width="300">
 
 ## Roadmap
 1) A core API that maps 1:1 to libsodium functions. Should cover the entire high-level API.
