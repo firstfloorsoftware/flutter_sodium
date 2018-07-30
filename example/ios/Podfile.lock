@@ -2,20 +2,26 @@ PODS:
   - Flutter (1.0.0)
   - flutter_sodium (0.0.1):
     - Flutter
+  - url_launcher (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `.symlinks/flutter/ios`)
   - flutter_sodium (from `.symlinks/plugins/flutter_sodium/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: ".symlinks/flutter/ios"
   flutter_sodium:
     :path: ".symlinks/plugins/flutter_sodium/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
 
 SPEC CHECKSUMS:
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
   flutter_sodium: 78af2a44944ac4f641cc2909090a68ab3476170e
+  url_launcher: 92b89c1029a0373879933c21642958c874539095
 
 PODFILE CHECKSUM: 5bb5e2b63597cfce9c9fa5786d89ac5632527232
 

@@ -6,6 +6,7 @@ dependencies:
     sdk: flutter
     
   cupertino_icons: ^0.1.2
+  url_launcher: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -16,3 +17,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: RobotoMono
+      fonts:
+        - asset: assets/fonts/RobotoMono-Regular.ttf
