@@ -1,6 +1,6 @@
 name: flutter_sodium
 description: Flutter bindings for libsodium, a modern, easy-to-use crypto library.
-version: 0.0.3
+version: 0.0.4
 author: First Floor Software <info@firstfloorsoftware.com>
 homepage: https://github.com/firstfloorsoftware/flutter_sodium
 

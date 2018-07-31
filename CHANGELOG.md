@@ -1,3 +1,7 @@
+## 0.0.4 - July 31, 2018
+* No functional changes
+* Fixes SDK constraint and source file formatting
+
 ## 0.0.3 - July 30, 2018
 * Adds Dart-friendly APIs
 * Introduces example app with runnable code samples 
