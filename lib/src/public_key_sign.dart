@@ -16,13 +16,13 @@ class PublicKeySign {
           Uint8List message, Uint8List secretKey) =>
       Sodium.cryptoSign(message, secretKey);
 
-  /// Computes a signature for given message and secret key.
-  static Future<Uint8List> sign(Uint8List message, Uint8List secretKey) =>
-      Sodium.cryptoSignDetached(message, secretKey);
-
   /// Computes a signature for given string value and secret key.
-  static Future<Uint8List> signString(String message, Uint8List secretKey) =>
+  static Future<Uint8List> sign(String message, Uint8List secretKey) =>
       Sodium.cryptoSignDetached(utf8.encode(message), secretKey);
+
+  /// Computes a signature for given message and secret key.
+  static Future<Uint8List> signBytes(Uint8List message, Uint8List secretKey) =>
+      Sodium.cryptoSignDetached(message, secretKey);
 
   /// Computes a signature for given stream value and secret key.
   static Future<Uint8List> signStream(
@@ -38,16 +38,16 @@ class PublicKeySign {
   static Future<Uint8List> open(Uint8List signedMessage, Uint8List publicKey) =>
       Sodium.cryptoSignOpen(signedMessage, publicKey);
 
-  /// Verifies whether the signature is valid for given message using the signer's public key.
-  static Future<bool> verify(
-          Uint8List signature, Uint8List message, Uint8List publicKey) =>
-      Sodium.cryptoSignVerifyDetached(signature, message, publicKey);
-
   /// Verifies whether the signature is valid for given string message using the signer's public key.
-  static Future<bool> verifyString(
+  static Future<bool> verify(
           Uint8List signature, String message, Uint8List publicKey) =>
       Sodium.cryptoSignVerifyDetached(
           signature, utf8.encode(message), publicKey);
+
+  /// Verifies whether the signature is valid for given message using the signer's public key.
+  static Future<bool> verifyBytes(
+          Uint8List signature, Uint8List message, Uint8List publicKey) =>
+      Sodium.cryptoSignVerifyDetached(signature, message, publicKey);
 
   /// Verifies whether the signature is valid for given stream meage using the signer's public key.
   static Future<bool> verifyStream(

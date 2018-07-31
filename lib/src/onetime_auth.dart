@@ -8,13 +8,13 @@ class OnetimeAuth {
   /// Generates a random key for use in onetime authentication.
   static Future<Uint8List> generateKey() => Sodium.cryptoOnetimeauthKeygen();
 
-  /// Computes a tag for given value and key.
-  static Future<Uint8List> compute(Uint8List value, Uint8List key) =>
-      Sodium.cryptoOnetimeauth(value, key);
-
   /// Computes a tag for given string value and key.
-  static Future<Uint8List> computeString(String value, Uint8List key) =>
+  static Future<Uint8List> compute(String value, Uint8List key) =>
       Sodium.cryptoOnetimeauth(utf8.encode(value), key);
+
+  /// Computes a tag for given value and key.
+  static Future<Uint8List> computeBytes(Uint8List value, Uint8List key) =>
+      Sodium.cryptoOnetimeauth(value, key);
 
   /// Computes a tag for given stream value and key.
   static Future<Uint8List> computeStream(
@@ -26,12 +26,12 @@ class OnetimeAuth {
     return await Sodium.cryptoOnetimeauthFinal(state);
   }
 
-  /// Verifies that the tag is valid for given value and key.
-  static Future<bool> verify(Uint8List tag, Uint8List value, Uint8List key) =>
-      Sodium.cryptoOnetimeauthVerify(tag, value, key);
-
   /// Verifies that the tag is valid for given string value and key.
-  static Future<bool> verifyString(
-          Uint8List tag, String value, Uint8List key) =>
+  static Future<bool> verify(Uint8List tag, String value, Uint8List key) =>
       Sodium.cryptoOnetimeauthVerify(tag, utf8.encode(value), key);
+
+  /// Verifies that the tag is valid for given value and key.
+  static Future<bool> verifyBytes(
+          Uint8List tag, Uint8List value, Uint8List key) =>
+      Sodium.cryptoOnetimeauthVerify(tag, value, key);
 }

@@ -9,15 +9,15 @@ class GenericHash {
   /// Generates a random key for use with generic hashing.
   static Future<Uint8List> generateKey() => Sodium.cryptoGenerichashKeygen();
 
-  /// Computes a generic hash of specified length for given value and optional key.
-  static Future<Uint8List> hash(Uint8List value,
-          {Uint8List key, int outlen = crypto_generichash_BYTES}) =>
-      Sodium.cryptoGenerichash(outlen, value, key);
-
   /// Computes a generic hash of specified length for given string value and optional key.
-  static Future<Uint8List> hashString(String value,
+  static Future<Uint8List> hash(String value,
           {Uint8List key, int outlen = crypto_generichash_BYTES}) =>
       Sodium.cryptoGenerichash(outlen, utf8.encode(value), key);
+
+  /// Computes a generic hash of specified length for given value and optional key.
+  static Future<Uint8List> hashBytes(Uint8List value,
+          {Uint8List key, int outlen = crypto_generichash_BYTES}) =>
+      Sodium.cryptoGenerichash(outlen, value, key);
 
   /// Computes a generic hash of specified length for given stream and optional key.
   static Future<Uint8List> hashStream(Stream<String> stream,

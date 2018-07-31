@@ -66,12 +66,12 @@ var keyPair = await SealedBox.generateKeyPair();
 
 // Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
 var msg = 'hello world';
-var cipher = await SealedBox.sealString(msg, keyPair.publicKey);
+var cipher = await SealedBox.seal(msg, keyPair.publicKey);
 
 print(hex.encode(cipher));
 
 // Recipient decrypts the ciphertext
-var decrypted = await SealedBox.openString(cipher, keyPair);
+var decrypted = await SealedBox.open(cipher, keyPair);
 
 assert(msg == decrypted);''', () async {
             // Recipient creates a long-term key pair
@@ -79,10 +79,10 @@ assert(msg == decrypted);''', () async {
 
             // Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
             var msg = 'hello world';
-            var cipher = await SealedBox.sealString(msg, keyPair.publicKey);
+            var cipher = await SealedBox.seal(msg, keyPair.publicKey);
 
             // Recipient decrypts the ciphertext
-            var decrypted = await SealedBox.openString(cipher, keyPair);
+            var decrypted = await SealedBox.open(cipher, keyPair);
 
             assert(msg == decrypted);
 
@@ -101,11 +101,11 @@ assert(msg == decrypted);''', () async {
               'Usage',
               'Computes a generic hash of specified length for given string value and optional key.',
               '''var value = 'hello world';
-var hash = await GenericHash.hashString(value);
+var hash = await GenericHash.hash(value);
 
 print(hex.encode(hash));''', () async {
             var value = 'hello world';
-            var hash = await GenericHash.hashString(value);
+            var hash = await GenericHash.hash(value);
 
             return hex.encode(hash);
           })
@@ -120,12 +120,12 @@ print(hex.encode(hash));''', () async {
               'Computes a fixed-size fingerprint for given string value and key.',
               '''var value = 'hello world';
 var key = await ShortHash.generateKey();
-var hash = await ShortHash.hashString(value, key);
+var hash = await ShortHash.hash(value, key);
 
 print(hex.encode(hash));''', () async {
             var value = 'hello world';
             var key = await ShortHash.generateKey();
-            var hash = await ShortHash.hashString(value, key);
+            var hash = await ShortHash.hash(value, key);
 
             return hex.encode(hash);
           })
@@ -175,20 +175,20 @@ var valid = await PasswordHash.verifyStorage(str, pw);''', () async {
               'Computes and verifies a tag for given string value and key.',
               '''var message = 'hello world';
 var key = await OnetimeAuth.generateKey();
-var tag = await OnetimeAuth.computeString(message, key);
+var tag = await OnetimeAuth.compute(message, key);
 
 print(hex.encode(tag));
 
 // verify tag
-var valid = await OnetimeAuth.verifyString (tag, message, key);
+var valid = await OnetimeAuth.verify(tag, message, key);
 assert(valid);
 ''', () async {
             var message = 'hello world';
             var key = await OnetimeAuth.generateKey();
-            var tag = await OnetimeAuth.computeString(message, key);
+            var tag = await OnetimeAuth.compute(message, key);
 
 // verify tag
-            var valid = await OnetimeAuth.verifyString(tag, message, key);
+            var valid = await OnetimeAuth.verify(tag, message, key);
             assert(valid);
 
             return hex.encode(tag);

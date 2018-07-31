@@ -8,20 +8,20 @@ class SecretKeyAuth {
   /// Generates a random key for use with authentication.
   static Future<Uint8List> generateKey() => Sodium.cryptoAuthKeygen();
 
-  /// Computes a tag for given value and key.
-  static Future<Uint8List> compute(Uint8List value, Uint8List key) =>
-      Sodium.cryptoAuth(value, key);
-
   /// Computes a tag for given string value and key.
-  static Future<Uint8List> computeString(String value, Uint8List key) =>
+  static Future<Uint8List> compute(String value, Uint8List key) =>
       Sodium.cryptoAuth(utf8.encode(value), key);
 
-  /// Verifies that the tag is valid for given value and key.
-  static Future<bool> verify(Uint8List tag, Uint8List value, Uint8List key) =>
-      Sodium.cryptoAuthVerify(tag, value, key);
+  /// Computes a tag for given value and key.
+  static Future<Uint8List> computeBytes(Uint8List value, Uint8List key) =>
+      Sodium.cryptoAuth(value, key);
 
   /// Verifies that the tag is valid for given string value and key.
-  static Future<bool> verifyString(
-          Uint8List tag, String value, Uint8List key) =>
+  static Future<bool> verify(Uint8List tag, String value, Uint8List key) =>
       Sodium.cryptoAuthVerify(tag, utf8.encode(value), key);
+
+  /// Verifies that the tag is valid for given value and key.
+  static Future<bool> verifyBytes(
+          Uint8List tag, Uint8List value, Uint8List key) =>
+      Sodium.cryptoAuthVerify(tag, value, key);
 }
