@@ -17,7 +17,8 @@ class OnetimeAuth {
       Sodium.cryptoOnetimeauth(utf8.encode(value), key);
 
   /// Computes a tag for given stream value and key.
-  static Future<Uint8List> computeStream(Stream<String> stream, Uint8List key) async {
+  static Future<Uint8List> computeStream(
+      Stream<String> stream, Uint8List key) async {
     var state = await Sodium.cryptoOnetimeauthInit(key);
     await for (var value in stream) {
       state = await Sodium.cryptoOnetimeauthUpdate(state, utf8.encode(value));
@@ -30,6 +31,7 @@ class OnetimeAuth {
       Sodium.cryptoOnetimeauthVerify(tag, value, key);
 
   /// Verifies that the tag is valid for given string value and key.
-  static Future<bool> verifyString(Uint8List tag, String value, Uint8List key) =>
+  static Future<bool> verifyString(
+          Uint8List tag, String value, Uint8List key) =>
       Sodium.cryptoOnetimeauthVerify(tag, utf8.encode(value), key);
 }

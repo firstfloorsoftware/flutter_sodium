@@ -126,7 +126,8 @@ const int crypto_pwhash_argon2id_OPSLIMIT_SENSITIVE = 4;
 const int crypto_pwhash_argon2id_MEMLIMIT_SENSITIVE = 1073741824;
 
 const int crypto_scalarmult_BYTES = crypto_scalarmult_curve25519_BYTES;
-const int crypto_scalarmult_SCALARBYTES = crypto_scalarmult_curve25519_SCALARBYTES;
+const int crypto_scalarmult_SCALARBYTES =
+    crypto_scalarmult_curve25519_SCALARBYTES;
 
 const int crypto_scalarmult_curve25519_BYTES = 32;
 const int crypto_scalarmult_curve25519_SCALARBYTES = 32;

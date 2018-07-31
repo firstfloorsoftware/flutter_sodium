@@ -21,6 +21,7 @@ class SecretKeyAuth {
       Sodium.cryptoAuthVerify(tag, value, key);
 
   /// Verifies that the tag is valid for given string value and key.
-  static Future<bool> verifyString(Uint8List tag, String value, Uint8List key) =>
+  static Future<bool> verifyString(
+          Uint8List tag, String value, Uint8List key) =>
       Sodium.cryptoAuthVerify(tag, utf8.encode(value), key);
 }

@@ -12,17 +12,16 @@ class PublicKeySign {
   }
 
   /// Prepends a signature to specified message for given secret key.
-  static Future<Uint8List> signCombined(Uint8List message, Uint8List secretKey) =>
+  static Future<Uint8List> signCombined(
+          Uint8List message, Uint8List secretKey) =>
       Sodium.cryptoSign(message, secretKey);
 
   /// Computes a signature for given message and secret key.
-  static Future<Uint8List> sign(
-          Uint8List message, Uint8List secretKey) =>
+  static Future<Uint8List> sign(Uint8List message, Uint8List secretKey) =>
       Sodium.cryptoSignDetached(message, secretKey);
 
   /// Computes a signature for given string value and secret key.
-  static Future<Uint8List> signString(
-          String message, Uint8List secretKey) =>
+  static Future<Uint8List> signString(String message, Uint8List secretKey) =>
       Sodium.cryptoSignDetached(utf8.encode(message), secretKey);
 
   /// Computes a signature for given stream value and secret key.

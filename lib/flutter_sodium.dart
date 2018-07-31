@@ -56,8 +56,7 @@ class Sodium {
 
   /// Generates a random secret key and a corresponding public key.
   static Future<Map<String, Uint8List>> cryptoBoxKeypair() async {
-    final Map result =
-        await _channel.invokeMethod('crypto_box_keypair');
+    final Map result = await _channel.invokeMethod('crypto_box_keypair');
     return result.cast<String, Uint8List>();
   }
 
@@ -221,8 +220,7 @@ class Sodium {
   //
   /// Creates a new key pair.
   static Future<Map<String, Uint8List>> cryptoKxKeypair() async {
-    final Map result =
-        await _channel.invokeMethod('crypto_kx_keypair');
+    final Map result = await _channel.invokeMethod('crypto_kx_keypair');
     return result.cast<String, Uint8List>();
   }
 
@@ -433,8 +431,7 @@ class Sodium {
 
   /// Randomly generates a secret key and a corresponding public key.
   static Future<Map<String, Uint8List>> cryptoSignKeypair() async {
-    final Map result =
-        await _channel.invokeMethod('crypto_sign_keypair');
+    final Map result = await _channel.invokeMethod('crypto_sign_keypair');
     return result.cast<String, Uint8List>();
   }
 
