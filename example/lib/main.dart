@@ -51,7 +51,43 @@ print(hex.encode(buffer));''', () async {
     // Example('Authentication'),
     Example('Public-key cryptography', isHeader: true),
     // Example('Authenticated encryption'),
-    // Example('Public-key signatures'),
+    Example('Public-key signatures',
+        description:
+            'Computes a signature for a message using a secret key, and provides verification using a public key.',
+        docUrl:
+            'https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures.html',
+        samples: [
+          Sample(
+              'Usage',
+              'Public key verification (detached mode).',
+              '''// Author generates keypair
+var keyPair = await PublicKeySign.generateKeyPair();
+
+// Author computes signature using secret key
+var msg = 'hello world';
+var sig = await PublicKeySign.sign(msg, keyPair.secretKey);
+
+print(hex.encode(sig));
+
+// Recipient verifies message was issued by author using public key
+var valid = await PublicKeySign.verify(sig, msg, keyPair.publicKey);
+
+assert(valid);''', () async {
+            // Author generates keypair
+            var keyPair = await PublicKeySign.generateKeyPair();
+
+            // Author computes signature using secret key
+            var msg = 'hello world';
+            var sig = await PublicKeySign.sign(msg, keyPair.secretKey);
+
+            // Recipient verifies message was issued by author using public key
+            var valid = await PublicKeySign.verify(sig, msg, keyPair.publicKey);
+
+            assert(valid);
+
+            return hex.encode(sig);
+          })
+        ]),
     Example('Sealed boxes',
         description:
             'Anonymously send encrypted messages to a recipient given its public key.',
