@@ -9,6 +9,7 @@ export 'src/password_hash.dart';
 export 'src/public_key_sign.dart';
 export 'src/randombytes.dart';
 export 'src/sealed_box.dart';
+export 'src/secret_box.dart';
 export 'src/secret_key_auth.dart';
 export 'src/short_hash.dart';
 
@@ -362,11 +363,11 @@ class Sodium {
   }
 
   /// Encrypts a message with a key and a nonce, and returns the encrypted message and mac.
-  static Future<Map<String, Uint8List>> cryptoSecretboxDetached(
+  static Future<Map<Uint8List, Uint8List>> cryptoSecretboxDetached(
       Uint8List m, Uint8List n, Uint8List k) async {
     final Map result = await _channel
         .invokeMethod('crypto_secretbox_detached', {'m': m, 'n': n, 'k': k});
-    return result.cast<String, Uint8List>();
+    return result.cast<Uint8List, Uint8List>();
   }
 
   /// Verifies and decrypts an encrypted message.

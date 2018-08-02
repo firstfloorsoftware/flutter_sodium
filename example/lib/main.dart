@@ -48,13 +48,85 @@ print(hex.encode(buffer));''', () async {
         ]),
     Example('Secret-key cryptography', isHeader: true),
     Example('Authenticated encryption',
-        description:
-            'Computes an authentication tag for a message and a secret key, and provides a way to verify that a given tag is valid for a given message and a key.',
+        description: 'Secret-key encryption and verification',
         docUrl:
             'https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html',
         samples: [
-          Sample('Usage', 'Secret key authentication.',
-              '''// Generate secret
+          Sample(
+              'Combined mode',
+              'The authentication tag and the encrypted message are stored together',
+              '''// Generate random secret and nonce
+var key = await SecretBox.generateKey();
+var nonce = await SecretBox.generateNonce();
+
+// Encrypt
+var msg = 'hello world';
+var encrypted = await SecretBox.encrypt(msg, nonce, key);
+
+print(hex.encode(encrypted));
+
+// Decrypt
+var decrypted = await SecretBox.decrypt(encrypted, nonce, key);
+
+assert(msg == decrypted);''', () async {
+            // Generate random secret and nonce
+            var key = await SecretBox.generateKey();
+            var nonce = await SecretBox.generateNonce();
+
+            // Encrypt
+            var msg = 'hello world';
+            var encrypted = await SecretBox.encrypt(msg, nonce, key);
+
+            // Decrypt
+            var decrypted = await SecretBox.decrypt(encrypted, nonce, key);
+
+            assert(msg == decrypted);
+
+            return hex.encode(encrypted);
+          }),
+          Sample(
+              'Detached mode',
+              'The authentication tag and the encrypted message are detached so they can be stored at different locations.',
+              '''// Generate random secret and nonce
+var key = await SecretBox.generateKey();
+var nonce = await SecretBox.generateNonce();
+
+// Encrypt
+var msg = 'hello world';
+var encrypted = await SecretBox.encryptDetached(msg, nonce, key);
+
+print('cipher: \${encrypted.cipher}');
+print('mac: \${encrypted.mac}');
+
+// Decrypt
+var decrypted =
+    await SecretBox.decryptDetached(encrypted, nonce, key);
+
+assert(msg == decrypted);''', () async {
+            // Generate random secret and nonce
+            var key = await SecretBox.generateKey();
+            var nonce = await SecretBox.generateNonce();
+
+            // Encrypt
+            var msg = 'hello world';
+            var encrypted = await SecretBox.encryptDetached(msg, nonce, key);
+
+            // Decrypt
+            var decrypted =
+                await SecretBox.decryptDetached(encrypted, nonce, key);
+
+            assert(msg == decrypted);
+
+            return 'cipher: ${hex.encode(encrypted.cipher)}\nmac: ${hex.encode(encrypted.mac)}';
+          })
+        ]),
+    Example('Authentication',
+        description:
+            'Computes an authentication tag for a message and a secret key, and provides a way to verify that a given tag is valid for a given message and a key.',
+        docUrl:
+            'https://download.libsodium.org/doc/secret-key_cryptography/secret-key_authentication.html',
+        samples: [
+          Sample('Usage', 'Secret key authentication.', '''// Generate secret
 var key = await SecretKeyAuth.generateKey();
 
 // Compute tag
@@ -82,8 +154,6 @@ assert(valid);''', () async {
             return hex.encode(tag);
           })
         ]),
-
-    // Example('Authentication'),
     Example('Public-key cryptography', isHeader: true),
     // Example('Authenticated encryption'),
     Example('Public-key signatures',
