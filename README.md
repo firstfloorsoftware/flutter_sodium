@@ -18,16 +18,12 @@ At this point in time flutter_sodium implements the following high-level libsodi
 - randombytes
 - sodium_version
 
-## Example app
-This project includes an extensive example app with runnable code samples. Be sure to check it out!
+## Dart APIs
+The plugin includes a core API that maps native libsodium functions 1:1 to Dart equivalents. The core API is available in the class [Sodium](https://github.com/firstfloorsoftware/flutter_sodium/blob/master/lib/flutter_sodium.dart). Dart naming conventions are used for core API function names. A native libsodium function such as `crypto_pwhash_str`, is available in flutter as `Sodium.cryptoPwhashStr`.
 
-<img src="https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/develop/example/assets/screenshots/screenshot1.png" width="300">
+Also included in flutter_sodium is a high-level, opinionated API providing access to libsodium in a Dart friendly manner. The various functions are available in separate Dart classes. Password hashing for example is available in the PasswordHash class.
 
-## Roadmap
-1) A core API that maps 1:1 to libsodium functions. Should cover the entire high-level API.
-2) Proper argument checks
-3) Fix missing API functions (such as crypto_pwhash_str_needs_rehash)
-4) A Dart-friendly, opinionated API wrapping the core API. Should work with types other than Uint8List such as strings, streams, etc.
+The high-level API depends on the core API to get things done.
 
 ## Getting Started
 
@@ -58,7 +54,12 @@ final valid = await PasswordHash.verifyStorage(str, password);
 assert(valid);
 ```
 
+## Example app
+This project includes an extensive example app with runnable code samples. Be sure to check it out!
+
+<img src="https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/develop/example/assets/screenshots/screenshot1.png" width="300">
+
 ## Current issues
-- Some APIs are not available yet in Android
+- Some APIs are not available in Android (this needs to be documented).
 - Using flutter_sodium in iOS doesn't work right out of the box. [Manual installation](https://github.com/firstfloorsoftware/flutter_sodium/issues/1#issuecomment-403973858) steps are required.
 - Since Flutter does [not support native binaries](https://github.com/flutter/flutter/issues/7053), a [platform channel](https://flutter.io/platform-channels/) is established to enable native function invocation. One side effect of this approach is that the entire flutter_sodium API is asynchronous. This is great for potential long-running operations such as Argon password hashing, but does not make much sense for other short-running functions.
