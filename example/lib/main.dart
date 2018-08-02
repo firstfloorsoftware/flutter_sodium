@@ -135,12 +135,12 @@ var keyPair = await SealedBox.generateKeyPair();
 
 // Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
 var msg = 'hello world';
-var cipher = await SealedBox.seal(msg, keyPair.publicKey);
+var cipher = await SealedBox.encrypt(msg, keyPair.publicKey);
 
 print(hex.encode(cipher));
 
 // Recipient decrypts the ciphertext
-var decrypted = await SealedBox.open(cipher, keyPair);
+var decrypted = await SealedBox.decrypt(cipher, keyPair);
 
 assert(msg == decrypted);''', () async {
             // Recipient creates a long-term key pair
@@ -148,10 +148,10 @@ assert(msg == decrypted);''', () async {
 
             // Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
             var msg = 'hello world';
-            var cipher = await SealedBox.seal(msg, keyPair.publicKey);
+            var cipher = await SealedBox.encrypt(msg, keyPair.publicKey);
 
             // Recipient decrypts the ciphertext
-            var decrypted = await SealedBox.open(cipher, keyPair);
+            var decrypted = await SealedBox.decrypt(cipher, keyPair);
 
             assert(msg == decrypted);
 

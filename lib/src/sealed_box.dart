@@ -13,15 +13,15 @@ class SealedBox {
   }
 
   /// Encrypts a message for a recipient having specified public key.
-  static Future<Uint8List> seal(String value, Uint8List publicKey) =>
+  static Future<Uint8List> encrypt(String value, Uint8List publicKey) =>
       Sodium.cryptoBoxSeal(utf8.encode(value), publicKey);
 
   /// Encrypts a value for a recipient having specified public key.
-  static Future<Uint8List> sealBytes(Uint8List value, Uint8List publicKey) =>
+  static Future<Uint8List> encryptBytes(Uint8List value, Uint8List publicKey) =>
       Sodium.cryptoBoxSeal(value, publicKey);
 
   /// Decrypts the ciphertext using given keypair.
-  static Future<String> open(Uint8List cipher, KeyPair keyPair) async {
+  static Future<String> decrypt(Uint8List cipher, KeyPair keyPair) async {
     var message = await Sodium.cryptoBoxSealOpen(
         cipher, keyPair.publicKey, keyPair.secretKey);
 
@@ -29,6 +29,6 @@ class SealedBox {
   }
 
   /// Decrypts the ciphertext using given keypair.
-  static Future<Uint8List> openBytes(Uint8List cipher, KeyPair keyPair) =>
+  static Future<Uint8List> decryptBytes(Uint8List cipher, KeyPair keyPair) =>
       Sodium.cryptoBoxSealOpen(cipher, keyPair.publicKey, keyPair.secretKey);
 }
