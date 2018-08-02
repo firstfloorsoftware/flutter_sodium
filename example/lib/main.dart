@@ -46,8 +46,43 @@ print(hex.encode(buffer));''', () async {
             return hex.encode(buffer);
           })
         ]),
-    // Example('Secret-key cryptography', isHeader: true),
-    // Example('Authenticated encryption'),
+    Example('Secret-key cryptography', isHeader: true),
+    Example('Authenticated encryption',
+        description:
+            'Computes an authentication tag for a message and a secret key, and provides a way to verify that a given tag is valid for a given message and a key.',
+        docUrl:
+            'https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html',
+        samples: [
+          Sample('Usage', 'Secret key authentication.',
+              '''// Generate secret
+var key = await SecretKeyAuth.generateKey();
+
+// Compute tag
+var msg = 'hello world';
+var tag = await SecretKeyAuth.compute(msg, key);
+
+print(hex.encode(tag));
+
+// Verify tag
+var valid = await SecretKeyAuth.verify(tag, msg, key);
+
+assert(valid);''', () async {
+            // Generate secret
+            var key = await SecretKeyAuth.generateKey();
+
+            // Compute tag
+            var msg = 'hello world';
+            var tag = await SecretKeyAuth.compute(msg, key);
+
+            // Verify tag
+            var valid = await SecretKeyAuth.verify(tag, msg, key);
+
+            assert(valid);
+
+            return hex.encode(tag);
+          })
+        ]),
+
     // Example('Authentication'),
     Example('Public-key cryptography', isHeader: true),
     // Example('Authenticated encryption'),
@@ -57,9 +92,7 @@ print(hex.encode(buffer));''', () async {
         docUrl:
             'https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures.html',
         samples: [
-          Sample(
-              'Usage',
-              'Public key verification (detached mode).',
+          Sample('Usage', 'Public key verification (detached mode).',
               '''// Author generates keypair
 var keyPair = await PublicKeySign.generateKeyPair();
 
