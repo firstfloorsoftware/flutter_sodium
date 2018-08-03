@@ -44,12 +44,12 @@ import 'package:flutter_sodium/flutter_sodium.dart';
 
 // Password hashing (using Argon)
 final password = 'my password';
-final str = await PasswordHash.hashStorage(password);
+final str = await CryptoPasswordHash.hashStorage(password);
 
 print(str);
 
 // verify hash str
-final valid = await PasswordHash.verifyStorage(str, password);
+final valid = await CryptoPasswordHash.verifyStorage(str, password);
 
 assert(valid);
 ```
