@@ -5,7 +5,7 @@ import 'constants.dart';
 import '../flutter_sodium.dart';
 
 /// Defines the supported password hashing algorithms.
-enum PasswordHashAlgorithm {
+enum CryptoPasswordHashAlgorithm {
   /// The recommended algoritm.
   Default,
 
@@ -17,12 +17,12 @@ enum PasswordHashAlgorithm {
 }
 
 /// Provides an Argon2 password hashing scheme implementation.
-class PasswordHash {
-  static int _alg(PasswordHashAlgorithm alg) {
+class CryptoPasswordHash {
+  static int _alg(CryptoPasswordHashAlgorithm alg) {
     switch (alg) {
-      case PasswordHashAlgorithm.Argon2i13:
+      case CryptoPasswordHashAlgorithm.Argon2i13:
         return crypto_pwhash_ALG_ARGON2I13;
-      case PasswordHashAlgorithm.Argon2id13:
+      case CryptoPasswordHashAlgorithm.Argon2id13:
         return crypto_pwhash_ALG_ARGON2ID13;
       default:
         return crypto_pwhash_ALG_DEFAULT;
@@ -38,7 +38,7 @@ class PasswordHash {
       {int outlen = crypto_pwhash_BYTES_MIN,
       int opslimit = crypto_pwhash_OPSLIMIT_INTERACTIVE,
       int memlimit = crypto_pwhash_MEMLIMIT_INTERACTIVE,
-      PasswordHashAlgorithm alg = PasswordHashAlgorithm.Default}) {
+      CryptoPasswordHashAlgorithm alg = CryptoPasswordHashAlgorithm.Default}) {
     var passwd = utf8.encode(password);
 
     return Sodium.cryptoPwhash(

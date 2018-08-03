@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import '../flutter_sodium.dart';
 
 /// Provides a set of functions to generate unpredictable data, suitable for creating secret keys
-class Randombytes {
+class RandomBytes {
   /// Generates an unpredictable value between 0 and 0xffffffff (included).
   static Future<int> random() => Sodium.randombytesRandom();
 

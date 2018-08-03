@@ -4,7 +4,7 @@ import 'dart:convert';
 import '../flutter_sodium.dart';
 
 /// Computes an authentication tag for a message and a secret key, and provides a way to verify that a given tag is valid for a given message and a key.
-class SecretKeyAuth {
+class CryptoAuth {
   /// Generates a random key for use with authentication.
   static Future<Uint8List> generateKey() => Sodium.cryptoAuthKeygen();
 

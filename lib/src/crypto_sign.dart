@@ -4,7 +4,7 @@ import 'dart:convert';
 import '../flutter_sodium.dart';
 
 /// Computes a signature for a message using a secret key, and provides verification using a public key.
-class PublicKeySign {
+class CryptoSign {
   /// Generates a random key for use with public-key signatures.
   static Future<KeyPair> generateKeyPair() async {
     var map = await Sodium.cryptoSignKeypair();
