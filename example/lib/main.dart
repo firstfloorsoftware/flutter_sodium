@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
+import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'example.dart';
 import 'sample.dart';
@@ -78,7 +80,8 @@ assert(msg == decrypted);''', () async {
             var encrypted = await CryptoSecretBox.encrypt(msg, nonce, key);
 
             // Decrypt
-            var decrypted = await CryptoSecretBox.decrypt(encrypted, nonce, key);
+            var decrypted =
+                await CryptoSecretBox.decrypt(encrypted, nonce, key);
 
             assert(msg == decrypted);
 
@@ -109,7 +112,8 @@ assert(msg == decrypted);''', () async {
 
             // Encrypt
             var msg = 'hello world';
-            var encrypted = await CryptoSecretBox.encryptDetached(msg, nonce, key);
+            var encrypted =
+                await CryptoSecretBox.encryptDetached(msg, nonce, key);
 
             // Decrypt
             var decrypted =
@@ -304,7 +308,73 @@ var valid = await CryptoPasswordHash.verifyStorage(str, pw);''', () async {
     // Example('Key derivation'),
     // Example('Key exchange'),
     Example('Advanced', isHeader: true),
-    // Example('Diffie-Hellman'),
+    Example('Diffie-Hellman',
+        description: 'Perform scalar multiplication of elliptic curve points',
+        docUrl:
+            'https://download.libsodium.org/doc/advanced/scalar_multiplication.html',
+        samples: [
+          Sample('Usage', 'Computes a shared secret.',
+              '''// Create client's secret and public keys
+final clientSecretKey = await CryptoScalarMult.generateSecretKey();
+final clientPublicKey =
+    await CryptoScalarMult.computePublicKey(clientSecretKey);
+
+// Create server's secret and public keys
+final serverSecretKey = await CryptoScalarMult.generateSecretKey();
+final serverPublicKey =
+    await CryptoScalarMult.computePublicKey(serverSecretKey);
+
+// Client derives shared key and hashes it
+final clientQ = await CryptoScalarMult.computeSharedSecret(
+    clientSecretKey, serverPublicKey);
+final sharedKeyClient = await CryptoGenericHash.hashByteStream(
+    Stream
+        .fromIterable([clientQ, clientPublicKey, serverPublicKey]));
+
+// Server derives shared key and hashes it
+final serverQ = await CryptoScalarMult.computeSharedSecret(
+    serverSecretKey, clientPublicKey);
+final sharedKeyServer = await CryptoGenericHash.hashByteStream(
+    Stream
+        .fromIterable([serverQ, clientPublicKey, serverPublicKey]));
+
+// assert shared keys do match
+assert(
+    const ListEquality().equals(sharedKeyClient, sharedKeyServer));
+
+print(hex.encode(sharedKeyClient));
+''', () async {
+            // Create client's secret and public keys
+            final clientSecretKey = await CryptoScalarMult.generateSecretKey();
+            final clientPublicKey =
+                await CryptoScalarMult.computePublicKey(clientSecretKey);
+
+            // Create server's secret and public keys
+            final serverSecretKey = await CryptoScalarMult.generateSecretKey();
+            final serverPublicKey =
+                await CryptoScalarMult.computePublicKey(serverSecretKey);
+
+            // Client derives shared key and hashes it
+            final clientQ = await CryptoScalarMult.computeSharedSecret(
+                clientSecretKey, serverPublicKey);
+            final sharedKeyClient = await CryptoGenericHash.hashByteStream(
+                Stream
+                    .fromIterable([clientQ, clientPublicKey, serverPublicKey]));
+
+            // Server derives shared key and hashes it
+            final serverQ = await CryptoScalarMult.computeSharedSecret(
+                serverSecretKey, clientPublicKey);
+            final sharedKeyServer = await CryptoGenericHash.hashByteStream(
+                Stream
+                    .fromIterable([serverQ, clientPublicKey, serverPublicKey]));
+
+            // assert shared keys do match
+            assert(
+                const ListEquality().equals(sharedKeyClient, sharedKeyServer));
+
+            return hex.encode(sharedKeyClient);
+          })
+        ]),
     Example('One-time authentication',
         description: 'Secret-key single-message authentication using Poly1305',
         docUrl: 'https://download.libsodium.org/doc/advanced/poly1305.html',
@@ -338,8 +408,7 @@ assert(valid);
   Widget _buildListTile(BuildContext context, Example example) {
     if (example.isHeader) {
       return ListTile(
-          title: Text(example.title,
-              style: Theme.of(context).textTheme.title));
+          title: Text(example.title, style: Theme.of(context).textTheme.title));
     } else {
       return ListTile(
           title: Text(example.title),
