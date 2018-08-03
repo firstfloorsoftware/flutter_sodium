@@ -14,7 +14,7 @@ class DetachedCipher {
 }
 
 /// Encrypts a message with a key and a nonce and computes an authentication tag.
-class CryptoSecretBox {
+class SecretBox {
   /// Generates a random key for use with secret key encryption.
   static Future<Uint8List> generateKey() => Sodium.cryptoSecretboxKeygen();
 

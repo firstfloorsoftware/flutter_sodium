@@ -58,30 +58,30 @@ print(hex.encode(buffer));''', () async {
               'Combined mode',
               'The authentication tag and the encrypted message are stored together',
               '''// Generate random secret and nonce
-var key = await CryptoSecretBox.generateKey();
-var nonce = await CryptoSecretBox.generateNonce();
+var key = await SecretBox.generateKey();
+var nonce = await SecretBox.generateNonce();
 
 // Encrypt
 var msg = 'hello world';
-var encrypted = await CryptoSecretBox.encrypt(msg, nonce, key);
+var encrypted = await SecretBox.encrypt(msg, nonce, key);
 
 print(hex.encode(encrypted));
 
 // Decrypt
-var decrypted = await CryptoSecretBox.decrypt(encrypted, nonce, key);
+var decrypted = await SecretBox.decrypt(encrypted, nonce, key);
 
 assert(msg == decrypted);''', () async {
             // Generate random secret and nonce
-            var key = await CryptoSecretBox.generateKey();
-            var nonce = await CryptoSecretBox.generateNonce();
+            var key = await SecretBox.generateKey();
+            var nonce = await SecretBox.generateNonce();
 
             // Encrypt
             var msg = 'hello world';
-            var encrypted = await CryptoSecretBox.encrypt(msg, nonce, key);
+            var encrypted = await SecretBox.encrypt(msg, nonce, key);
 
             // Decrypt
             var decrypted =
-                await CryptoSecretBox.decrypt(encrypted, nonce, key);
+                await SecretBox.decrypt(encrypted, nonce, key);
 
             assert(msg == decrypted);
 
@@ -91,33 +91,33 @@ assert(msg == decrypted);''', () async {
               'Detached mode',
               'The authentication tag and the encrypted message are detached so they can be stored at different locations.',
               '''// Generate random secret and nonce
-var key = await CryptoSecretBox.generateKey();
-var nonce = await CryptoSecretBox.generateNonce();
+var key = await SecretBox.generateKey();
+var nonce = await SecretBox.generateNonce();
 
 // Encrypt
 var msg = 'hello world';
-var encrypted = await CryptoSecretBox.encryptDetached(msg, nonce, key);
+var encrypted = await SecretBox.encryptDetached(msg, nonce, key);
 
 print('cipher: \${encrypted.cipher}');
 print('mac: \${encrypted.mac}');
 
 // Decrypt
 var decrypted =
-    await CryptoSecretBox.decryptDetached(encrypted, nonce, key);
+    await SecretBox.decryptDetached(encrypted, nonce, key);
 
 assert(msg == decrypted);''', () async {
             // Generate random secret and nonce
-            var key = await CryptoSecretBox.generateKey();
-            var nonce = await CryptoSecretBox.generateNonce();
+            var key = await SecretBox.generateKey();
+            var nonce = await SecretBox.generateNonce();
 
             // Encrypt
             var msg = 'hello world';
             var encrypted =
-                await CryptoSecretBox.encryptDetached(msg, nonce, key);
+                await SecretBox.encryptDetached(msg, nonce, key);
 
             // Decrypt
             var decrypted =
-                await CryptoSecretBox.decryptDetached(encrypted, nonce, key);
+                await SecretBox.decryptDetached(encrypted, nonce, key);
 
             assert(msg == decrypted);
 
@@ -244,11 +244,11 @@ assert(msg == decrypted);''', () async {
               'Usage',
               'Computes a generic hash of specified length for given string value and optional key.',
               '''var value = 'hello world';
-var hash = await CryptoGenericHash.hash(value);
+var hash = await GenericHash.hash(value);
 
 print(hex.encode(hash));''', () async {
             var value = 'hello world';
-            var hash = await CryptoGenericHash.hash(value);
+            var hash = await GenericHash.hash(value);
 
             return hex.encode(hash);
           })
@@ -262,13 +262,13 @@ print(hex.encode(hash));''', () async {
               'Usage',
               'Computes a fixed-size fingerprint for given string value and key.',
               '''var value = 'hello world';
-var key = await CryptoShortHash.generateKey();
-var hash = await CryptoShortHash.hash(value, key);
+var key = await ShortHash.generateKey();
+var hash = await ShortHash.hash(value, key);
 
 print(hex.encode(hash));''', () async {
             var value = 'hello world';
-            var key = await CryptoShortHash.generateKey();
-            var hash = await CryptoShortHash.hash(value, key);
+            var key = await ShortHash.generateKey();
+            var hash = await ShortHash.hash(value, key);
 
             return hex.encode(hash);
           })
@@ -281,27 +281,27 @@ print(hex.encode(hash));''', () async {
         samples: [
           Sample('Hash', 'Derives a hash from given password and salt.',
               '''var pw = 'hello world';
-var salt = await CryptoPasswordHash.generateSalt();
-var hash = await CryptoPasswordHash.hash(pw, salt);
+var salt = await PasswordHash.generateSalt();
+var hash = await PasswordHash.hash(pw, salt);
 
 print(hex.encode(hash));''', () async {
             var pwd = 'hello world';
-            var salt = await CryptoPasswordHash.generateSalt();
-            var hash = await CryptoPasswordHash.hash(pwd, salt);
+            var salt = await PasswordHash.generateSalt();
+            var hash = await PasswordHash.hash(pwd, salt);
             return hex.encode(hash);
           }),
           Sample(
               'Hash storage',
               'Computes a password verification string for given password.',
               '''var pw = 'hello world';
-var str = await CryptoPasswordHash.hashStorage(pw);
+var str = await PasswordHash.hashStorage(pw);
 
 print(str);
 
 // verify storage string
-var valid = await CryptoPasswordHash.verifyStorage(str, pw);''', () async {
+var valid = await PasswordHash.verifyStorage(str, pw);''', () async {
             var pwd = 'hello world';
-            return await CryptoPasswordHash.hashStorage(pwd);
+            return await PasswordHash.hashStorage(pwd);
           })
         ]),
     // Example('Key functions', isHeader: true),
@@ -315,26 +315,26 @@ var valid = await CryptoPasswordHash.verifyStorage(str, pw);''', () async {
         samples: [
           Sample('Usage', 'Computes a shared secret.',
               '''// Create client's secret and public keys
-final clientSecretKey = await CryptoScalarMult.generateSecretKey();
+final clientSecretKey = await ScalarMult.generateSecretKey();
 final clientPublicKey =
-    await CryptoScalarMult.computePublicKey(clientSecretKey);
+    await ScalarMult.computePublicKey(clientSecretKey);
 
 // Create server's secret and public keys
-final serverSecretKey = await CryptoScalarMult.generateSecretKey();
+final serverSecretKey = await ScalarMult.generateSecretKey();
 final serverPublicKey =
-    await CryptoScalarMult.computePublicKey(serverSecretKey);
+    await ScalarMult.computePublicKey(serverSecretKey);
 
 // Client derives shared key and hashes it
-final clientQ = await CryptoScalarMult.computeSharedSecret(
+final clientQ = await ScalarMult.computeSharedSecret(
     clientSecretKey, serverPublicKey);
-final sharedKeyClient = await CryptoGenericHash.hashByteStream(
+final sharedKeyClient = await GenericHash.hashByteStream(
     Stream
         .fromIterable([clientQ, clientPublicKey, serverPublicKey]));
 
 // Server derives shared key and hashes it
-final serverQ = await CryptoScalarMult.computeSharedSecret(
+final serverQ = await ScalarMult.computeSharedSecret(
     serverSecretKey, clientPublicKey);
-final sharedKeyServer = await CryptoGenericHash.hashByteStream(
+final sharedKeyServer = await GenericHash.hashByteStream(
     Stream
         .fromIterable([serverQ, clientPublicKey, serverPublicKey]));
 
@@ -345,26 +345,26 @@ assert(
 print(hex.encode(sharedKeyClient));
 ''', () async {
             // Create client's secret and public keys
-            final clientSecretKey = await CryptoScalarMult.generateSecretKey();
+            final clientSecretKey = await ScalarMult.generateSecretKey();
             final clientPublicKey =
-                await CryptoScalarMult.computePublicKey(clientSecretKey);
+                await ScalarMult.computePublicKey(clientSecretKey);
 
             // Create server's secret and public keys
-            final serverSecretKey = await CryptoScalarMult.generateSecretKey();
+            final serverSecretKey = await ScalarMult.generateSecretKey();
             final serverPublicKey =
-                await CryptoScalarMult.computePublicKey(serverSecretKey);
+                await ScalarMult.computePublicKey(serverSecretKey);
 
             // Client derives shared key and hashes it
-            final clientQ = await CryptoScalarMult.computeSharedSecret(
+            final clientQ = await ScalarMult.computeSharedSecret(
                 clientSecretKey, serverPublicKey);
-            final sharedKeyClient = await CryptoGenericHash.hashByteStream(
+            final sharedKeyClient = await GenericHash.hashByteStream(
                 Stream
                     .fromIterable([clientQ, clientPublicKey, serverPublicKey]));
 
             // Server derives shared key and hashes it
-            final serverQ = await CryptoScalarMult.computeSharedSecret(
+            final serverQ = await ScalarMult.computeSharedSecret(
                 serverSecretKey, clientPublicKey);
-            final sharedKeyServer = await CryptoGenericHash.hashByteStream(
+            final sharedKeyServer = await GenericHash.hashByteStream(
                 Stream
                     .fromIterable([serverQ, clientPublicKey, serverPublicKey]));
 
@@ -383,21 +383,21 @@ print(hex.encode(sharedKeyClient));
               'Usage',
               'Computes and verifies a tag for given string value and key.',
               '''var message = 'hello world';
-var key = await CryptoOnetimeAuth.generateKey();
-var tag = await CryptoOnetimeAuth.compute(message, key);
+var key = await OnetimeAuth.generateKey();
+var tag = await OnetimeAuth.compute(message, key);
 
 print(hex.encode(tag));
 
 // verify tag
-var valid = await CryptoOnetimeAuth.verify(tag, message, key);
+var valid = await OnetimeAuth.verify(tag, message, key);
 assert(valid);
 ''', () async {
             var message = 'hello world';
-            var key = await CryptoOnetimeAuth.generateKey();
-            var tag = await CryptoOnetimeAuth.compute(message, key);
+            var key = await OnetimeAuth.generateKey();
+            var tag = await OnetimeAuth.compute(message, key);
 
 // verify tag
-            var valid = await CryptoOnetimeAuth.verify(tag, message, key);
+            var valid = await OnetimeAuth.verify(tag, message, key);
             assert(valid);
 
             return hex.encode(tag);

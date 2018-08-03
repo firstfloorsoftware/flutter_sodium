@@ -5,7 +5,7 @@ import 'constants.dart';
 import '../flutter_sodium.dart';
 
 /// Computes a fixed-length fingerprint for an arbitrary long message using the BLAKE2b algorithm.
-class CryptoGenericHash {
+class GenericHash {
   /// Generates a random key for use with generic hashing.
   static Future<Uint8List> generateKey() => Sodium.cryptoGenerichashKeygen();
 

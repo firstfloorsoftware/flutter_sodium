@@ -4,7 +4,7 @@ import 'dart:convert';
 import '../flutter_sodium.dart';
 
 /// Computes short hashes using the SipHash-2-4 algorithm.
-class CryptoShortHash {
+class ShortHash {
   /// Generates a random key for use with short hashing.
   static Future<Uint8List> generateKey() => Sodium.cryptoShorthashKeygen();
 
