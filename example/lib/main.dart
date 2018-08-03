@@ -337,10 +337,9 @@ assert(valid);
 
   Widget _buildListTile(BuildContext context, Example example) {
     if (example.isHeader) {
-      var color = Theme.of(context).primaryColor;
       return ListTile(
           title: Text(example.title,
-              style: Theme.of(context).textTheme.title.apply(color: color)));
+              style: Theme.of(context).textTheme.title));
     } else {
       return ListTile(
           title: Text(example.title),
