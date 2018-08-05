@@ -1,3 +1,9 @@
+## 0.0.5 - August 5, 2018
+* breaking high-level API changes
+  * String operations now default
+  * Randombytes renamed to RandomBytes
+* adds CryptoBox, KeyDerivation, KeyExchange and ScalarMult highlevel APIs 
+
 ## 0.0.4 - July 31, 2018
 * No functional changes
 * Fixes SDK constraint and source file formatting
