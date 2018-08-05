@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 export 'src/constants.dart';
 export 'src/crypto_auth.dart';
 export 'src/crypto_box.dart';
+export 'src/crypto_kx.dart';
 export 'src/crypto_sign.dart';
 export 'src/detached_cipher.dart';
 export 'src/generic_hash.dart';
@@ -11,9 +12,10 @@ export 'src/key_pair.dart';
 export 'src/onetime_auth.dart';
 export 'src/password_hash.dart';
 export 'src/random_bytes.dart';
-export 'src/sealed_box.dart';
 export 'src/scalar_mult.dart';
+export 'src/sealed_box.dart';
 export 'src/secret_box.dart';
+export 'src/session_keys.dart';
 export 'src/short_hash.dart';
 
 /// Sodium is a modern, easy-to-use software library for encryption, decryption, signatures, password hashing and more.
@@ -81,11 +83,11 @@ class Sodium {
   }
 
   /// Encrypts a message with a recipient's public key, a sender's secret key and a nonce. Returns the encrypted message and mac.
-  static Future<Map<Uint8List, Uint8List>> cryptoBoxDetached(
+  static Future<Map<String, Uint8List>> cryptoBoxDetached(
       Uint8List m, Uint8List n, Uint8List pk, Uint8List sk) async {
     final Map result = await _channel.invokeMethod(
         'crypto_box_detached', {'m': m, 'n': n, 'pk': pk, 'sk': sk});
-    return result.cast<Uint8List, Uint8List>();
+    return result.cast<String, Uint8List>();
   }
 
   /// Verifies and decrypts a ciphertext produced by [cryptoBoxDetached].
@@ -366,11 +368,11 @@ class Sodium {
   }
 
   /// Encrypts a message with a key and a nonce, and returns the encrypted message and mac.
-  static Future<Map<Uint8List, Uint8List>> cryptoSecretboxDetached(
+  static Future<Map<String, Uint8List>> cryptoSecretboxDetached(
       Uint8List m, Uint8List n, Uint8List k) async {
     final Map result = await _channel
         .invokeMethod('crypto_secretbox_detached', {'m': m, 'n': n, 'k': k});
-    return result.cast<Uint8List, Uint8List>();
+    return result.cast<String, Uint8List>();
   }
 
   /// Verifies and decrypts an encrypted message.

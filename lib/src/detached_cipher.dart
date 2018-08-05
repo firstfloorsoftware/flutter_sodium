@@ -6,6 +6,6 @@ class DetachedCipher {
   final Uint8List mac;
 
   const DetachedCipher(this.cipher, this.mac);
-  DetachedCipher.fromMap(Map<Uint8List, Uint8List> map)
+  DetachedCipher.fromMap(Map<String, Uint8List> map)
       : this(map['c'], map['mac']);
 }

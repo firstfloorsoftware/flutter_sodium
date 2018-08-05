@@ -380,9 +380,44 @@ var valid = await PasswordHash.verifyStorage(str, pw);''', () async {
             return await PasswordHash.hashStorage(pwd);
           })
         ]),
-    // Example('Key functions', isHeader: true),
+    Example('Key functions', isHeader: true),
     // Example('Key derivation'),
-    // Example('Key exchange'),
+    Example('Key exchange', description:'Securely compute a set of shared keys.', docUrl: 'https://download.libsodium.org/doc/key_exchange/',
+        samples: [
+          Sample('Usage', 'Computes a shared secret.',
+              '''// Generate key pairs
+final clientPair = await CryptoKx.generateKeyPair();
+final serverPair = await CryptoKx.generateKeyPair();
+
+// Compute session keys
+final clientKeys = await CryptoKx.computeClientSessionKeys(clientPair, serverPair.publicKey);
+final serverKeys = await CryptoKx.computeServerSessionKeys(serverPair, clientPair.publicKey);
+
+// assert keys do match
+assert(
+    const ListEquality().equals(clientKeys.rx, serverKeys.tx));
+assert(
+    const ListEquality().equals(clientKeys.tx, serverKeys.rx));
+    
+print('client rx: \${hex.encode(clientKeys.rx)}')
+print('client tx: \${hex.encode(clientKeys.tx)}');''', () async {
+            // Generate key pairs
+            final clientPair = await CryptoKx.generateKeyPair();
+            final serverPair = await CryptoKx.generateKeyPair();
+
+            // Compute session keys
+            final clientKeys =await CryptoKx.computeClientSessionKeys(clientPair, serverPair.publicKey);
+            final serverKeys = await CryptoKx.computeServerSessionKeys(serverPair, clientPair.publicKey);
+
+            // assert keys do match
+            assert(
+                const ListEquality().equals(clientKeys.rx, serverKeys.tx));
+assert(
+                const ListEquality().equals(clientKeys.tx, serverKeys.rx));
+
+            return 'client rx: ${hex.encode(clientKeys.rx)}\nclient tx: ${hex.encode(clientKeys.tx)}';
+          })
+        ]),
     Example('Advanced', isHeader: true),
     Example('Diffie-Hellman',
         description: 'Perform scalar multiplication of elliptic curve points',
