@@ -80,8 +80,7 @@ assert(msg == decrypted);''', () async {
             var encrypted = await SecretBox.encrypt(msg, nonce, key);
 
             // Decrypt
-            var decrypted =
-                await SecretBox.decrypt(encrypted, nonce, key);
+            var decrypted = await SecretBox.decrypt(encrypted, nonce, key);
 
             assert(msg == decrypted);
 
@@ -112,8 +111,7 @@ assert(msg == decrypted);''', () async {
 
             // Encrypt
             var msg = 'hello world';
-            var encrypted =
-                await SecretBox.encryptDetached(msg, nonce, key);
+            var encrypted = await SecretBox.encryptDetached(msg, nonce, key);
 
             // Decrypt
             var decrypted =
@@ -159,7 +157,85 @@ assert(valid);''', () async {
           })
         ]),
     Example('Public-key cryptography', isHeader: true),
-    // Example('Authenticated encryption'),
+    Example('Authenticated encryption',
+        description: 'Public-key authenticated encryption',
+        docUrl:
+            'https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption.html',
+        samples: [
+          Sample(
+              'Combined mode',
+              'The authentication tag and the encrypted message are stored together',
+              '''// Generate key pairs
+var alicePair = await CryptoBox.generateKeyPair();
+var bobPair = await CryptoBox.generateKeyPair();
+
+var nonce = await CryptoBox.generateNonce();
+
+// Alice encrypts message for Bob
+var msg = 'hello world';
+var encrypted = await CryptoBox.encrypt(msg, nonce, bobPair.publicKey, alicePair.secretKey);
+
+// Bob decrypts message from Alice
+var decrypted = await CryptoBox.decrypt(encrypted, nonce, alicePair.publicKey, bobPair.secretKey);
+
+assert(msg == decrypted);
+
+print(hex.encode(encrypted));''', () async {
+            // Generate key pairs
+            var alicePair = await CryptoBox.generateKeyPair();
+            var bobPair = await CryptoBox.generateKeyPair();
+
+            var nonce = await CryptoBox.generateNonce();
+
+            // Alice encrypts message for Bob
+            var msg = 'hello world';
+            var encrypted = await CryptoBox.encrypt(msg, nonce, bobPair.publicKey, alicePair.secretKey);
+
+            // Bob decrypts message from Alice
+            var decrypted = await CryptoBox.decrypt(encrypted, nonce, alicePair.publicKey, bobPair.secretKey);
+
+            assert(msg == decrypted);
+
+            return hex.encode(encrypted);
+          }),
+          Sample(
+              'Detached mode',
+              'The authentication tag and the encrypted message are detached so they can be stored at different locations.',
+              '''// Generate key pairs
+var alicePair = await CryptoBox.generateKeyPair();
+var bobPair = await CryptoBox.generateKeyPair();
+
+var nonce = await CryptoBox.generateNonce();
+
+// Alice encrypts message for Bob
+var msg = 'hello world';
+var encrypted = await CryptoBox.encryptDetached(msg, nonce, bobPair.publicKey, alicePair.secretKey);
+
+print('cipher: \${encrypted.cipher}');
+print('mac: \${encrypted.mac}');
+
+// Bob decrypts message from Alice
+var decrypted = await CryptoBox.decryptDetached(encrypted, nonce, alicePair.publicKey, bobPair.secretKey);
+
+assert(msg == decrypted);''', () async {
+            // Generate key pairs
+            var alicePair = await CryptoBox.generateKeyPair();
+            var bobPair = await CryptoBox.generateKeyPair();
+
+            var nonce = await CryptoBox.generateNonce();
+
+            // Alice encrypts message for Bob
+            var msg = 'hello world';
+            var encrypted = await CryptoBox.encryptDetached(msg, nonce, bobPair.publicKey, alicePair.secretKey);
+
+            // Bob decrypts message from Alice
+            var decrypted = await CryptoBox.decryptDetached(encrypted, nonce, alicePair.publicKey, bobPair.secretKey);
+
+            assert(msg == decrypted);
+
+            return 'cipher: ${hex.encode(encrypted.cipher)}\nmac: ${hex.encode(encrypted.mac)}';
+          })
+        ]),
     Example('Public-key signatures',
         description:
             'Computes a signature for a message using a secret key, and provides verification using a public key.',
@@ -205,27 +281,27 @@ assert(valid);''', () async {
               'Usage',
               'Anonymous sender encrypts a message intended for recipient only.',
               '''// Recipient creates a long-term key pair
-var keyPair = await CryptoBox.generateKeyPair();
+var keyPair = await SealedBox.generateKeyPair();
 
 // Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
 var msg = 'hello world';
-var cipher = await CryptoBox.seal(msg, keyPair.publicKey);
+var cipher = await SealedBox.seal(msg, keyPair.publicKey);
 
 print(hex.encode(cipher));
 
 // Recipient decrypts the ciphertext
-var decrypted = await CryptoBox.sealOpen(cipher, keyPair);
+var decrypted = await SealedBox.sealOpen(cipher, keyPair);
 
 assert(msg == decrypted);''', () async {
             // Recipient creates a long-term key pair
-            var keyPair = await CryptoBox.generateKeyPair();
+            var keyPair = await SealedBox.generateKeyPair();
 
             // Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
             var msg = 'hello world';
-            var cipher = await CryptoBox.seal(msg, keyPair.publicKey);
+            var cipher = await SealedBox.seal(msg, keyPair.publicKey);
 
             // Recipient decrypts the ciphertext
-            var decrypted = await CryptoBox.sealOpen(cipher, keyPair);
+            var decrypted = await SealedBox.sealOpen(cipher, keyPair);
 
             assert(msg == decrypted);
 
@@ -357,16 +433,14 @@ print(hex.encode(sharedKeyClient));
             // Client derives shared key and hashes it
             final clientQ = await ScalarMult.computeSharedSecret(
                 clientSecretKey, serverPublicKey);
-            final sharedKeyClient = await GenericHash.hashByteStream(
-                Stream
-                    .fromIterable([clientQ, clientPublicKey, serverPublicKey]));
+            final sharedKeyClient = await GenericHash.hashByteStream(Stream
+                .fromIterable([clientQ, clientPublicKey, serverPublicKey]));
 
             // Server derives shared key and hashes it
             final serverQ = await ScalarMult.computeSharedSecret(
                 serverSecretKey, clientPublicKey);
-            final sharedKeyServer = await GenericHash.hashByteStream(
-                Stream
-                    .fromIterable([serverQ, clientPublicKey, serverPublicKey]));
+            final sharedKeyServer = await GenericHash.hashByteStream(Stream
+                .fromIterable([serverQ, clientPublicKey, serverPublicKey]));
 
             // assert shared keys do match
             assert(

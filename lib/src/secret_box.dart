@@ -3,16 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 import '../flutter_sodium.dart';
 
-/// Detached cipher and associated authentication tag.
-class DetachedCipher {
-  final Uint8List cipher;
-  final Uint8List mac;
-
-  const DetachedCipher(this.cipher, this.mac);
-  DetachedCipher.fromMap(Map<Uint8List, Uint8List> map)
-      : this(map['c'], map['mac']);
-}
-
 /// Encrypts a message with a key and a nonce and computes an authentication tag.
 class SecretBox {
   /// Generates a random key for use with secret key encryption.
