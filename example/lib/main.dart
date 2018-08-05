@@ -189,10 +189,12 @@ print(hex.encode(encrypted));''', () async {
 
             // Alice encrypts message for Bob
             var msg = 'hello world';
-            var encrypted = await CryptoBox.encrypt(msg, nonce, bobPair.publicKey, alicePair.secretKey);
+            var encrypted = await CryptoBox.encrypt(
+                msg, nonce, bobPair.publicKey, alicePair.secretKey);
 
             // Bob decrypts message from Alice
-            var decrypted = await CryptoBox.decrypt(encrypted, nonce, alicePair.publicKey, bobPair.secretKey);
+            var decrypted = await CryptoBox.decrypt(
+                encrypted, nonce, alicePair.publicKey, bobPair.secretKey);
 
             assert(msg == decrypted);
 
@@ -226,10 +228,12 @@ assert(msg == decrypted);''', () async {
 
             // Alice encrypts message for Bob
             var msg = 'hello world';
-            var encrypted = await CryptoBox.encryptDetached(msg, nonce, bobPair.publicKey, alicePair.secretKey);
+            var encrypted = await CryptoBox.encryptDetached(
+                msg, nonce, bobPair.publicKey, alicePair.secretKey);
 
             // Bob decrypts message from Alice
-            var decrypted = await CryptoBox.decryptDetached(encrypted, nonce, alicePair.publicKey, bobPair.secretKey);
+            var decrypted = await CryptoBox.decryptDetached(
+                encrypted, nonce, alicePair.publicKey, bobPair.secretKey);
 
             assert(msg == decrypted);
 
@@ -308,7 +312,6 @@ assert(msg == decrypted);''', () async {
             return hex.encode(cipher);
           })
         ]),
-
     Example('Hashing', isHeader: true),
     Example('Generic hashing',
         description:
@@ -381,17 +384,45 @@ var valid = await PasswordHash.verifyStorage(str, pw);''', () async {
           })
         ]),
     Example('Key functions', isHeader: true),
-    // Example('Key derivation'),
-    Example('Key exchange', description:'Securely compute a set of shared keys.', docUrl: 'https://download.libsodium.org/doc/key_exchange/',
+    Example('Key derivation',
+        description: 'Derive secret subkeys from a single master key.',
+        docUrl: 'https://download.libsodium.org/doc/key_derivation/',
         samples: [
-          Sample('Usage', 'Computes a shared secret.',
-              '''// Generate key pairs
-final clientPair = await CryptoKx.generateKeyPair();
-final serverPair = await CryptoKx.generateKeyPair();
+          Sample(
+              'Usage', 'Compute a set of shared keys.', '''// Generate master key
+final masterkey = await KeyDerivation.generateKey();
+
+// Derives subkeys of various lengths
+final subkey1 = await KeyDerivation.deriveFromKey(masterkey, 1, subKeyLength: 32);
+final subkey2 = await KeyDerivation.deriveFromKey(masterkey, 2, subKeyLength: 32);
+final subkey3 = await KeyDerivation.deriveFromKey(masterkey, 3, subKeyLength: 64);
+
+print(subkey1: \${hex.encode(subkey1)})
+print(subkey2: \${hex.encode(subkey3)})
+print(subkey2: \${hex.encode(subkey3)});''', () async {
+            // Generate master key
+            final masterkey = await KeyDerivation.generateKey();
+
+            // Derives subkeys of various lengths
+            final subkey1 = await KeyDerivation.deriveFromKey(masterkey, 1, subKeyLength: 32);
+            final subkey2 = await KeyDerivation.deriveFromKey(masterkey, 2, subKeyLength: 32);
+            final subkey3 = await KeyDerivation.deriveFromKey(masterkey, 3, subKeyLength: 64);
+
+            return 'subkey1: ${hex.encode(subkey1)}\nsubkey2: ${hex.encode(subkey2)}\nsubkey3: ${hex.encode(subkey3)}\n';
+          })
+        ]),
+    Example('Key exchange',
+        description: 'Securely compute a set of shared keys.',
+        docUrl: 'https://download.libsodium.org/doc/key_exchange/',
+        samples: [
+          Sample(
+              'Usage', 'Compute a set of shared keys.', '''// Generate key pairs
+final clientPair = await KeyExchange.generateKeyPair();
+final serverPair = await KeyExchange.generateKeyPair();
 
 // Compute session keys
-final clientKeys = await CryptoKx.computeClientSessionKeys(clientPair, serverPair.publicKey);
-final serverKeys = await CryptoKx.computeServerSessionKeys(serverPair, clientPair.publicKey);
+final clientKeys = await KeyExchange.computeClientSessionKeys(clientPair, serverPair.publicKey);
+final serverKeys = await KeyExchange.computeServerSessionKeys(serverPair, clientPair.publicKey);
 
 // assert keys do match
 assert(
@@ -402,18 +433,18 @@ assert(
 print('client rx: \${hex.encode(clientKeys.rx)}')
 print('client tx: \${hex.encode(clientKeys.tx)}');''', () async {
             // Generate key pairs
-            final clientPair = await CryptoKx.generateKeyPair();
-            final serverPair = await CryptoKx.generateKeyPair();
+            final clientPair = await KeyExchange.generateKeyPair();
+            final serverPair = await KeyExchange.generateKeyPair();
 
             // Compute session keys
-            final clientKeys =await CryptoKx.computeClientSessionKeys(clientPair, serverPair.publicKey);
-            final serverKeys = await CryptoKx.computeServerSessionKeys(serverPair, clientPair.publicKey);
+            final clientKeys = await KeyExchange.computeClientSessionKeys(
+                clientPair, serverPair.publicKey);
+            final serverKeys = await KeyExchange.computeServerSessionKeys(
+                serverPair, clientPair.publicKey);
 
             // assert keys do match
-            assert(
-                const ListEquality().equals(clientKeys.rx, serverKeys.tx));
-assert(
-                const ListEquality().equals(clientKeys.tx, serverKeys.rx));
+            assert(const ListEquality().equals(clientKeys.rx, serverKeys.tx));
+            assert(const ListEquality().equals(clientKeys.tx, serverKeys.rx));
 
             return 'client rx: ${hex.encode(clientKeys.rx)}\nclient tx: ${hex.encode(clientKeys.tx)}';
           })

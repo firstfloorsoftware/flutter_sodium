@@ -7,6 +7,7 @@ export 'src/crypto_box.dart';
 export 'src/crypto_sign.dart';
 export 'src/detached_cipher.dart';
 export 'src/generic_hash.dart';
+export 'src/key_derivation.dart';
 export 'src/key_exchange.dart';
 export 'src/key_pair.dart';
 export 'src/onetime_auth.dart';

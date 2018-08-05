@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import '../flutter_sodium.dart';
 
 /// Key exchange API, securely compute a set of shared keys.
-class CryptoKx {
+class KeyExchange {
   /// Generates a random secret key and a corresponding public key.
   static Future<KeyPair> generateKeyPair() async {
     var map = await Sodium.cryptoKxKeypair();
