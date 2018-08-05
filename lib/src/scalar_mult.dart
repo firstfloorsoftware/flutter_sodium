@@ -5,7 +5,8 @@ import '../flutter_sodium.dart';
 /// Performs scalar multiplication of elliptic curve points
 class ScalarMult {
   /// Generates a random secret key.
-  static Future<Uint8List> generateSecretKey() => RandomBytes.buffer(crypto_box_SECRETKEYBYTES);
+  static Future<Uint8List> generateSecretKey() =>
+      RandomBytes.buffer(crypto_box_SECRETKEYBYTES);
 
   /// Computes a public key given specified secret key.
   static Future<Uint8List> computePublicKey(Uint8List secretKey) =>

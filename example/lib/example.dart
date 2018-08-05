@@ -17,4 +17,3 @@ class Example {
         new MaterialPageRoute(builder: (context) => ExamplePage(this)));
   }
 }
-

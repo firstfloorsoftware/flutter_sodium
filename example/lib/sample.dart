@@ -48,14 +48,13 @@ class SampleRunnerState extends State<SampleRunner> {
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[
-      
-       Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: RaisedButton(
-                  child: Text('Run'),
-                  textColor: Colors.white,
-                  color: Theme.of(context).accentColor,
-                  onPressed: () => runSample()))
+      Padding(
+          padding: EdgeInsets.symmetric(vertical: 16.0),
+          child: RaisedButton(
+              child: Text('Run'),
+              textColor: Colors.white,
+              color: Theme.of(context).accentColor,
+              onPressed: () => runSample()))
     ];
 
     if (_sampleRun != null) {

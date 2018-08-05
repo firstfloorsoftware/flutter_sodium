@@ -9,7 +9,7 @@ class ExamplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[];
-    
+
     if (_example.description != null) {
       children.add(Padding(
           padding: EdgeInsets.only(bottom: 16.0),
@@ -46,4 +46,3 @@ class ExamplePage extends StatelessWidget {
                     children: children))));
   }
 }
-

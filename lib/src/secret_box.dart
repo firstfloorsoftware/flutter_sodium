@@ -9,7 +9,8 @@ class SecretBox {
   static Future<Uint8List> generateKey() => Sodium.cryptoSecretboxKeygen();
 
   /// Generates a random nonce for use with secret key encryption.
-  static Future<Uint8List> generateNonce() => RandomBytes.buffer(crypto_secretbox_NONCEBYTES);
+  static Future<Uint8List> generateNonce() =>
+      RandomBytes.buffer(crypto_secretbox_NONCEBYTES);
 
   /// Encrypts a string message with a key and a nonce.
   static Future<Uint8List> encrypt(

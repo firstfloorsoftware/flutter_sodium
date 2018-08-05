@@ -388,8 +388,8 @@ var valid = await PasswordHash.verifyStorage(str, pw);''', () async {
         description: 'Derive secret subkeys from a single master key.',
         docUrl: 'https://download.libsodium.org/doc/key_derivation/',
         samples: [
-          Sample(
-              'Usage', 'Compute a set of shared keys.', '''// Generate master key
+          Sample('Usage', 'Compute a set of shared keys.',
+              '''// Generate master key
 final masterkey = await KeyDerivation.generateKey();
 
 // Derives subkeys of various lengths
@@ -404,9 +404,12 @@ print(subkey2: \${hex.encode(subkey3)});''', () async {
             final masterkey = await KeyDerivation.generateKey();
 
             // Derives subkeys of various lengths
-            final subkey1 = await KeyDerivation.deriveFromKey(masterkey, 1, subKeyLength: 32);
-            final subkey2 = await KeyDerivation.deriveFromKey(masterkey, 2, subKeyLength: 32);
-            final subkey3 = await KeyDerivation.deriveFromKey(masterkey, 3, subKeyLength: 64);
+            final subkey1 = await KeyDerivation.deriveFromKey(masterkey, 1,
+                subKeyLength: 32);
+            final subkey2 = await KeyDerivation.deriveFromKey(masterkey, 2,
+                subKeyLength: 32);
+            final subkey3 = await KeyDerivation.deriveFromKey(masterkey, 3,
+                subKeyLength: 64);
 
             return 'subkey1: ${hex.encode(subkey1)}\nsubkey2: ${hex.encode(subkey2)}\nsubkey3: ${hex.encode(subkey3)}\n';
           })
