@@ -30,18 +30,15 @@ class SampleRunner extends StatefulWidget {
   SampleRunner(this._sample);
 
   @override
-  State<StatefulWidget> createState() => SampleRunnerState(_sample);
+  State<StatefulWidget> createState() => _SampleRunnerState();
 }
 
-class SampleRunnerState extends State<SampleRunner> {
-  final SampleFunction _sample;
+class _SampleRunnerState extends State<SampleRunner> {
   Future<String> _sampleRun;
-
-  SampleRunnerState(this._sample);
 
   runSample() {
     setState(() {
-      _sampleRun = _sample();
+      _sampleRun = widget._sample();
     });
   }
 
