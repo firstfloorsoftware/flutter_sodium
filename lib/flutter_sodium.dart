@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
+import 'src/constants.dart';
 export 'src/constants.dart';
 export 'src/crypto_auth.dart';
 export 'src/crypto_box.dart';
@@ -19,6 +20,7 @@ export 'src/secret_box.dart';
 export 'src/session_keys.dart';
 export 'src/short_hash.dart';
 
+
 /// Sodium is a modern, easy-to-use software library for encryption, decryption, signatures, password hashing and more.
 ///
 /// This class provides a 1:1 mapping of Dart to native libsodium API functions. You can use this
@@ -31,6 +33,10 @@ class Sodium {
   //
   /// Computes a tag for specified input and key.
   static Future<Uint8List> cryptoAuth(Uint8List i, Uint8List k) async {
+    assert(i != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(k.length, crypto_auth_KEYBYTES, crypto_auth_KEYBYTES);
+
     final Uint8List result =
         await _channel.invokeMethod('crypto_auth', {'in': i, 'k': k});
     return result;
@@ -39,6 +45,12 @@ class Sodium {
   /// Verifies that the tag stored at h is a valid tag for the input and key.
   static Future<bool> cryptoAuthVerify(
       Uint8List h, Uint8List i, Uint8List k) async {
+    assert(h != null);
+    assert(i != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(h.length, crypto_auth_BYTES, crypto_auth_BYTES);
+    RangeError.checkValueInInterval(k.length, crypto_auth_KEYBYTES, crypto_auth_KEYBYTES);
+
     final bool result = await _channel
         .invokeMethod('crypto_auth_verify', {'h': h, 'in': i, 'k': k});
     return result;
