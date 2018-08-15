@@ -32,6 +32,17 @@ void main() {
       ]);
     });
 
+    test('verify', () async {
+      await CryptoAuth.verify(new Uint8List(32), 'hello world', new Uint8List(32));
+      expect(log, <Matcher>[
+        isMethodCall('crypto_auth_verify', arguments: <String, dynamic>{
+          'h': new Uint8List(32),
+          'in': utf8.encode('hello world'),
+          'k': new Uint8List(32)
+        })
+      ]);
+    });
+
     test('compute does not accept null value', () async {
       expect(() async => await CryptoAuth.compute(null, new Uint8List(1)),
           throwsAssertionError);
@@ -44,6 +55,44 @@ void main() {
     test('compute does not accept key of invalid length', () async {
       expect(
           () async => await CryptoAuth.compute('hello world', new Uint8List(1)),
+          throwsA(allOf(
+              isRangeError,
+              predicate((e) =>
+                  e.toString() ==
+                  'RangeError (k): Invalid length: Only valid value is 32: 1'))));
+    });
+
+    test('verify does not accept null tag', () async {
+      expect(
+          () async => await CryptoAuth.verify(null, 'hello world', new Uint8List(32)),
+          throwsAssertionError);
+    });
+
+    test('verify does not accept null value', () async {
+      expect(
+          () async => await CryptoAuth.verify(new Uint8List(32), null, new Uint8List(32)),
+          throwsAssertionError);
+    });
+
+    test('verify does not accept null key', () async {
+      expect(
+          () async => await CryptoAuth.verify(new Uint8List(32), 'hello world', null),
+          throwsAssertionError);
+    });
+
+    test('verify does not accept tag of invalid length', () async {
+      expect(
+          () async => await CryptoAuth.verify(new Uint8List(1), 'hello world', new Uint8List(32)),
+          throwsA(allOf(
+              isRangeError,
+              predicate((e) =>
+                  e.toString() ==
+                  'RangeError (h): Invalid length: Only valid value is 32: 1'))));
+    });
+
+    test('verify does not accept key of invalid length', () async {
+      expect(
+          () async => await CryptoAuth.verify(new Uint8List(32), 'hello world', new Uint8List(1)),
           throwsA(allOf(
               isRangeError,
               predicate((e) =>
