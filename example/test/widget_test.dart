@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 import 'dart:typed_data';
+import 'dart:convert';
 
 void main() {
   final List<MethodCall> log = <MethodCall>[];
@@ -15,30 +16,44 @@ void main() {
   });
 
   group('CryptoAuth', () {
-    test('CryptoAuth.generateKey', () async {
+    test('generateKey', () async {
       await CryptoAuth.generateKey();
       expect(
           log, <Matcher>[isMethodCall('crypto_auth_keygen', arguments: null)]);
     });
 
-    test('CryptoAuth.compute does not accept null value', () async {
-      expect(() async => await CryptoAuth.compute(null, null),
+    test('compute', () async {
+      await CryptoAuth.compute('hello world', new Uint8List(32));
+      expect(log, <Matcher>[
+        isMethodCall('crypto_auth', arguments: <String, dynamic>{
+          'in': utf8.encode('hello world'),
+          'k': new Uint8List(32)
+        })
+      ]);
+    });
+
+    test('compute does not accept null value', () async {
+      expect(() async => await CryptoAuth.compute(null, new Uint8List(1)),
           throwsAssertionError);
     });
-    test('CryptoAuth.compute does not accept null key', () async {
+    test('compute does not accept null key', () async {
       expect(() async => await CryptoAuth.compute('hello world', null),
           throwsAssertionError);
     });
 
-    test('CryptoAuth.compute does not accept key of invalid length', () async {
+    test('compute does not accept key of invalid length', () async {
       expect(
           () async => await CryptoAuth.compute('hello world', new Uint8List(1)),
-          throwsRangeError);
+          throwsA(allOf(
+              isRangeError,
+              predicate((e) =>
+                  e.toString() ==
+                  'RangeError (k): Invalid length: Only valid value is 32: 1'))));
     });
   });
 
   group('RandomBytes', () {
-    test('RandomBytes.buffer', () async {
+    test('buffer', () async {
       await RandomBytes.buffer(16);
       expect(log, <Matcher>[
         isMethodCall('randombytes_buf',
@@ -46,13 +61,13 @@ void main() {
       ]);
     });
 
-    test('RandomBytes.random', () async {
+    test('random', () async {
       await RandomBytes.random();
       expect(
           log, <Matcher>[isMethodCall('randombytes_random', arguments: null)]);
     });
 
-    test('RandomBytes.uniform', () async {
+    test('uniform', () async {
       await RandomBytes.uniform(16);
       expect(log, <Matcher>[
         isMethodCall('randombytes_uniform',

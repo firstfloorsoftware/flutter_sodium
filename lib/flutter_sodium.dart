@@ -20,7 +20,6 @@ export 'src/secret_box.dart';
 export 'src/session_keys.dart';
 export 'src/short_hash.dart';
 
-
 /// Sodium is a modern, easy-to-use software library for encryption, decryption, signatures, password hashing and more.
 ///
 /// This class provides a 1:1 mapping of Dart to native libsodium API functions. You can use this
@@ -35,7 +34,8 @@ class Sodium {
   static Future<Uint8List> cryptoAuth(Uint8List i, Uint8List k) async {
     assert(i != null);
     assert(k != null);
-    RangeError.checkValueInInterval(k.length, crypto_auth_KEYBYTES, crypto_auth_KEYBYTES);
+    RangeError.checkValueInInterval(k.length, crypto_auth_KEYBYTES,
+        crypto_auth_KEYBYTES, 'k', 'Invalid length');
 
     final Uint8List result =
         await _channel.invokeMethod('crypto_auth', {'in': i, 'k': k});
@@ -48,8 +48,10 @@ class Sodium {
     assert(h != null);
     assert(i != null);
     assert(k != null);
-    RangeError.checkValueInInterval(h.length, crypto_auth_BYTES, crypto_auth_BYTES);
-    RangeError.checkValueInInterval(k.length, crypto_auth_KEYBYTES, crypto_auth_KEYBYTES);
+    RangeError.checkValueInInterval(
+        h.length, crypto_auth_BYTES, crypto_auth_BYTES, 'h', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, crypto_auth_KEYBYTES,
+        crypto_auth_KEYBYTES, 'k', 'Invalid length');
 
     final bool result = await _channel
         .invokeMethod('crypto_auth_verify', {'h': h, 'in': i, 'k': k});
@@ -68,6 +70,10 @@ class Sodium {
   /// Deterministically derive a key pair from a single key seed.
   static Future<Map<String, Uint8List>> cryptoBoxSeedKeypair(
       Uint8List seed) async {
+    assert(seed != null);
+    RangeError.checkValueInInterval(seed.length, crypto_box_SEEDBYTES,
+        crypto_box_SEEDBYTES, 'seed', 'Invalid length');
+
     final Map result =
         await _channel.invokeMethod('crypto_box_seed_keypair', {'seed': seed});
     return result.cast<String, Uint8List>();
@@ -82,6 +88,17 @@ class Sodium {
   /// Encrypts a message with a recipient's public key, a sender's secret key and a nonce.
   static Future<Uint8List> cryptoBoxEasy(
       Uint8List m, Uint8List n, Uint8List pk, Uint8List sk) async {
+    assert(m != null);
+    assert(n != null);
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(n.length, crypto_box_NONCEBYTES,
+        crypto_box_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(pk.length, crypto_box_PUBLICKEYBYTES,
+        crypto_box_PUBLICKEYBYTES, 'pk', 'Invalid length');
+    RangeError.checkValueInInterval(sk.length, crypto_box_SECRETKEYBYTES,
+        crypto_box_SECRETKEYBYTES, 'sk', 'Invalid length');
+
     final Uint8List result = await _channel
         .invokeMethod('crypto_box_easy', {'m': m, 'n': n, 'pk': pk, 'sk': sk});
     return result;
@@ -90,6 +107,17 @@ class Sodium {
   /// Verifies and decrypts a ciphertext produced by [cryptoBoxEasy].
   static Future<Uint8List> cryptoBoxOpenEasy(
       Uint8List c, Uint8List n, Uint8List pk, Uint8List sk) async {
+    assert(c != null);
+    assert(n != null);
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(n.length, crypto_box_NONCEBYTES,
+        crypto_box_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(pk.length, crypto_box_PUBLICKEYBYTES,
+        crypto_box_PUBLICKEYBYTES, 'pk', 'Invalid length');
+    RangeError.checkValueInInterval(sk.length, crypto_box_SECRETKEYBYTES,
+        crypto_box_SECRETKEYBYTES, 'sk', 'Invalid length');
+
     final Uint8List result = await _channel.invokeMethod(
         'crypto_box_open_easy', {'c': c, 'n': n, 'pk': pk, 'sk': sk});
     return result;
@@ -98,6 +126,17 @@ class Sodium {
   /// Encrypts a message with a recipient's public key, a sender's secret key and a nonce. Returns the encrypted message and mac.
   static Future<Map<String, Uint8List>> cryptoBoxDetached(
       Uint8List m, Uint8List n, Uint8List pk, Uint8List sk) async {
+    assert(m != null);
+    assert(n != null);
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(n.length, crypto_box_NONCEBYTES,
+        crypto_box_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(pk.length, crypto_box_PUBLICKEYBYTES,
+        crypto_box_PUBLICKEYBYTES, 'pk', 'Invalid length');
+    RangeError.checkValueInInterval(sk.length, crypto_box_SECRETKEYBYTES,
+        crypto_box_SECRETKEYBYTES, 'sk', 'Invalid length');
+
     final Map result = await _channel.invokeMethod(
         'crypto_box_detached', {'m': m, 'n': n, 'pk': pk, 'sk': sk});
     return result.cast<String, Uint8List>();
@@ -106,6 +145,20 @@ class Sodium {
   /// Verifies and decrypts a ciphertext produced by [cryptoBoxDetached].
   static Future<Uint8List> cryptoBoxOpenDetached(Uint8List c, Uint8List mac,
       Uint8List n, Uint8List pk, Uint8List sk) async {
+    assert(c != null);
+    assert(mac != null);
+    assert(n != null);
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(mac.length, crypto_box_MACBYTES,
+        crypto_box_MACBYTES, 'mac', 'Invalid length');
+    RangeError.checkValueInInterval(n.length, crypto_box_NONCEBYTES,
+        crypto_box_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(pk.length, crypto_box_PUBLICKEYBYTES,
+        crypto_box_PUBLICKEYBYTES, 'pk', 'Invalid length');
+    RangeError.checkValueInInterval(sk.length, crypto_box_SECRETKEYBYTES,
+        crypto_box_SECRETKEYBYTES, 'sk', 'Invalid length');
+
     final Uint8List result = await _channel.invokeMethod(
         'crypto_box_open_detached',
         {'c': c, 'mac': mac, 'n': n, 'pk': pk, 'sk': sk});
@@ -114,6 +167,13 @@ class Sodium {
 
   /// Computes a shared secret key given a public key and a secret key.
   static Future<Uint8List> cryptoBoxBeforenm(Uint8List pk, Uint8List sk) async {
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(pk.length, crypto_box_PUBLICKEYBYTES,
+        crypto_box_PUBLICKEYBYTES, 'pk', 'Invalid length');
+    RangeError.checkValueInInterval(sk.length, crypto_box_SECRETKEYBYTES,
+        crypto_box_SECRETKEYBYTES, 'sk', 'Invalid length');
+
     final Uint8List result = await _channel
         .invokeMethod('crypto_box_beforenm', {'pk': pk, 'sk': sk});
     return result;
@@ -122,6 +182,14 @@ class Sodium {
   /// Encrypts a message with a shared secret key and a nonce.
   static Future<Uint8List> cryptoBoxEasyAfternm(
       Uint8List m, Uint8List n, Uint8List k) async {
+    assert(m != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, crypto_box_NONCEBYTES,
+        crypto_box_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, crypto_box_BEFORENMBYTES,
+        crypto_box_BEFORENMBYTES, 'k', 'Invalid length');
+
     final Uint8List result = await _channel
         .invokeMethod('crypto_box_easy_afternm', {'m': m, 'n': n, 'k': k});
     return result;
@@ -130,6 +198,14 @@ class Sodium {
   /// Verifies and decrypts a ciphertext with a shared secret key and a nonce.
   static Future<Uint8List> cryptoBoxOpenEasyAfternm(
       Uint8List c, Uint8List n, Uint8List k) async {
+    assert(c != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, crypto_box_NONCEBYTES,
+        crypto_box_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, crypto_box_BEFORENMBYTES,
+        crypto_box_BEFORENMBYTES, 'k', 'Invalid length');
+
     final Uint8List result = await _channel
         .invokeMethod('crypto_box_open_easy_afternm', {'c': c, 'n': n, 'k': k});
     return result;
@@ -138,6 +214,14 @@ class Sodium {
   /// Encrypts a message with a shared secret key and a nonce. Returns the encrypted message and mac.
   static Future<Map<String, Uint8List>> cryptoBoxDetachedAfternm(
       Uint8List m, Uint8List n, Uint8List k) async {
+    assert(m != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, crypto_box_NONCEBYTES,
+        crypto_box_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, crypto_box_BEFORENMBYTES,
+        crypto_box_BEFORENMBYTES, 'k', 'Invalid length');
+
     final Map result = await _channel
         .invokeMethod('crypto_box_detached_afternm', {'m': m, 'n': n, 'k': k});
     return result.cast<String, Uint8List>();
@@ -146,6 +230,17 @@ class Sodium {
   /// Verifies and decrypts a ciphertext with a mac, a shared secret key and a nonce.
   static Future<Uint8List> cryptoBoxOpenDetachedAfternm(
       Uint8List c, Uint8List mac, Uint8List n, Uint8List k) async {
+    assert(c != null);
+    assert(mac != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(mac.length, crypto_box_MACBYTES,
+        crypto_box_MACBYTES, 'mac', 'Invalid length');
+    RangeError.checkValueInInterval(n.length, crypto_box_NONCEBYTES,
+        crypto_box_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, crypto_box_BEFORENMBYTES,
+        crypto_box_BEFORENMBYTES, 'k', 'Invalid length');
+
     final Uint8List result = await _channel.invokeMethod(
         'crypto_box_open_detached_afternm',
         {'c': c, 'mac': mac, 'n': n, 'k': k});
@@ -157,6 +252,11 @@ class Sodium {
   //
   /// Encrypts a message for a recipient whose public key is pk
   static Future<Uint8List> cryptoBoxSeal(Uint8List m, Uint8List pk) async {
+    assert(m != null);
+    assert(pk != null);
+    RangeError.checkValueInInterval(pk.length, crypto_box_PUBLICKEYBYTES,
+        crypto_box_PUBLICKEYBYTES, 'pk', 'Invalid length');
+
     final Uint8List result =
         await _channel.invokeMethod('crypto_box_seal', {'m': m, 'pk': pk});
     return result;
@@ -165,6 +265,14 @@ class Sodium {
   /// Decrypts the ciphertext using specified key pair.
   static Future<Uint8List> cryptoBoxSealOpen(
       Uint8List c, Uint8List pk, Uint8List sk) async {
+    assert(c != null);
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(pk.length, crypto_box_PUBLICKEYBYTES,
+        crypto_box_PUBLICKEYBYTES, 'pk', 'Invalid length');
+    RangeError.checkValueInInterval(sk.length, crypto_box_SECRETKEYBYTES,
+        crypto_box_SECRETKEYBYTES, 'sk', 'Invalid length');
+
     final Uint8List result = await _channel
         .invokeMethod('crypto_box_seal_open', {'c': c, 'pk': pk, 'sk': sk});
     return result;
@@ -176,6 +284,18 @@ class Sodium {
   /// Computes a fingerprint of specified length for given input and key.
   static Future<Uint8List> cryptoGenerichash(
       int outlen, Uint8List i, Uint8List key) async {
+    assert(i != null);
+    RangeError.checkValueInInterval(
+        outlen, crypto_generichash_BYTES_MIN, crypto_generichash_BYTES_MAX);
+    if (key != null) {
+      RangeError.checkValueInInterval(
+          key.length,
+          crypto_generichash_KEYBYTES_MIN,
+          crypto_generichash_KEYBYTES_MAX,
+          'key',
+          'Invalid length');
+    }
+
     final Uint8List result = await _channel.invokeMethod(
         'crypto_generichash', {'outlen': outlen, 'in': i, 'key': key});
     return result;
@@ -184,6 +304,17 @@ class Sodium {
   /// Initializes the hash state for the streaming API.
   static Future<Uint8List> cryptoGenerichashInit(
       Uint8List key, int outlen) async {
+    if (key != null) {
+      RangeError.checkValueInInterval(
+          key.length,
+          crypto_generichash_KEYBYTES_MIN,
+          crypto_generichash_KEYBYTES_MAX,
+          'key',
+          'Invalid length');
+    }
+    RangeError.checkValueInInterval(
+        outlen, crypto_generichash_BYTES_MIN, crypto_generichash_BYTES_MAX);
+
     final Uint8List result = await _channel.invokeMethod(
         'crypto_generichash_init', {'key': key, 'outlen': outlen});
     return result;
@@ -192,6 +323,9 @@ class Sodium {
   /// Computes the hash for a part of a message.
   static Future<Uint8List> cryptoGenerichashUpdate(
       Uint8List state, Uint8List i) async {
+    assert(state != null);
+    assert(i != null);
+
     final Uint8List result = await _channel
         .invokeMethod('crypto_generichash_update', {'state': state, 'in': i});
     return result;
@@ -200,6 +334,10 @@ class Sodium {
   /// Completes the hash computation and returns the hash.
   static Future<Uint8List> cryptoGenerichashFinal(
       Uint8List state, int outlen) async {
+    assert(state != null);
+    RangeError.checkValueInInterval(
+        outlen, crypto_generichash_BYTES_MIN, crypto_generichash_BYTES_MAX);
+
     final Uint8List result = await _channel.invokeMethod(
         'crypto_generichash_final', {'state': state, 'outlen': outlen});
     return result;
