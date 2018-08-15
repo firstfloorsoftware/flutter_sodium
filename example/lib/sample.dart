@@ -44,38 +44,55 @@ class _SampleRunnerState extends State<SampleRunner> {
 
   @override
   Widget build(BuildContext context) {
-    final children = <Widget>[
-      Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.0),
-          child: RaisedButton(
-              child: Text('Run'),
-              textColor: Colors.white,
-              color: Theme.of(context).accentColor,
-              onPressed: () => runSample()))
-    ];
+    if (_sampleRun == null) {
+      return Padding(
+          padding: EdgeInsets.only(top: 16.0), child: RunButton(runSample));
+    }
 
-    if (_sampleRun != null) {
-      children.add(Padding(
-          padding: EdgeInsets.only(bottom: 16.0),
-          child:
-              Text('Result', style: TextStyle(fontWeight: FontWeight.bold))));
-      children.add(FutureBuilder<String>(
-        future: _sampleRun,
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          return CodeBlock(
+    return FutureBuilder<String>(
+      future: _sampleRun,
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        final children = <Widget>[
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: RunButton(snapshot.connectionState == ConnectionState.done
+                  ? runSample
+                  : null)),
+          Padding(
+              padding: EdgeInsets.only(bottom: 16.0),
+              child:
+                  Text('Result', style: TextStyle(fontWeight: FontWeight.bold)))
+        ];
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          children.add(CodeBlock(
               snapshot.hasError ? snapshot.error.toString() : snapshot.data,
               color: snapshot.hasError
                   ? Colors.red.shade200
-                  : Colors.green.shade200);
-        },
-      ));
-    }
+                  : Colors.green.shade200));
+        } else {
+          children.add(Center(child: CircularProgressIndicator()));
+        }
 
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start, children: children);
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: children);
+      },
+    );
+  }
+}
+
+class RunButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  RunButton(this.onPressed);
+
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+        child: Text('Run'),
+        textColor: Colors.white,
+        color: Theme.of(context).accentColor,
+        onPressed: onPressed);
   }
 }
 
