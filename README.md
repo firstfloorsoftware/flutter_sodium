@@ -4,6 +4,7 @@ With flutter_sodium you get access to the modern, easy-to-use [libsodium](https:
 
 ## API coverage
 At this point in time flutter_sodium implements the following high-level libsodium APIs:
+- crypto_aead_xchacha20poly1305
 - crypto_auth
 - crypto_box
 - crypto_generichash
