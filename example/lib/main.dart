@@ -156,6 +156,85 @@ assert(valid);''', () async {
             return hex.encode(tag);
           })
         ]),
+    Example('AEAD, XChaCha20-Poly1305',
+        description: 'Authenticated Encryption with Additional Data.',
+        docUrl:
+            'https://download.libsodium.org/doc/secret-key_cryptography/xchacha20-poly1305_construction.html',
+        samples: [
+          Sample(
+              'Combined mode',
+              'The authentication tag is directly appended to the encrypted message.',
+              '''// Generate random nonce and key
+var nonce = await XChaCha20Poly1305.generateNonce();
+var key = await XChaCha20Poly1305.generateKey();
+
+// Encrypt
+var msg = 'hello world';
+var data = '123456';
+var ciphertext = await XChaCha20Poly1305.encrypt(msg, data, nonce, key);
+
+print(hex.encode(ciphertext));
+
+// Decrypt
+var decrypted = await XChaCha20Poly1305.decrypt(ciphertext,data, nonce, key);
+
+assert(msg == decrypted);''', () async {
+            // Generate random nonce and key
+            var nonce = await XChaCha20Poly1305.generateNonce();
+            var key = await XChaCha20Poly1305.generateKey();
+
+            // Encrypt
+            var msg = 'hello world';
+            var data = '123456';
+            var ciphertext =
+                await XChaCha20Poly1305.encrypt(msg, data, nonce, key);
+
+            // Decrypt
+            var decrypted =
+                await XChaCha20Poly1305.decrypt(ciphertext, data, nonce, key);
+
+            assert(msg == decrypted);
+
+            return hex.encode(ciphertext);
+          }),
+          Sample(
+              'Detached mode',
+              'Returns the encrypted message and authentication tag as seperate entities.',
+              '''// Generate random nonce and key
+var nonce = await XChaCha20Poly1305.generateNonce();
+var key = await XChaCha20Poly1305.generateKey();
+
+// Encrypt
+var msg = 'hello world';
+var data = '123456';
+var encrypted = await XChaCha20Poly1305.encryptDetached(msg, data, nonce, key);
+
+print('cipher: \${encrypted.cipher}');
+print('mac: \${encrypted.mac}');
+
+// Decrypt
+var decrypted = await XChaCha20Poly1305.decryptDetached(encrypted, data, nonce, key);
+
+assert(msg == decrypted);''', () async {
+            // Generate random nonce and key
+            var nonce = await XChaCha20Poly1305.generateNonce();
+            var key = await XChaCha20Poly1305.generateKey();
+
+            // Encrypt
+            var msg = 'hello world';
+            var data = '123456';
+            var encrypted =
+                await XChaCha20Poly1305.encryptDetached(msg, data, nonce, key);
+                
+            // Decrypt
+            var decrypted = await XChaCha20Poly1305.decryptDetached(
+                encrypted, data, nonce, key);
+
+            assert(msg == decrypted);
+
+            return 'cipher: ${hex.encode(encrypted.cipher)}\nmac: ${hex.encode(encrypted.mac)}';
+          })
+        ]),
     Example('Public-key cryptography', isHeader: true),
     Example('Authenticated encryption',
         description: 'Public-key authenticated encryption',

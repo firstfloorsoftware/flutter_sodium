@@ -1,3 +1,9 @@
+const int crypto_aead_xchacha20poly1305_ietf_KEYBYTES = 32;
+const int crypto_aead_xchacha20poly1305_ietf_NSECBYTES = 0;
+const int crypto_aead_xchacha20poly1305_ietf_NPUBBYTES = 24;
+const int crypto_aead_xchacha20poly1305_ietf_ABYTES = 16;
+const int crypto_aead_xchacha20poly1305_ietf_MESSAGEBYTES_MAX = 4294967295 - crypto_aead_xchacha20poly1305_ietf_ABYTES;
+
 const int crypto_auth_BYTES = crypto_auth_hmacsha512256_BYTES;
 const int crypto_auth_KEYBYTES = crypto_auth_hmacsha512256_KEYBYTES;
 

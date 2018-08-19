@@ -19,6 +19,7 @@ export 'src/sealed_box.dart';
 export 'src/secret_box.dart';
 export 'src/session_keys.dart';
 export 'src/short_hash.dart';
+export 'src/x_cha_cha20_poly1305.dart';
 
 /// Sodium is a modern, easy-to-use software library for encryption, decryption, signatures, password hashing and more.
 ///
@@ -26,6 +27,137 @@ export 'src/short_hash.dart';
 /// low-level API directly, or choose to use the more Dart-friendly higher level API.
 class Sodium {
   static const MethodChannel _channel = const MethodChannel('flutter_sodium');
+
+  //
+  // crypto_aead
+  //
+  /// Encrypts a message with optional additional data, a key and a nonce.
+  static Future<Uint8List> cryptoAeadXchacha20poly1305IetfEncrypt(Uint8List m,
+      Uint8List ad, Uint8List nsec, Uint8List npub, Uint8List k) async {
+    assert(m != null);
+    assert(nsec == null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_xchacha20poly1305_ietf_NPUBBYTES,
+        crypto_aead_xchacha20poly1305_ietf_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_xchacha20poly1305_ietf_KEYBYTES,
+        crypto_aead_xchacha20poly1305_ietf_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List c = await _channel.invokeMethod(
+        'crypto_aead_xchacha20poly1305_ietf_encrypt',
+        {'m': m, 'ad': ad, 'npub': npub, 'k': k});
+    return c;
+  }
+
+  /// Verifies and decrypts a cipher text produced by encrypt.
+  static Future<Uint8List> cryptoAeadXchacha20poly1305IetfDecrypt(
+      Uint8List nsec,
+      Uint8List c,
+      Uint8List ad,
+      Uint8List npub,
+      Uint8List k) async {
+    assert(nsec == null);
+    assert(c != null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_xchacha20poly1305_ietf_NPUBBYTES,
+        crypto_aead_xchacha20poly1305_ietf_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_xchacha20poly1305_ietf_KEYBYTES,
+        crypto_aead_xchacha20poly1305_ietf_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List m = await _channel.invokeMethod(
+        'crypto_aead_xchacha20poly1305_ietf_decrypt',
+        {'c': c, 'ad': ad, 'npub': npub, 'k': k});
+    return m;
+  }
+
+  /// Generates a random key.
+  static Future<Uint8List> cryptoAeadXchacha20poly1305IetfKeygen() async {
+    final Uint8List k = await _channel
+        .invokeMethod('crypto_aead_xchacha20poly1305_ietf_keygen');
+    return k;
+  }
+
+  /// Encrypts a message with optional additional data, a key and a nonce. Returns a ciphertext and mac.
+  static Future<Map<String, Uint8List>>
+      cryptoAeadXchacha20poly1305IetfEncryptDetached(Uint8List m, Uint8List ad,
+          Uint8List nsec, Uint8List npub, Uint8List k) async {
+    assert(m != null);
+    assert(nsec == null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_xchacha20poly1305_ietf_NPUBBYTES,
+        crypto_aead_xchacha20poly1305_ietf_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_xchacha20poly1305_ietf_KEYBYTES,
+        crypto_aead_xchacha20poly1305_ietf_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Map result = await _channel.invokeMethod(
+        'crypto_aead_xchacha20poly1305_ietf_encrypt_detached',
+        {'m': m, 'ad': ad, 'npub': npub, 'k': k});
+    return result.cast<String, Uint8List>();
+  }
+
+  /// Verifies and decrypts a cipher text and mac produced by encrypt detached.
+  static Future<Uint8List> cryptoAeadXchacha20poly1305IetfDecryptDetached(
+      Uint8List nsec,
+      Uint8List c,
+      Uint8List mac,
+      Uint8List ad,
+      Uint8List npub,
+      Uint8List k) async {
+    assert(nsec == null);
+    assert(c != null);
+    assert(mac != null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        mac.length,
+        crypto_aead_xchacha20poly1305_ietf_ABYTES,
+        crypto_aead_xchacha20poly1305_ietf_ABYTES,
+        'mac',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_xchacha20poly1305_ietf_NPUBBYTES,
+        crypto_aead_xchacha20poly1305_ietf_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_xchacha20poly1305_ietf_KEYBYTES,
+        crypto_aead_xchacha20poly1305_ietf_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List m = await _channel.invokeMethod(
+        'crypto_aead_xchacha20poly1305_ietf_decrypt_detached',
+        {'c': c, 'mac': mac, 'ad': ad, 'npub': npub, 'k': k});
+    return m;
+  }
 
   //
   // crypto_auth

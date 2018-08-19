@@ -24,6 +24,12 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
   public void onMethodCall(MethodCall call, Result result) {
     try{
       switch(call.method) {
+        case "crypto_aead_xchacha20poly1305_ietf_encrypt": crypto_aead_xchacha20poly1305_ietf_encrypt(call, result); break;
+        case "crypto_aead_xchacha20poly1305_ietf_decrypt": crypto_aead_xchacha20poly1305_ietf_decrypt(call, result); break;
+        case "crypto_aead_xchacha20poly1305_ietf_encrypt_detached": crypto_aead_xchacha20poly1305_ietf_encrypt_detached(call, result); break;
+        case "crypto_aead_xchacha20poly1305_ietf_decrypt_detached": crypto_aead_xchacha20poly1305_ietf_decrypt_detached(call, result); break;
+        case "crypto_aead_xchacha20poly1305_ietf_keygen": crypto_aead_xchacha20poly1305_ietf_keygen(call, result); break;
+
         case "crypto_auth": crypto_auth(call, result); break;
         case "crypto_auth_verify": crypto_auth_verify(call, result); break;
         case "crypto_auth_keygen": crypto_auth_keygen(call, result); break;
@@ -116,6 +122,36 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
     {
       throw new Exception("result " + ret);
     }
+  }
+
+  private void crypto_aead_xchacha20poly1305_ietf_encrypt(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_xchacha20poly1305_ietf_encrypt not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_aead_xchacha20poly1305_ietf_decrypt(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_xchacha20poly1305_ietf_decrypt not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_aead_xchacha20poly1305_ietf_encrypt_detached(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_xchacha20poly1305_ietf_encrypt_detached not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_aead_xchacha20poly1305_ietf_decrypt_detached(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_xchacha20poly1305_ietf_decrypt_detached not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_aead_xchacha20poly1305_ietf_keygen(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_xchacha20poly1305_ietf_keygen not implemented in libsodium-jni
+    result.notImplemented();
   }
 
   private void crypto_auth(MethodCall call, Result result) throws Exception
