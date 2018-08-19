@@ -61,6 +61,11 @@ This project includes an extensive example app with runnable code samples. Be su
 <img src="https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/develop/example/assets/screenshots/screenshot1.png" width="300">
 
 ## Current issues
-- Some APIs are not available in Android (this needs to be documented).
+- The following APIs are not available on Android:
+  - crypto_aead_xchacha20poly1305
+  - crypto_kdf
+  - crypto_pwhash_str_needs_rehash
+  - crypto_sign streaming APIs
+  - randombytes_buf_deterministic
 - Using flutter_sodium in iOS doesn't work right out of the box. [Manual installation](https://github.com/firstfloorsoftware/flutter_sodium/issues/1#issuecomment-403973858) steps are required.
 - Since Flutter does [not support native binaries](https://github.com/flutter/flutter/issues/7053), a [platform channel](https://flutter.io/platform-channels/) is established to enable native function invocation. One side effect of this approach is that the entire flutter_sodium API is asynchronous. This is great for potential long-running operations such as Argon password hashing, but does not make much sense for other short-running functions.
