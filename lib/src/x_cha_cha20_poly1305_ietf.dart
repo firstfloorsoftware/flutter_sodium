@@ -4,7 +4,7 @@ import 'dart:convert';
 import '../flutter_sodium.dart';
 
 /// The XChaCha20-Poly1305 construction
-class XChaCha20Poly1305 {
+class XChaCha20Poly1305Ietf {
   /// Generates a random key for use with the XChaCha20-Poly1305 construction.
   static Future<Uint8List> generateKey() =>
       Sodium.cryptoAeadXchacha20poly1305IetfKeygen();

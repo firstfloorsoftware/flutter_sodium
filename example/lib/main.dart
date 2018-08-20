@@ -165,33 +165,33 @@ assert(valid);''', () async {
               'Combined mode',
               'The authentication tag is directly appended to the encrypted message.',
               '''// Generate random nonce and key
-var nonce = await XChaCha20Poly1305.generateNonce();
-var key = await XChaCha20Poly1305.generateKey();
+var nonce = await XChaCha20Poly1305Ietf.generateNonce();
+var key = await XChaCha20Poly1305Ietf.generateKey();
 
 // Encrypt
 var msg = 'hello world';
 var data = '123456';
-var ciphertext = await XChaCha20Poly1305.encrypt(msg, data, nonce, key);
+var ciphertext = await XChaCha20Poly1305Ietf.encrypt(msg, data, nonce, key);
 
 print(hex.encode(ciphertext));
 
 // Decrypt
-var decrypted = await XChaCha20Poly1305.decrypt(ciphertext,data, nonce, key);
+var decrypted = await XChaCha20Poly1305Ietf.decrypt(ciphertext,data, nonce, key);
 
 assert(msg == decrypted);''', () async {
             // Generate random nonce and key
-            var nonce = await XChaCha20Poly1305.generateNonce();
-            var key = await XChaCha20Poly1305.generateKey();
+            var nonce = await XChaCha20Poly1305Ietf.generateNonce();
+            var key = await XChaCha20Poly1305Ietf.generateKey();
 
             // Encrypt
             var msg = 'hello world';
             var data = '123456';
             var ciphertext =
-                await XChaCha20Poly1305.encrypt(msg, data, nonce, key);
+                await XChaCha20Poly1305Ietf.encrypt(msg, data, nonce, key);
 
             // Decrypt
             var decrypted =
-                await XChaCha20Poly1305.decrypt(ciphertext, data, nonce, key);
+                await XChaCha20Poly1305Ietf.decrypt(ciphertext, data, nonce, key);
 
             assert(msg == decrypted);
 
@@ -201,33 +201,33 @@ assert(msg == decrypted);''', () async {
               'Detached mode',
               'Returns the encrypted message and authentication tag as seperate entities.',
               '''// Generate random nonce and key
-var nonce = await XChaCha20Poly1305.generateNonce();
-var key = await XChaCha20Poly1305.generateKey();
+var nonce = await XChaCha20Poly1305Ietf.generateNonce();
+var key = await XChaCha20Poly1305Ietf.generateKey();
 
 // Encrypt
 var msg = 'hello world';
 var data = '123456';
-var encrypted = await XChaCha20Poly1305.encryptDetached(msg, data, nonce, key);
+var encrypted = await XChaCha20Poly1305Ietf.encryptDetached(msg, data, nonce, key);
 
 print('cipher: \${encrypted.cipher}');
 print('mac: \${encrypted.mac}');
 
 // Decrypt
-var decrypted = await XChaCha20Poly1305.decryptDetached(encrypted, data, nonce, key);
+var decrypted = await XChaCha20Poly1305Ietf.decryptDetached(encrypted, data, nonce, key);
 
 assert(msg == decrypted);''', () async {
             // Generate random nonce and key
-            var nonce = await XChaCha20Poly1305.generateNonce();
-            var key = await XChaCha20Poly1305.generateKey();
+            var nonce = await XChaCha20Poly1305Ietf.generateNonce();
+            var key = await XChaCha20Poly1305Ietf.generateKey();
 
             // Encrypt
             var msg = 'hello world';
             var data = '123456';
             var encrypted =
-                await XChaCha20Poly1305.encryptDetached(msg, data, nonce, key);
+                await XChaCha20Poly1305Ietf.encryptDetached(msg, data, nonce, key);
                 
             // Decrypt
-            var decrypted = await XChaCha20Poly1305.decryptDetached(
+            var decrypted = await XChaCha20Poly1305Ietf.decryptDetached(
                 encrypted, data, nonce, key);
 
             assert(msg == decrypted);

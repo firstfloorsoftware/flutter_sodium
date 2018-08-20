@@ -19,7 +19,7 @@ export 'src/sealed_box.dart';
 export 'src/secret_box.dart';
 export 'src/session_keys.dart';
 export 'src/short_hash.dart';
-export 'src/x_cha_cha20_poly1305.dart';
+export 'src/x_cha_cha20_poly1305_ietf.dart';
 
 /// Sodium is a modern, easy-to-use software library for encryption, decryption, signatures, password hashing and more.
 ///
