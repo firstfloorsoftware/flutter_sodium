@@ -1,8 +1,13 @@
+## 0.0.6 - August 21, 2018
+* Adds ChaCha20Poly1305, ChaCha20Poly1305Ietf and XChaCha20Poly1305Ietf APIs
+* Adds argument assertions and range checks 
+* Upgrades libsodiumjni dependency to v2.0.1
+
 ## 0.0.5 - August 5, 2018
-* breaking high-level API changes
+* Breaking high-level API changes
   * String operations now default
   * Randombytes renamed to RandomBytes
-* adds CryptoBox, KeyDerivation, KeyExchange and ScalarMult highlevel APIs 
+* Adds CryptoBox, KeyDerivation, KeyExchange and ScalarMult highlevel APIs 
 
 ## 0.0.4 - July 31, 2018
 * No functional changes
