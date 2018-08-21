@@ -24,6 +24,18 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
   public void onMethodCall(MethodCall call, Result result) {
     try{
       switch(call.method) {
+        case "crypto_aead_chacha20poly1305_encrypt": crypto_aead_chacha20poly1305_encrypt(call, result); break;
+        case "crypto_aead_chacha20poly1305_decrypt": crypto_aead_chacha20poly1305_decrypt(call, result); break;
+        case "crypto_aead_chacha20poly1305_encrypt_detached": crypto_aead_chacha20poly1305_encrypt_detached(call, result); break;
+        case "crypto_aead_chacha20poly1305_decrypt_detached": crypto_aead_chacha20poly1305_decrypt_detached(call, result); break;
+        case "crypto_aead_chacha20poly1305_keygen": crypto_aead_chacha20poly1305_keygen(call, result); break;
+
+        case "crypto_aead_chacha20poly1305_ietf_encrypt": crypto_aead_chacha20poly1305_ietf_encrypt(call, result); break;
+        case "crypto_aead_chacha20poly1305_ietf_decrypt": crypto_aead_chacha20poly1305_ietf_decrypt(call, result); break;
+        case "crypto_aead_chacha20poly1305_ietf_encrypt_detached": crypto_aead_chacha20poly1305_ietf_encrypt_detached(call, result); break;
+        case "crypto_aead_chacha20poly1305_ietf_decrypt_detached": crypto_aead_chacha20poly1305_ietf_decrypt_detached(call, result); break;
+        case "crypto_aead_chacha20poly1305_ietf_keygen": crypto_aead_chacha20poly1305_ietf_keygen(call, result); break;
+
         case "crypto_aead_xchacha20poly1305_ietf_encrypt": crypto_aead_xchacha20poly1305_ietf_encrypt(call, result); break;
         case "crypto_aead_xchacha20poly1305_ietf_decrypt": crypto_aead_xchacha20poly1305_ietf_decrypt(call, result); break;
         case "crypto_aead_xchacha20poly1305_ietf_encrypt_detached": crypto_aead_xchacha20poly1305_ietf_encrypt_detached(call, result); break;
@@ -122,6 +134,122 @@ public class FlutterSodiumPlugin implements MethodCallHandler {
     {
       throw new Exception("result " + ret);
     }
+  }
+
+  private void crypto_aead_chacha20poly1305_encrypt(MethodCall call, Result result) throws Exception
+  {
+    byte[] m = call.argument("m");
+    byte[] ad = call.argument("ad");
+    byte[] npub = call.argument("npub");
+    byte[] k = call.argument("k");
+    byte[] c = new byte[m.length + sodium().crypto_aead_chacha20poly1305_abytes()];
+    int[] clen = new int[1];
+    if (ad == null)
+    {
+      ad = new byte[0];
+    }
+
+    requireSuccess(sodium().crypto_aead_chacha20poly1305_encrypt(c, clen, m, m.length, ad, ad.length, new byte[0], npub, k));
+    result.success(c); 
+  }
+
+  private void crypto_aead_chacha20poly1305_decrypt(MethodCall call, Result result) throws Exception
+  {
+    byte[] c = call.argument("c");
+    byte[] ad = call.argument("ad");
+    byte[] npub = call.argument("npub");
+    byte[] k = call.argument("k");
+    byte[] m = new byte[c.length - sodium().crypto_aead_chacha20poly1305_abytes()];
+    int[] mlen = new int[1];
+    if (ad == null)
+    {
+      ad = new byte[0];
+    }
+
+    requireSuccess(sodium().crypto_aead_chacha20poly1305_decrypt(m, mlen, new byte[0], c, c.length, ad, ad.length, npub, k));
+    result.success(m); 
+  }
+
+  private void crypto_aead_chacha20poly1305_encrypt_detached(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_chacha20poly1305_encrypt_detached not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_aead_chacha20poly1305_decrypt_detached(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_chacha20poly1305_decrypt_detached not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_aead_chacha20poly1305_keygen(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_chacha20poly1305_keygen not implemented in libsodium-jni, falling back to randombytes_buf
+    byte[] k = new byte[sodium().crypto_aead_chacha20poly1305_keybytes()];
+    sodium().randombytes_buf(k, k.length);
+    result.success(k);
+  }
+
+  private void crypto_aead_chacha20poly1305_ietf_encrypt(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_chacha20poly1305_ietf_abytes undefined, hard-coded here
+    int crypto_aead_chacha20poly1305_ietf_abytes = 16;
+
+    byte[] m = call.argument("m");
+    byte[] ad = call.argument("ad");
+    byte[] npub = call.argument("npub");
+    byte[] k = call.argument("k");
+    byte[] c = new byte[m.length + crypto_aead_chacha20poly1305_ietf_abytes];
+    int[] clen = new int[1];
+    if (ad == null)
+    {
+      ad = new byte[0];
+    }
+
+    requireSuccess(sodium().crypto_aead_chacha20poly1305_ietf_encrypt(c, clen, m, m.length, ad, ad.length, new byte[0], npub, k));
+    result.success(c); 
+  }
+
+  private void crypto_aead_chacha20poly1305_ietf_decrypt(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_chacha20poly1305_ietf_abytes undefined, hard-coded here
+    int crypto_aead_chacha20poly1305_ietf_abytes = 16;
+
+    byte[] c = call.argument("c");
+    byte[] ad = call.argument("ad");
+    byte[] npub = call.argument("npub");
+    byte[] k = call.argument("k");
+    byte[] m = new byte[c.length - crypto_aead_chacha20poly1305_ietf_abytes];
+    int[] mlen = new int[1];
+    if (ad == null)
+    {
+      ad = new byte[0];
+    }
+
+    requireSuccess(sodium().crypto_aead_chacha20poly1305_ietf_decrypt(m, mlen, new byte[0], c, c.length, ad, ad.length, npub, k));
+    result.success(m); 
+  }
+
+  private void crypto_aead_chacha20poly1305_ietf_encrypt_detached(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_chacha20poly1305_ietf_encrypt_detached not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_aead_chacha20poly1305_ietf_decrypt_detached(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_chacha20poly1305_ietf_decrypt_detached not implemented in libsodium-jni
+    result.notImplemented();
+  }
+
+  private void crypto_aead_chacha20poly1305_ietf_keygen(MethodCall call, Result result) throws Exception
+  {
+    // FIXME: crypto_aead_chacha20poly1305_ietf_keygen not implemented in libsodium-jni, falling back to randombytes_buf
+    // FIXME: crypto_aead_chacha20poly1305_ietf_keybytes undefined, hard-coded here
+    int crypto_aead_chacha20poly1305_ietf_keybytes = 32;
+    byte[] k = new byte[crypto_aead_chacha20poly1305_ietf_keybytes];
+    sodium().randombytes_buf(k, k.length);
+    result.success(k);
   }
 
   private void crypto_aead_xchacha20poly1305_ietf_encrypt(MethodCall call, Result result) throws Exception

@@ -19,6 +19,18 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     }
 
     switch call.method {
+      case "crypto_aead_chacha20poly1305_encrypt": result(crypto_aead_chacha20poly1305_encrypt(call:call))
+      case "crypto_aead_chacha20poly1305_decrypt": result(crypto_aead_chacha20poly1305_decrypt(call:call))
+      case "crypto_aead_chacha20poly1305_encrypt_detached": result(crypto_aead_chacha20poly1305_encrypt_detached(call:call))
+      case "crypto_aead_chacha20poly1305_decrypt_detached": result(crypto_aead_chacha20poly1305_decrypt_detached(call:call))
+      case "crypto_aead_chacha20poly1305_keygen": result(crypto_aead_chacha20poly1305_keygen(call:call))
+
+      case "crypto_aead_chacha20poly1305_ietf_encrypt": result(crypto_aead_chacha20poly1305_ietf_encrypt(call:call))
+      case "crypto_aead_chacha20poly1305_ietf_decrypt": result(crypto_aead_chacha20poly1305_ietf_decrypt(call:call))
+      case "crypto_aead_chacha20poly1305_ietf_encrypt_detached": result(crypto_aead_chacha20poly1305_ietf_encrypt_detached(call:call))
+      case "crypto_aead_chacha20poly1305_ietf_decrypt_detached": result(crypto_aead_chacha20poly1305_ietf_decrypt_detached(call:call))
+      case "crypto_aead_chacha20poly1305_ietf_keygen": result(crypto_aead_chacha20poly1305_ietf_keygen(call:call))
+
       case "crypto_aead_xchacha20poly1305_ietf_encrypt": result(crypto_aead_xchacha20poly1305_ietf_encrypt(call:call))
       case "crypto_aead_xchacha20poly1305_ietf_decrypt": result(crypto_aead_xchacha20poly1305_ietf_decrypt(call:call))
       case "crypto_aead_xchacha20poly1305_ietf_encrypt_detached": result(crypto_aead_xchacha20poly1305_ietf_encrypt_detached(call:call))
@@ -112,6 +124,356 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       return FlutterError.init(code: "Failure", message: "\(function) returns \(ret)", details: nil)
     }
     return nil
+  }
+
+  private func crypto_aead_chacha20poly1305_encrypt(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let m = (args["m"] as! FlutterStandardTypedData).data
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
+    let npub = (args["npub"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var c = Data(count: m.count + flutter_sodium.crypto_aead_chacha20poly1305_abytes())
+    var ret: Int32 = -1
+    
+    if let ad = ad {
+      ret = c.withUnsafeMutableBytes { cPtr in
+        m.withUnsafeBytes { mPtr in
+          ad.withUnsafeBytes { adPtr in
+            npub.withUnsafeBytes { npubPtr in
+              k.withUnsafeBytes { kPtr in
+                flutter_sodium.crypto_aead_chacha20poly1305_encrypt(cPtr, nil, mPtr, CUnsignedLongLong(m.count), adPtr, CUnsignedLongLong(ad.count), nil, npubPtr, kPtr)
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      ret = c.withUnsafeMutableBytes { cPtr in
+        m.withUnsafeBytes { mPtr in
+          npub.withUnsafeBytes { npubPtr in
+            k.withUnsafeBytes { kPtr in
+              flutter_sodium.crypto_aead_chacha20poly1305_encrypt(cPtr, nil, mPtr, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr, kPtr)
+            }
+          }
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+  }
+
+  private func crypto_aead_chacha20poly1305_decrypt(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let c = (args["c"] as! FlutterStandardTypedData).data
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
+    let npub = (args["npub"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var m = Data(count: c.count - flutter_sodium.crypto_aead_chacha20poly1305_abytes())
+    var ret: Int32 = -1
+    
+    if let ad = ad {
+      ret = m.withUnsafeMutableBytes { mPtr in
+        c.withUnsafeBytes { cPtr in
+          ad.withUnsafeBytes { adPtr in
+            npub.withUnsafeBytes { npubPtr in
+              k.withUnsafeBytes { kPtr in
+                flutter_sodium.crypto_aead_chacha20poly1305_decrypt(mPtr, nil, nil, cPtr, CUnsignedLongLong(c.count), adPtr, CUnsignedLongLong(ad.count), npubPtr, kPtr)
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      ret = m.withUnsafeMutableBytes { mPtr in
+        c.withUnsafeBytes { cPtr in
+          npub.withUnsafeBytes { npubPtr in
+            k.withUnsafeBytes { kPtr in
+              flutter_sodium.crypto_aead_chacha20poly1305_decrypt(mPtr, nil, nil, cPtr, CUnsignedLongLong(c.count), nil, 0, npubPtr, kPtr)
+            }
+          }
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+  }
+
+  private func crypto_aead_chacha20poly1305_encrypt_detached(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let m = (args["m"] as! FlutterStandardTypedData).data
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
+    let npub = (args["npub"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var c = Data(count: m.count)
+    var mac = Data(count: flutter_sodium.crypto_aead_chacha20poly1305_abytes())
+    var ret: Int32 = -1
+    
+    if let ad = ad {
+      ret = c.withUnsafeMutableBytes { cPtr in
+        mac.withUnsafeMutableBytes { macPtr in
+          m.withUnsafeBytes { mPtr in
+            ad.withUnsafeBytes { adPtr in
+              npub.withUnsafeBytes { npubPtr in
+                k.withUnsafeBytes { kPtr in
+                  flutter_sodium.crypto_aead_chacha20poly1305_encrypt_detached(cPtr, macPtr, nil, mPtr, CUnsignedLongLong(m.count), adPtr, CUnsignedLongLong(ad.count), nil, npubPtr, kPtr)
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      ret = c.withUnsafeMutableBytes { cPtr in
+        mac.withUnsafeMutableBytes { macPtr in
+          m.withUnsafeBytes { mPtr in
+            npub.withUnsafeBytes { npubPtr in
+              k.withUnsafeBytes { kPtr in
+                flutter_sodium.crypto_aead_chacha20poly1305_encrypt_detached(cPtr, macPtr, nil, mPtr, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr, kPtr)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return error(ret: ret) ?? [
+      "c": FlutterStandardTypedData.init(bytes: c),
+      "mac": FlutterStandardTypedData.init(bytes: mac)
+    ]
+  }
+
+  private func crypto_aead_chacha20poly1305_decrypt_detached(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let c = (args["c"] as! FlutterStandardTypedData).data
+    let mac = (args["mac"] as! FlutterStandardTypedData).data
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
+    let npub = (args["npub"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var m = Data(count: c.count)
+    var ret: Int32 = -1
+    
+    if let ad = ad {
+      ret = m.withUnsafeMutableBytes { mPtr in
+        c.withUnsafeBytes { cPtr in
+          mac.withUnsafeBytes { macPtr in
+            ad.withUnsafeBytes { adPtr in
+              npub.withUnsafeBytes { npubPtr in
+                k.withUnsafeBytes { kPtr in
+                  flutter_sodium.crypto_aead_chacha20poly1305_decrypt_detached(mPtr, nil, cPtr, CUnsignedLongLong(c.count), macPtr, adPtr, CUnsignedLongLong(ad.count), npubPtr, kPtr)
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      ret = m.withUnsafeMutableBytes { mPtr in
+        c.withUnsafeBytes { cPtr in
+          mac.withUnsafeBytes { macPtr in
+            npub.withUnsafeBytes { npubPtr in
+              k.withUnsafeBytes { kPtr in
+                flutter_sodium.crypto_aead_chacha20poly1305_decrypt_detached(mPtr, nil, cPtr, CUnsignedLongLong(c.count), macPtr, nil, 0, npubPtr, kPtr)
+              }
+            }
+          }
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+  }
+
+  private func crypto_aead_chacha20poly1305_keygen(call: FlutterMethodCall) -> Any
+  {
+    var k = Data(count: flutter_sodium.crypto_aead_chacha20poly1305_keybytes())
+    k.withUnsafeMutableBytes { kPtr in
+      flutter_sodium.crypto_aead_chacha20poly1305_keygen(kPtr)
+    }
+    return FlutterStandardTypedData.init(bytes: k)
+  }
+
+  private func crypto_aead_chacha20poly1305_ietf_encrypt(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let m = (args["m"] as! FlutterStandardTypedData).data
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
+    let npub = (args["npub"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var c = Data(count: m.count + flutter_sodium.crypto_aead_chacha20poly1305_ietf_abytes())
+    var ret: Int32 = -1
+    
+    if let ad = ad {
+      ret = c.withUnsafeMutableBytes { cPtr in
+        m.withUnsafeBytes { mPtr in
+          ad.withUnsafeBytes { adPtr in
+            npub.withUnsafeBytes { npubPtr in
+              k.withUnsafeBytes { kPtr in
+                flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt(cPtr, nil, mPtr, CUnsignedLongLong(m.count), adPtr, CUnsignedLongLong(ad.count), nil, npubPtr, kPtr)
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      ret = c.withUnsafeMutableBytes { cPtr in
+        m.withUnsafeBytes { mPtr in
+          npub.withUnsafeBytes { npubPtr in
+            k.withUnsafeBytes { kPtr in
+              flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt(cPtr, nil, mPtr, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr, kPtr)
+            }
+          }
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+  }
+
+  private func crypto_aead_chacha20poly1305_ietf_decrypt(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let c = (args["c"] as! FlutterStandardTypedData).data
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
+    let npub = (args["npub"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var m = Data(count: c.count - flutter_sodium.crypto_aead_chacha20poly1305_ietf_abytes())
+    var ret: Int32 = -1
+    
+    if let ad = ad {
+      ret = m.withUnsafeMutableBytes { mPtr in
+        c.withUnsafeBytes { cPtr in
+          ad.withUnsafeBytes { adPtr in
+            npub.withUnsafeBytes { npubPtr in
+              k.withUnsafeBytes { kPtr in
+                flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt(mPtr, nil, nil, cPtr, CUnsignedLongLong(c.count), adPtr, CUnsignedLongLong(ad.count), npubPtr, kPtr)
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      ret = m.withUnsafeMutableBytes { mPtr in
+        c.withUnsafeBytes { cPtr in
+          npub.withUnsafeBytes { npubPtr in
+            k.withUnsafeBytes { kPtr in
+              flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt(mPtr, nil, nil, cPtr, CUnsignedLongLong(c.count), nil, 0, npubPtr, kPtr)
+            }
+          }
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+  }
+
+  private func crypto_aead_chacha20poly1305_ietf_encrypt_detached(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let m = (args["m"] as! FlutterStandardTypedData).data
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
+    let npub = (args["npub"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var c = Data(count: m.count)
+    var mac = Data(count: flutter_sodium.crypto_aead_chacha20poly1305_ietf_abytes())
+    var ret: Int32 = -1
+    
+    if let ad = ad {
+      ret = c.withUnsafeMutableBytes { cPtr in
+        mac.withUnsafeMutableBytes { macPtr in
+          m.withUnsafeBytes { mPtr in
+            ad.withUnsafeBytes { adPtr in
+              npub.withUnsafeBytes { npubPtr in
+                k.withUnsafeBytes { kPtr in
+                  flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(cPtr, macPtr, nil, mPtr, CUnsignedLongLong(m.count), adPtr, CUnsignedLongLong(ad.count), nil, npubPtr, kPtr)
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      ret = c.withUnsafeMutableBytes { cPtr in
+        mac.withUnsafeMutableBytes { macPtr in
+          m.withUnsafeBytes { mPtr in
+            npub.withUnsafeBytes { npubPtr in
+              k.withUnsafeBytes { kPtr in
+                flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(cPtr, macPtr, nil, mPtr, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr, kPtr)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return error(ret: ret) ?? [
+      "c": FlutterStandardTypedData.init(bytes: c),
+      "mac": FlutterStandardTypedData.init(bytes: mac)
+    ]
+  }
+
+  private func crypto_aead_chacha20poly1305_ietf_decrypt_detached(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let c = (args["c"] as! FlutterStandardTypedData).data
+    let mac = (args["mac"] as! FlutterStandardTypedData).data
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
+    let npub = (args["npub"] as! FlutterStandardTypedData).data
+    let k = (args["k"] as! FlutterStandardTypedData).data
+
+    var m = Data(count: c.count)
+    var ret: Int32 = -1
+    
+    if let ad = ad {
+      ret = m.withUnsafeMutableBytes { mPtr in
+        c.withUnsafeBytes { cPtr in
+          mac.withUnsafeBytes { macPtr in
+            ad.withUnsafeBytes { adPtr in
+              npub.withUnsafeBytes { npubPtr in
+                k.withUnsafeBytes { kPtr in
+                  flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt_detached(mPtr, nil, cPtr, CUnsignedLongLong(c.count), macPtr, adPtr, CUnsignedLongLong(ad.count), npubPtr, kPtr)
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      ret = m.withUnsafeMutableBytes { mPtr in
+        c.withUnsafeBytes { cPtr in
+          mac.withUnsafeBytes { macPtr in
+            npub.withUnsafeBytes { npubPtr in
+              k.withUnsafeBytes { kPtr in
+                flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt_detached(mPtr, nil, cPtr, CUnsignedLongLong(c.count), macPtr, nil, 0, npubPtr, kPtr)
+              }
+            }
+          }
+        }
+      }
+    }
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+  }
+
+  private func crypto_aead_chacha20poly1305_ietf_keygen(call: FlutterMethodCall) -> Any
+  {
+    var k = Data(count: flutter_sodium.crypto_aead_chacha20poly1305_ietf_keybytes())
+    k.withUnsafeMutableBytes { kPtr in
+      flutter_sodium.crypto_aead_chacha20poly1305_ietf_keygen(kPtr)
+    }
+    return FlutterStandardTypedData.init(bytes: k)
   }
 
   private func crypto_aead_xchacha20poly1305_ietf_encrypt(call: FlutterMethodCall) -> Any

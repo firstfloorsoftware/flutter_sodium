@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'src/constants.dart';
+export 'src/cha_cha20_poly1305.dart';
+export 'src/cha_cha20_poly1305_ietf.dart';
 export 'src/constants.dart';
 export 'src/crypto_auth.dart';
 export 'src/crypto_box.dart';
@@ -29,7 +31,269 @@ class Sodium {
   static const MethodChannel _channel = const MethodChannel('flutter_sodium');
 
   //
-  // crypto_aead
+  // crypto_aead_chacha20poly1305
+  //
+  /// Encrypts a message with optional additional data, a key and a nonce.
+  static Future<Uint8List> cryptoAeadChacha20poly1305Encrypt(Uint8List m,
+      Uint8List ad, Uint8List nsec, Uint8List npub, Uint8List k) async {
+    assert(m != null);
+    assert(nsec == null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_chacha20poly1305_NPUBBYTES,
+        crypto_aead_chacha20poly1305_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_chacha20poly1305_KEYBYTES,
+        crypto_aead_chacha20poly1305_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List c = await _channel.invokeMethod(
+        'crypto_aead_chacha20poly1305_encrypt',
+        {'m': m, 'ad': ad, 'npub': npub, 'k': k});
+    return c;
+  }
+
+  /// Verifies and decrypts a cipher text produced by encrypt.
+  static Future<Uint8List> cryptoAeadChacha20poly1305Decrypt(
+      Uint8List nsec,
+      Uint8List c,
+      Uint8List ad,
+      Uint8List npub,
+      Uint8List k) async {
+    assert(nsec == null);
+    assert(c != null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_chacha20poly1305_NPUBBYTES,
+        crypto_aead_chacha20poly1305_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_chacha20poly1305_KEYBYTES,
+        crypto_aead_chacha20poly1305_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List m = await _channel.invokeMethod(
+        'crypto_aead_chacha20poly1305_decrypt',
+        {'c': c, 'ad': ad, 'npub': npub, 'k': k});
+    return m;
+  }
+
+  /// Encrypts a message with optional additional data, a key and a nonce. Returns a ciphertext and mac.
+  static Future<Map<String, Uint8List>>
+      cryptoAeadChacha20poly1305EncryptDetached(Uint8List m, Uint8List ad,
+          Uint8List nsec, Uint8List npub, Uint8List k) async {
+    assert(m != null);
+    assert(nsec == null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_chacha20poly1305_NPUBBYTES,
+        crypto_aead_chacha20poly1305_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_chacha20poly1305_KEYBYTES,
+        crypto_aead_chacha20poly1305_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Map result = await _channel.invokeMethod(
+        'crypto_aead_chacha20poly1305_encrypt_detached',
+        {'m': m, 'ad': ad, 'npub': npub, 'k': k});
+    return result.cast<String, Uint8List>();
+  }
+
+  /// Verifies and decrypts a cipher text and mac produced by encrypt detached.
+  static Future<Uint8List> cryptoAeadChacha20poly1305DecryptDetached(
+      Uint8List nsec,
+      Uint8List c,
+      Uint8List mac,
+      Uint8List ad,
+      Uint8List npub,
+      Uint8List k) async {
+    assert(nsec == null);
+    assert(c != null);
+    assert(mac != null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        mac.length,
+        crypto_aead_chacha20poly1305_ABYTES,
+        crypto_aead_chacha20poly1305_ABYTES,
+        'mac',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_chacha20poly1305_NPUBBYTES,
+        crypto_aead_chacha20poly1305_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_chacha20poly1305_KEYBYTES,
+        crypto_aead_chacha20poly1305_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List m = await _channel.invokeMethod(
+        'crypto_aead_chacha20poly1305_decrypt_detached',
+        {'c': c, 'mac': mac, 'ad': ad, 'npub': npub, 'k': k});
+    return m;
+  }
+
+  /// Generates a random key.
+  static Future<Uint8List> cryptoAeadChacha20poly1305Keygen() async {
+    final Uint8List k = await _channel
+        .invokeMethod('crypto_aead_chacha20poly1305_keygen');
+    return k;
+  }
+
+  //
+  // crypto_aead_chacha20poly1305_ietf
+  //
+  /// Encrypts a message with optional additional data, a key and a nonce.
+  static Future<Uint8List> cryptoAeadChacha20poly1305IetfEncrypt(Uint8List m,
+      Uint8List ad, Uint8List nsec, Uint8List npub, Uint8List k) async {
+    assert(m != null);
+    assert(nsec == null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_chacha20poly1305_ietf_NPUBBYTES,
+        crypto_aead_chacha20poly1305_ietf_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_chacha20poly1305_ietf_KEYBYTES,
+        crypto_aead_chacha20poly1305_ietf_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List c = await _channel.invokeMethod(
+        'crypto_aead_chacha20poly1305_ietf_encrypt',
+        {'m': m, 'ad': ad, 'npub': npub, 'k': k});
+    return c;
+  }
+
+  /// Verifies and decrypts a cipher text produced by encrypt.
+  static Future<Uint8List> cryptoAeadChacha20poly1305IetfDecrypt(
+      Uint8List nsec,
+      Uint8List c,
+      Uint8List ad,
+      Uint8List npub,
+      Uint8List k) async {
+    assert(nsec == null);
+    assert(c != null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_chacha20poly1305_ietf_NPUBBYTES,
+        crypto_aead_chacha20poly1305_ietf_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_chacha20poly1305_ietf_KEYBYTES,
+        crypto_aead_chacha20poly1305_ietf_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List m = await _channel.invokeMethod(
+        'crypto_aead_chacha20poly1305_ietf_decrypt',
+        {'c': c, 'ad': ad, 'npub': npub, 'k': k});
+    return m;
+  }
+
+  /// Encrypts a message with optional additional data, a key and a nonce. Returns a ciphertext and mac.
+  static Future<Map<String, Uint8List>>
+      cryptoAeadChacha20poly1305IetfEncryptDetached(Uint8List m, Uint8List ad,
+          Uint8List nsec, Uint8List npub, Uint8List k) async {
+    assert(m != null);
+    assert(nsec == null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_chacha20poly1305_ietf_NPUBBYTES,
+        crypto_aead_chacha20poly1305_ietf_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_chacha20poly1305_ietf_KEYBYTES,
+        crypto_aead_chacha20poly1305_ietf_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Map result = await _channel.invokeMethod(
+        'crypto_aead_chacha20poly1305_ietf_encrypt_detached',
+        {'m': m, 'ad': ad, 'npub': npub, 'k': k});
+    return result.cast<String, Uint8List>();
+  }
+
+  /// Verifies and decrypts a cipher text and mac produced by encrypt detached.
+  static Future<Uint8List> cryptoAeadChacha20poly1305IetfDecryptDetached(
+      Uint8List nsec,
+      Uint8List c,
+      Uint8List mac,
+      Uint8List ad,
+      Uint8List npub,
+      Uint8List k) async {
+    assert(nsec == null);
+    assert(c != null);
+    assert(mac != null);
+    assert(npub != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        mac.length,
+        crypto_aead_chacha20poly1305_ietf_ABYTES,
+        crypto_aead_chacha20poly1305_ietf_ABYTES,
+        'mac',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        npub.length,
+        crypto_aead_chacha20poly1305_ietf_NPUBBYTES,
+        crypto_aead_chacha20poly1305_ietf_NPUBBYTES,
+        'npub',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_aead_chacha20poly1305_ietf_KEYBYTES,
+        crypto_aead_chacha20poly1305_ietf_KEYBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List m = await _channel.invokeMethod(
+        'crypto_aead_chacha20poly1305_ietf_decrypt_detached',
+        {'c': c, 'mac': mac, 'ad': ad, 'npub': npub, 'k': k});
+    return m;
+  }
+
+  /// Generates a random key.
+  static Future<Uint8List> cryptoAeadChacha20poly1305IetfKeygen() async {
+    final Uint8List k = await _channel
+        .invokeMethod('crypto_aead_chacha20poly1305_ietf_keygen');
+    return k;
+  }
+
+  //
+  // crypto_aead_xchacha20poly1305_ietf
   //
   /// Encrypts a message with optional additional data, a key and a nonce.
   static Future<Uint8List> cryptoAeadXchacha20poly1305IetfEncrypt(Uint8List m,
@@ -85,13 +349,6 @@ class Sodium {
         'crypto_aead_xchacha20poly1305_ietf_decrypt',
         {'c': c, 'ad': ad, 'npub': npub, 'k': k});
     return m;
-  }
-
-  /// Generates a random key.
-  static Future<Uint8List> cryptoAeadXchacha20poly1305IetfKeygen() async {
-    final Uint8List k = await _channel
-        .invokeMethod('crypto_aead_xchacha20poly1305_ietf_keygen');
-    return k;
   }
 
   /// Encrypts a message with optional additional data, a key and a nonce. Returns a ciphertext and mac.
@@ -157,6 +414,13 @@ class Sodium {
         'crypto_aead_xchacha20poly1305_ietf_decrypt_detached',
         {'c': c, 'mac': mac, 'ad': ad, 'npub': npub, 'k': k});
     return m;
+  }
+
+  /// Generates a random key.
+  static Future<Uint8List> cryptoAeadXchacha20poly1305IetfKeygen() async {
+    final Uint8List k = await _channel
+        .invokeMethod('crypto_aead_xchacha20poly1305_ietf_keygen');
+    return k;
   }
 
   //

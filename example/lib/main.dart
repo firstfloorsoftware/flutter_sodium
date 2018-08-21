@@ -156,7 +156,91 @@ assert(valid);''', () async {
             return hex.encode(tag);
           })
         ]),
-    Example('AEAD, XChaCha20-Poly1305',
+    Example('Original ChaCha20-Poly1305',
+        description: 'Authenticated Encryption with Additional Data.',
+        docUrl:
+            'https://download.libsodium.org/doc/secret-key_cryptography/original_chacha20-poly1305_construction.html',
+        samples: [
+          Sample(
+              'Combined mode',
+              'The authentication tag is directly appended to the encrypted message.',
+              '''// Generate random nonce and key
+var nonce = await ChaCha20Poly1305.generateNonce();
+var key = await ChaCha20Poly1305.generateKey();
+
+// Encrypt
+var msg = 'hello world';
+var data = '123456';
+var ciphertext = await ChaCha20Poly1305.encrypt(msg, data, nonce, key);
+
+print(hex.encode(ciphertext));
+
+// Decrypt
+var decrypted = await ChaCha20Poly1305.decrypt(ciphertext,data, nonce, key);
+
+assert(msg == decrypted);''', () async {
+            // Generate random nonce and key
+            var nonce = await ChaCha20Poly1305.generateNonce();
+            var key = await ChaCha20Poly1305.generateKey();
+
+            // Encrypt
+            var msg = 'hello world';
+            var data = '123456';
+            var ciphertext =
+                await ChaCha20Poly1305.encrypt(msg, data, nonce, key);
+
+            // Decrypt
+            var decrypted = await ChaCha20Poly1305.decrypt(
+                ciphertext, data, nonce, key);
+
+            assert(msg == decrypted);
+
+            return hex.encode(ciphertext);
+          })
+        ]),
+    Example('IETF ChaCha20-Poly1305',
+        description: 'Authenticated Encryption with Additional Data.',
+        docUrl:
+            'https://download.libsodium.org/doc/secret-key_cryptography/ietf_chacha20-poly1305_construction.html',
+        samples: [
+          Sample(
+              'Combined mode',
+              'The authentication tag is directly appended to the encrypted message.',
+              '''// Generate random nonce and key
+var nonce = await ChaCha20Poly1305Ietf.generateNonce();
+var key = await ChaCha20Poly1305Ietf.generateKey();
+
+// Encrypt
+var msg = 'hello world';
+var data = '123456';
+var ciphertext = await ChaCha20Poly1305Ietf.encrypt(msg, data, nonce, key);
+
+print(hex.encode(ciphertext));
+
+// Decrypt
+var decrypted = await ChaCha20Poly1305Ietf.decrypt(ciphertext,data, nonce, key);
+
+assert(msg == decrypted);''', () async {
+            // Generate random nonce and key
+            var nonce = await ChaCha20Poly1305Ietf.generateNonce();
+            var key = await ChaCha20Poly1305Ietf.generateKey();
+
+            // Encrypt
+            var msg = 'hello world';
+            var data = '123456';
+            var ciphertext =
+                await ChaCha20Poly1305Ietf.encrypt(msg, data, nonce, key);
+
+            // Decrypt
+            var decrypted = await ChaCha20Poly1305Ietf.decrypt(
+                ciphertext, data, nonce, key);
+
+            assert(msg == decrypted);
+
+            return hex.encode(ciphertext);
+          })
+        ]),
+    Example('XChaCha20-Poly1305',
         description: 'Authenticated Encryption with Additional Data.',
         docUrl:
             'https://download.libsodium.org/doc/secret-key_cryptography/xchacha20-poly1305_construction.html',
@@ -190,8 +274,8 @@ assert(msg == decrypted);''', () async {
                 await XChaCha20Poly1305Ietf.encrypt(msg, data, nonce, key);
 
             // Decrypt
-            var decrypted =
-                await XChaCha20Poly1305Ietf.decrypt(ciphertext, data, nonce, key);
+            var decrypted = await XChaCha20Poly1305Ietf.decrypt(
+                ciphertext, data, nonce, key);
 
             assert(msg == decrypted);
 
@@ -223,9 +307,9 @@ assert(msg == decrypted);''', () async {
             // Encrypt
             var msg = 'hello world';
             var data = '123456';
-            var encrypted =
-                await XChaCha20Poly1305Ietf.encryptDetached(msg, data, nonce, key);
-                
+            var encrypted = await XChaCha20Poly1305Ietf.encryptDetached(
+                msg, data, nonce, key);
+
             // Decrypt
             var decrypted = await XChaCha20Poly1305Ietf.decryptDetached(
                 encrypted, data, nonce, key);
