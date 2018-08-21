@@ -60,12 +60,8 @@ class Sodium {
   }
 
   /// Verifies and decrypts a cipher text produced by encrypt.
-  static Future<Uint8List> cryptoAeadChacha20poly1305Decrypt(
-      Uint8List nsec,
-      Uint8List c,
-      Uint8List ad,
-      Uint8List npub,
-      Uint8List k) async {
+  static Future<Uint8List> cryptoAeadChacha20poly1305Decrypt(Uint8List nsec,
+      Uint8List c, Uint8List ad, Uint8List npub, Uint8List k) async {
     assert(nsec == null);
     assert(c != null);
     assert(npub != null);
@@ -156,8 +152,8 @@ class Sodium {
 
   /// Generates a random key.
   static Future<Uint8List> cryptoAeadChacha20poly1305Keygen() async {
-    final Uint8List k = await _channel
-        .invokeMethod('crypto_aead_chacha20poly1305_keygen');
+    final Uint8List k =
+        await _channel.invokeMethod('crypto_aead_chacha20poly1305_keygen');
     return k;
   }
 
@@ -191,12 +187,8 @@ class Sodium {
   }
 
   /// Verifies and decrypts a cipher text produced by encrypt.
-  static Future<Uint8List> cryptoAeadChacha20poly1305IetfDecrypt(
-      Uint8List nsec,
-      Uint8List c,
-      Uint8List ad,
-      Uint8List npub,
-      Uint8List k) async {
+  static Future<Uint8List> cryptoAeadChacha20poly1305IetfDecrypt(Uint8List nsec,
+      Uint8List c, Uint8List ad, Uint8List npub, Uint8List k) async {
     assert(nsec == null);
     assert(c != null);
     assert(npub != null);
@@ -287,8 +279,8 @@ class Sodium {
 
   /// Generates a random key.
   static Future<Uint8List> cryptoAeadChacha20poly1305IetfKeygen() async {
-    final Uint8List k = await _channel
-        .invokeMethod('crypto_aead_chacha20poly1305_ietf_keygen');
+    final Uint8List k =
+        await _channel.invokeMethod('crypto_aead_chacha20poly1305_ietf_keygen');
     return k;
   }
 
