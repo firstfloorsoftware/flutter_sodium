@@ -4,7 +4,7 @@ With flutter_sodium you get access to the modern, easy-to-use [libsodium](https:
 
 ## API coverage
 At this point in time flutter_sodium implements the following high-level libsodium APIs:
-- crypto_aead_xchacha20poly1305
+- crypto_aead
 - crypto_auth
 - crypto_box
 - crypto_generichash
@@ -62,6 +62,7 @@ This project includes an extensive example app with runnable code samples. Be su
 
 ## Current issues
 - The following APIs are not available on Android:
+  - detached mode of both original and ietf variants of crypto_aead_chacha20poly1305
   - crypto_aead_xchacha20poly1305
   - crypto_kdf
   - crypto_pwhash_str_needs_rehash
