@@ -3,7 +3,7 @@
 With flutter_sodium you get access to the modern, easy-to-use [libsodium](https://download.libsodium.org/doc/) crypto library in your [Flutter](https://flutter.io) apps. One set of crypto APIs supporting both Android and iOS.
 
 ## API coverage
-At this point in time flutter_sodium implements the following high-level libsodium APIs:
+The flutter_sodium plugin implements the following libsodium APIs *):
 - crypto_aead
 - crypto_auth
 - crypto_box
@@ -18,6 +18,8 @@ At this point in time flutter_sodium implements the following high-level libsodi
 - crypto_sign
 - randombytes
 - sodium_version
+
+*) Some APIs are not available on Android. See [this issue](https://github.com/firstfloorsoftware/flutter_sodium/issues/7) for details.
 
 ## Dart APIs
 The plugin includes a core API that maps native libsodium functions 1:1 to Dart equivalents. The core API is available in the class [`Sodium`](https://github.com/firstfloorsoftware/flutter_sodium/blob/master/lib/flutter_sodium.dart). Dart naming conventions are used for core API function names. A native libsodium function such as `crypto_pwhash_str`, is available in flutter as `Sodium.cryptoPwhashStr`.
