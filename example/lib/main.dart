@@ -48,6 +48,19 @@ print(hex.encode(buffer));''', () async {
             return hex.encode(buffer);
           })
         ]),
+    Example('Version',
+        description: 'Provides libsodium version info.',
+        docUrl: 'https://download.libsodium.org/doc/',
+        samples: [
+          Sample(
+              'Usage',
+              'Retrieves the version of the loaded libsodium library',
+              '''final version = await Sodium.sodiumVersionString();
+print(version);''', () async {
+            final version = await Sodium.sodiumVersionString();
+            return version;
+          })
+        ]),
     Example('Secret-key cryptography', isHeader: true),
     Example('Authenticated encryption',
         description: 'Secret-key encryption and verification',
@@ -190,8 +203,8 @@ assert(msg == decrypted);''', () async {
                 await ChaCha20Poly1305.encrypt(msg, data, nonce, key);
 
             // Decrypt
-            var decrypted = await ChaCha20Poly1305.decrypt(
-                ciphertext, data, nonce, key);
+            var decrypted =
+                await ChaCha20Poly1305.decrypt(ciphertext, data, nonce, key);
 
             assert(msg == decrypted);
 
