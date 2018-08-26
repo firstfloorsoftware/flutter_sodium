@@ -31,6 +31,10 @@ final valid = await PasswordHash.verifyStorage(str, password);
 assert(valid);
 ```
 
+This project includes an extensive example app with runnable code samples. Be sure to check it out!
+
+<img src="https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/develop/example/assets/screenshots/screenshot1.png" width="300">
+
 ## API coverage
 The flutter_sodium plugin implements the following libsodium APIs *):
 - crypto_aead
@@ -55,15 +59,10 @@ The plugin includes a core API that maps native libsodium functions 1:1 to Dart 
 
 Also included in flutter_sodium is a high-level, opinionated API providing access to libsodium in a Dart friendly manner. The various functions are available in separate Dart classes. Password hashing for example is available in the `PasswordHash` class. The high-level API depends on the core API to get things done.
 
-### Threading
-The flutter_sodium APIs support both running on the UI thread and in a background thread. Most crypto tasks can safely run on the UI thread, some tasks take considerable time to execute (most notable crypto_pwhash_* ), and will run on a background thread by default. All methods of the core API includes an optional ```useBackgroundThread``` argument to switch from UI to background thread or vice versa.
+## Threading
+The flutter_sodium APIs support both running on the UI thread and in a background thread. Most crypto tasks can safely run on the UI thread, some tasks take considerable time to execute (most notable crypto_pwhash_* ), and will run on a background thread by default. All methods of the core API includes an optional ```useBackgroundThread``` argument to switch from UI to background thread or vice versa. Background execution is implemented using ```AsyncTask`` in Android, and ```DispatchQueue``` in iOS.
 
 Please note that the entire API is asynchronous. Even when a crypto task is executed on the UI thread, the method returns an async ```Future```.
-
-## Example app
-This project includes an extensive example app with runnable code samples. Be sure to check it out!
-
-<img src="https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/develop/example/assets/screenshots/screenshot1.png" width="300">
 
 ## Current issues
 - Some APIs are not available on Android. An issue has been created with the [complete list](https://github.com/firstfloorsoftware/flutter_sodium/issues/7).
