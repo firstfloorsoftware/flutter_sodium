@@ -742,8 +742,10 @@ assert(valid);
         appBar: new AppBar(
           title: new Text("Flutter Sodium"),
         ),
-        body: ListView(
-            children:
-                _examples.map((e) => _buildListTile(context, e)).toList()));
+        body: SafeArea(
+            child: ListView(
+                children: _examples
+                    .map((e) => _buildListTile(context, e))
+                    .toList())));
   }
 }

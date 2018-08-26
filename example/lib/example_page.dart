@@ -38,11 +38,12 @@ class ExamplePage extends StatelessWidget {
         appBar: AppBar(
           title: Text(_example.title),
         ),
-        body: SingleChildScrollView(
-            child: Container(
-                padding: EdgeInsets.all(15.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: children))));
+        body: SafeArea(
+            child: SingleChildScrollView(
+                child: Container(
+                    padding: EdgeInsets.all(15.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: children)))));
   }
 }
