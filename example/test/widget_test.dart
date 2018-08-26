@@ -18,8 +18,10 @@ void main() {
   group('CryptoAuth', () {
     test('generateKey', () async {
       await CryptoAuth.generateKey();
-      expect(
-          log, <Matcher>[isMethodCall('crypto_auth_keygen', arguments: null)]);
+      expect(log, <Matcher>[
+        isMethodCall('crypto_auth_keygen',
+            arguments: <String, dynamic>{'bgThread': false})
+      ]);
     });
 
     test('compute', () async {
@@ -27,18 +29,21 @@ void main() {
       expect(log, <Matcher>[
         isMethodCall('crypto_auth', arguments: <String, dynamic>{
           'in': utf8.encode('hello world'),
-          'k': new Uint8List(32)
+          'k': new Uint8List(32),
+          'bgThread': false
         })
       ]);
     });
 
     test('verify', () async {
-      await CryptoAuth.verify(new Uint8List(32), 'hello world', new Uint8List(32));
+      await CryptoAuth.verify(
+          new Uint8List(32), 'hello world', new Uint8List(32));
       expect(log, <Matcher>[
         isMethodCall('crypto_auth_verify', arguments: <String, dynamic>{
           'h': new Uint8List(32),
           'in': utf8.encode('hello world'),
-          'k': new Uint8List(32)
+          'k': new Uint8List(32),
+          'bgThread': false
         })
       ]);
     });
@@ -64,25 +69,29 @@ void main() {
 
     test('verify does not accept null tag', () async {
       expect(
-          () async => await CryptoAuth.verify(null, 'hello world', new Uint8List(32)),
+          () async =>
+              await CryptoAuth.verify(null, 'hello world', new Uint8List(32)),
           throwsAssertionError);
     });
 
     test('verify does not accept null value', () async {
       expect(
-          () async => await CryptoAuth.verify(new Uint8List(32), null, new Uint8List(32)),
+          () async => await CryptoAuth.verify(
+              new Uint8List(32), null, new Uint8List(32)),
           throwsAssertionError);
     });
 
     test('verify does not accept null key', () async {
       expect(
-          () async => await CryptoAuth.verify(new Uint8List(32), 'hello world', null),
+          () async =>
+              await CryptoAuth.verify(new Uint8List(32), 'hello world', null),
           throwsAssertionError);
     });
 
     test('verify does not accept tag of invalid length', () async {
       expect(
-          () async => await CryptoAuth.verify(new Uint8List(1), 'hello world', new Uint8List(32)),
+          () async => await CryptoAuth.verify(
+              new Uint8List(1), 'hello world', new Uint8List(32)),
           throwsA(allOf(
               isRangeError,
               predicate((e) =>
@@ -92,7 +101,8 @@ void main() {
 
     test('verify does not accept key of invalid length', () async {
       expect(
-          () async => await CryptoAuth.verify(new Uint8List(32), 'hello world', new Uint8List(1)),
+          () async => await CryptoAuth.verify(
+              new Uint8List(32), 'hello world', new Uint8List(1)),
           throwsA(allOf(
               isRangeError,
               predicate((e) =>
@@ -106,21 +116,23 @@ void main() {
       await RandomBytes.buffer(16);
       expect(log, <Matcher>[
         isMethodCall('randombytes_buf',
-            arguments: <String, dynamic>{'size': 16})
+            arguments: <String, dynamic>{'size': 16, 'bgThread': false})
       ]);
     });
 
     test('random', () async {
       await RandomBytes.random();
-      expect(
-          log, <Matcher>[isMethodCall('randombytes_random', arguments: null)]);
+      expect(log, <Matcher>[
+        isMethodCall('randombytes_random',
+            arguments: <String, dynamic>{'bgThread': false})
+      ]);
     });
 
     test('uniform', () async {
       await RandomBytes.uniform(16);
       expect(log, <Matcher>[
         isMethodCall('randombytes_uniform',
-            arguments: <String, dynamic>{'upper_bound': 16})
+            arguments: <String, dynamic>{'upper_bound': 16, 'bgThread': false})
       ]);
     });
   });
