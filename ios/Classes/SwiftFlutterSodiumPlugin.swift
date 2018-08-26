@@ -17,104 +17,122 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       result(FlutterError.init(code: "Failure", message: "Sodium failed to initialize", details: nil))
       return
     }
+    let args = call.arguments as! NSDictionary
+    if (args["bgThread"] as? Bool == true) {
+      // run on background thread
+      DispatchQueue.global(qos: .background).async {
+        let r = self.execute(call)
 
+        DispatchQueue.main.async {
+          result(r)
+        }
+      }
+    }
+    else {
+      // run on UI thread
+      result(execute(call))
+    }
+  }
+
+  private func execute(_ call: FlutterMethodCall) -> Any
+  {
     switch call.method {
-      case "crypto_aead_chacha20poly1305_encrypt": result(crypto_aead_chacha20poly1305_encrypt(call:call))
-      case "crypto_aead_chacha20poly1305_decrypt": result(crypto_aead_chacha20poly1305_decrypt(call:call))
-      case "crypto_aead_chacha20poly1305_encrypt_detached": result(crypto_aead_chacha20poly1305_encrypt_detached(call:call))
-      case "crypto_aead_chacha20poly1305_decrypt_detached": result(crypto_aead_chacha20poly1305_decrypt_detached(call:call))
-      case "crypto_aead_chacha20poly1305_keygen": result(crypto_aead_chacha20poly1305_keygen(call:call))
+      case "crypto_aead_chacha20poly1305_encrypt": return crypto_aead_chacha20poly1305_encrypt(call:call)
+      case "crypto_aead_chacha20poly1305_decrypt": return crypto_aead_chacha20poly1305_decrypt(call:call)
+      case "crypto_aead_chacha20poly1305_encrypt_detached": return crypto_aead_chacha20poly1305_encrypt_detached(call:call)
+      case "crypto_aead_chacha20poly1305_decrypt_detached": return crypto_aead_chacha20poly1305_decrypt_detached(call:call)
+      case "crypto_aead_chacha20poly1305_keygen": return crypto_aead_chacha20poly1305_keygen(call:call)
 
-      case "crypto_aead_chacha20poly1305_ietf_encrypt": result(crypto_aead_chacha20poly1305_ietf_encrypt(call:call))
-      case "crypto_aead_chacha20poly1305_ietf_decrypt": result(crypto_aead_chacha20poly1305_ietf_decrypt(call:call))
-      case "crypto_aead_chacha20poly1305_ietf_encrypt_detached": result(crypto_aead_chacha20poly1305_ietf_encrypt_detached(call:call))
-      case "crypto_aead_chacha20poly1305_ietf_decrypt_detached": result(crypto_aead_chacha20poly1305_ietf_decrypt_detached(call:call))
-      case "crypto_aead_chacha20poly1305_ietf_keygen": result(crypto_aead_chacha20poly1305_ietf_keygen(call:call))
+      case "crypto_aead_chacha20poly1305_ietf_encrypt": return crypto_aead_chacha20poly1305_ietf_encrypt(call:call)
+      case "crypto_aead_chacha20poly1305_ietf_decrypt": return crypto_aead_chacha20poly1305_ietf_decrypt(call:call)
+      case "crypto_aead_chacha20poly1305_ietf_encrypt_detached": return crypto_aead_chacha20poly1305_ietf_encrypt_detached(call:call)
+      case "crypto_aead_chacha20poly1305_ietf_decrypt_detached": return crypto_aead_chacha20poly1305_ietf_decrypt_detached(call:call)
+      case "crypto_aead_chacha20poly1305_ietf_keygen": return crypto_aead_chacha20poly1305_ietf_keygen(call:call)
 
-      case "crypto_aead_xchacha20poly1305_ietf_encrypt": result(crypto_aead_xchacha20poly1305_ietf_encrypt(call:call))
-      case "crypto_aead_xchacha20poly1305_ietf_decrypt": result(crypto_aead_xchacha20poly1305_ietf_decrypt(call:call))
-      case "crypto_aead_xchacha20poly1305_ietf_encrypt_detached": result(crypto_aead_xchacha20poly1305_ietf_encrypt_detached(call:call))
-      case "crypto_aead_xchacha20poly1305_ietf_decrypt_detached": result(crypto_aead_xchacha20poly1305_ietf_decrypt_detached(call:call))
-      case "crypto_aead_xchacha20poly1305_ietf_keygen": result(crypto_aead_xchacha20poly1305_ietf_keygen(call:call))
+      case "crypto_aead_xchacha20poly1305_ietf_encrypt": return crypto_aead_xchacha20poly1305_ietf_encrypt(call:call)
+      case "crypto_aead_xchacha20poly1305_ietf_decrypt": return crypto_aead_xchacha20poly1305_ietf_decrypt(call:call)
+      case "crypto_aead_xchacha20poly1305_ietf_encrypt_detached": return crypto_aead_xchacha20poly1305_ietf_encrypt_detached(call:call)
+      case "crypto_aead_xchacha20poly1305_ietf_decrypt_detached": return crypto_aead_xchacha20poly1305_ietf_decrypt_detached(call:call)
+      case "crypto_aead_xchacha20poly1305_ietf_keygen": return crypto_aead_xchacha20poly1305_ietf_keygen(call:call)
 
-      case "crypto_auth": result(crypto_auth(call:call))
-      case "crypto_auth_verify": result(crypto_auth_verify(call:call))
-      case "crypto_auth_keygen": result(crypto_auth_keygen(call:call))
+      case "crypto_auth": return crypto_auth(call:call)
+      case "crypto_auth_verify": return crypto_auth_verify(call:call)
+      case "crypto_auth_keygen": return crypto_auth_keygen(call:call)
 
-      case "crypto_box_seed_keypair": result(crypto_box_seed_keypair(call: call))
-      case "crypto_box_keypair": result(crypto_box_keypair(call: call))
-      case "crypto_box_easy": result(crypto_box_easy(call:call))
-      case "crypto_box_open_easy": result(crypto_box_open_easy(call:call))
-      case "crypto_box_detached": result(crypto_box_detached(call:call))
-      case "crypto_box_open_detached": result(crypto_box_open_detached(call:call))
-      case "crypto_box_beforenm": result(crypto_box_beforenm(call:call))
-      case "crypto_box_easy_afternm": result(crypto_box_easy_afternm(call:call))
-      case "crypto_box_open_easy_afternm": result(crypto_box_open_easy_afternm(call:call))
-      case "crypto_box_detached_afternm": result(crypto_box_detached_afternm(call:call))
-      case "crypto_box_open_detached_afternm": result(crypto_box_open_detached_afternm(call:call))
+      case "crypto_box_seed_keypair": return crypto_box_seed_keypair(call: call)
+      case "crypto_box_keypair": return crypto_box_keypair(call: call)
+      case "crypto_box_easy": return crypto_box_easy(call:call)
+      case "crypto_box_open_easy": return crypto_box_open_easy(call:call)
+      case "crypto_box_detached": return crypto_box_detached(call:call)
+      case "crypto_box_open_detached": return crypto_box_open_detached(call:call)
+      case "crypto_box_beforenm": return crypto_box_beforenm(call:call)
+      case "crypto_box_easy_afternm": return crypto_box_easy_afternm(call:call)
+      case "crypto_box_open_easy_afternm": return crypto_box_open_easy_afternm(call:call)
+      case "crypto_box_detached_afternm": return crypto_box_detached_afternm(call:call)
+      case "crypto_box_open_detached_afternm": return crypto_box_open_detached_afternm(call:call)
 
-      case "crypto_box_seal": result(crypto_box_seal(call: call))
-      case "crypto_box_seal_open": result(crypto_box_seal_open(call: call))
+      case "crypto_box_seal": return crypto_box_seal(call: call)
+      case "crypto_box_seal_open": return crypto_box_seal_open(call: call)
 
-      case "crypto_generichash": result(crypto_generichash(call: call))
-      case "crypto_generichash_init": result(crypto_generichash_init(call: call))
-      case "crypto_generichash_update": result(crypto_generichash_update(call: call))
-      case "crypto_generichash_final": result(crypto_generichash_final(call: call))
-      case "crypto_generichash_keygen": result(crypto_generichash_keygen(call: call))
+      case "crypto_generichash": return crypto_generichash(call: call)
+      case "crypto_generichash_init": return crypto_generichash_init(call: call)
+      case "crypto_generichash_update": return crypto_generichash_update(call: call)
+      case "crypto_generichash_final": return crypto_generichash_final(call: call)
+      case "crypto_generichash_keygen": return crypto_generichash_keygen(call: call)
 
-      case "crypto_kdf_keygen": result(crypto_kdf_keygen(call: call))
-      case "crypto_kdf_derive_from_key": result(crypto_kdf_derive_from_key(call: call))
+      case "crypto_kdf_keygen": return crypto_kdf_keygen(call: call)
+      case "crypto_kdf_derive_from_key": return crypto_kdf_derive_from_key(call: call)
 
-      case "crypto_kx_keypair": result(crypto_kx_keypair(call: call))
-      case "crypto_kx_seed_keypair": result(crypto_kx_seed_keypair(call: call))
-      case "crypto_kx_client_session_keys": result(crypto_kx_client_session_keys(call: call))
-      case "crypto_kx_server_session_keys": result(crypto_kx_server_session_keys(call: call))
+      case "crypto_kx_keypair": return crypto_kx_keypair(call: call)
+      case "crypto_kx_seed_keypair": return crypto_kx_seed_keypair(call: call)
+      case "crypto_kx_client_session_keys": return crypto_kx_client_session_keys(call: call)
+      case "crypto_kx_server_session_keys": return crypto_kx_server_session_keys(call: call)
 
-      case "crypto_onetimeauth": result(crypto_onetimeauth(call: call))
-      case "crypto_onetimeauth_verify": result(crypto_onetimeauth_verify(call: call))
-      case "crypto_onetimeauth_init": result(crypto_onetimeauth_init(call: call))
-      case "crypto_onetimeauth_update": result(crypto_onetimeauth_update(call: call))
-      case "crypto_onetimeauth_final": result(crypto_onetimeauth_final(call: call))
-      case "crypto_onetimeauth_keygen": result(crypto_onetimeauth_keygen(call: call))
+      case "crypto_onetimeauth": return crypto_onetimeauth(call: call)
+      case "crypto_onetimeauth_verify": return crypto_onetimeauth_verify(call: call)
+      case "crypto_onetimeauth_init": return crypto_onetimeauth_init(call: call)
+      case "crypto_onetimeauth_update": return crypto_onetimeauth_update(call: call)
+      case "crypto_onetimeauth_final": return crypto_onetimeauth_final(call: call)
+      case "crypto_onetimeauth_keygen": return crypto_onetimeauth_keygen(call: call)
 
-      case "crypto_pwhash": result(crypto_pwhash(call: call))
-      case "crypto_pwhash_str": result(crypto_pwhash_str(call: call))
-      case "crypto_pwhash_str_verify": result(crypto_pwhash_str_verify(call: call))
-      case "crypto_pwhash_str_needs_rehash": result(crypto_pwhash_str_needs_rehash(call: call))
+      case "crypto_pwhash": return crypto_pwhash(call: call)
+      case "crypto_pwhash_str": return crypto_pwhash_str(call: call)
+      case "crypto_pwhash_str_verify": return crypto_pwhash_str_verify(call: call)
+      case "crypto_pwhash_str_needs_rehash": return crypto_pwhash_str_needs_rehash(call: call)
 
-      case "crypto_scalarmult_base": result(crypto_scalarmult_base(call: call))
-      case "crypto_scalarmult": result(crypto_scalarmult(call: call))
+      case "crypto_scalarmult_base": return crypto_scalarmult_base(call: call)
+      case "crypto_scalarmult": return crypto_scalarmult(call: call)
 
-      case "crypto_secretbox_easy": result(crypto_secretbox_easy(call: call))
-      case "crypto_secretbox_open_easy": result(crypto_secretbox_open_easy(call: call))
-      case "crypto_secretbox_detached": result(crypto_secretbox_detached(call: call))
-      case "crypto_secretbox_open_detached": result(crypto_secretbox_open_detached(call: call))
-      case "crypto_secretbox_keygen": result(crypto_secretbox_keygen(call: call))
+      case "crypto_secretbox_easy": return crypto_secretbox_easy(call: call)
+      case "crypto_secretbox_open_easy": return crypto_secretbox_open_easy(call: call)
+      case "crypto_secretbox_detached": return crypto_secretbox_detached(call: call)
+      case "crypto_secretbox_open_detached": return crypto_secretbox_open_detached(call: call)
+      case "crypto_secretbox_keygen": return crypto_secretbox_keygen(call: call)
 
-      case "crypto_shorthash": result(crypto_shorthash(call: call))
-      case "crypto_shorthash_keygen": result(crypto_shorthash_keygen(call: call))
+      case "crypto_shorthash": return crypto_shorthash(call: call)
+      case "crypto_shorthash_keygen": return crypto_shorthash_keygen(call: call)
 
-      case "crypto_sign_seed_keypair": result(crypto_sign_seed_keypair(call: call))
-      case "crypto_sign_keypair": result(crypto_sign_keypair(call: call))
-      case "crypto_sign": result(crypto_sign(call: call))
-      case "crypto_sign_open": result(crypto_sign_open(call: call))
-      case "crypto_sign_detached": result(crypto_sign_detached(call: call))
-      case "crypto_sign_verify_detached": result(crypto_sign_verify_detached(call: call))
-      case "crypto_sign_init": result(crypto_sign_init(call: call))
-      case "crypto_sign_update": result(crypto_sign_update(call: call))
-      case "crypto_sign_final_create": result(crypto_sign_final_create(call: call))
-      case "crypto_sign_final_verify": result(crypto_sign_final_verify(call: call))
+      case "crypto_sign_seed_keypair": return crypto_sign_seed_keypair(call: call)
+      case "crypto_sign_keypair": return crypto_sign_keypair(call: call)
+      case "crypto_sign": return crypto_sign(call: call)
+      case "crypto_sign_open": return crypto_sign_open(call: call)
+      case "crypto_sign_detached": return crypto_sign_detached(call: call)
+      case "crypto_sign_verify_detached": return crypto_sign_verify_detached(call: call)
+      case "crypto_sign_init": return crypto_sign_init(call: call)
+      case "crypto_sign_update": return crypto_sign_update(call: call)
+      case "crypto_sign_final_create": return crypto_sign_final_create(call: call)
+      case "crypto_sign_final_verify": return crypto_sign_final_verify(call: call)
 
-      case "randombytes_buf": result(randombytes_buf(call: call))
-      case "randombytes_buf_deterministic": result(randombytes_buf_deterministic(call: call))
-      case "randombytes_random": result(randombytes_random(call: call))
-      case "randombytes_uniform": result(randombytes_uniform(call: call))
-      case "randombytes_stir": result(randombytes_stir(call: call))
-      case "randombytes_close": result(randombytes_close(call: call))
+      case "randombytes_buf": return randombytes_buf(call: call)
+      case "randombytes_buf_deterministic": return randombytes_buf_deterministic(call: call)
+      case "randombytes_random": return randombytes_random(call: call)
+      case "randombytes_uniform": return randombytes_uniform(call: call)
+      case "randombytes_stir": return randombytes_stir(call: call)
+      case "randombytes_close": return randombytes_close(call: call)
 
-      case "sodium_version_string": result(sodium_version_string(call: call))
+      case "sodium_version_string": return sodium_version_string(call: call)
       
-      default: result(FlutterMethodNotImplemented)
+      default: return FlutterMethodNotImplemented
     }
   }
 
