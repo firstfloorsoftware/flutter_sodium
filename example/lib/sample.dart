@@ -107,7 +107,7 @@ class CodeBlock extends StatelessWidget {
     return Container(
         padding: EdgeInsets.all(10.0),
         color: color,
-        child: Text(_code,
+        child: Text(_code ?? "(null)",
             style: TextStyle(fontFamily: 'RobotoMono', fontSize: 12.0)));
   }
 }
