@@ -24,9 +24,12 @@ The flutter_sodium plugin implements the following libsodium APIs *):
 ## Dart APIs
 The plugin includes a core API that maps native libsodium functions 1:1 to Dart equivalents. The core API is available in the class [`Sodium`](https://github.com/firstfloorsoftware/flutter_sodium/blob/master/lib/flutter_sodium.dart). Dart naming conventions are used for core API function names. A native libsodium function such as `crypto_pwhash_str`, is available in flutter as `Sodium.cryptoPwhashStr`.
 
-Also included in flutter_sodium is a high-level, opinionated API providing access to libsodium in a Dart friendly manner. The various functions are available in separate Dart classes. Password hashing for example is available in the `PasswordHash` class.
+Also included in flutter_sodium is a high-level, opinionated API providing access to libsodium in a Dart friendly manner. The various functions are available in separate Dart classes. Password hashing for example is available in the `PasswordHash` class. The high-level API depends on the core API to get things done.
 
-The high-level API depends on the core API to get things done.
+### Threading
+The flutter_sodium APIs support both running on the UI thread and in a background thread. Most crypto tasks can safely run on the UI thread, some tasks take considerable time to execute (most notable crypto_pwhash_* ), and will run on a background thread by default. All methods of the core API includes an optional ```useBackgroundThread``` argument to switch from UI to background thread or vice versa.
+
+Please note that the entire API is asynchronous. Even when a crypto task is executed on the UI thread, the method returns an async ```Future```.
 
 ## Getting Started
 
