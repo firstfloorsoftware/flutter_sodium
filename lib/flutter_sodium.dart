@@ -1217,6 +1217,8 @@ class Sodium {
   /// Returns an unpredictable sequence of bytes of size [size].
   static Future<Uint8List> randombytesBuf(int size,
       {bool useBackgroundThread = false}) async {
+    assert(size != null);
+    RangeError.checkNotNegative(size);
     final Uint8List result = await _channel.invokeMethod(
         'randombytes_buf', {'size': size, 'bgThread': useBackgroundThread});
     return result;
@@ -1227,6 +1229,11 @@ class Sodium {
   /// For a given seed, this function will always output the same sequence
   static Future<Uint8List> randombytesBufDeterministic(int size, Uint8List seed,
       {bool useBackgroundThread = false}) async {
+    assert(size != null);
+    assert(seed != null);
+    RangeError.checkNotNegative(size);
+    RangeError.checkValueInInterval(seed.length, randombytes_SEEDBYTES,
+        randombytes_SEEDBYTES, 'seed', 'Invalid length');
     final Uint8List result = await _channel.invokeMethod(
         'randombytes_buf_deterministic',
         {'size': size, 'seed': seed, 'bgThread': useBackgroundThread});
@@ -1246,6 +1253,8 @@ class Sodium {
   /// It guarantees a uniform distribution of the possible output values even when [upperBound] is not a power of 2.
   static Future<int> randombytesUniform(int upperBound,
       {bool useBackgroundThread = false}) async {
+    assert(upperBound != null);
+    RangeError.checkNotNegative(upperBound);
     final int result = await _channel.invokeMethod('randombytes_uniform',
         {'upper_bound': upperBound, 'bgThread': useBackgroundThread});
     return result;
