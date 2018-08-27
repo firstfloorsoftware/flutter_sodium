@@ -178,8 +178,9 @@ class Sodium {
   /// Generates a random key.
   static Future<Uint8List> cryptoAeadChacha20poly1305Keygen(
       {bool useBackgroundThread = false}) async {
-    final Uint8List k =
-        await _channel.invokeMethod('crypto_aead_chacha20poly1305_keygen');
+    final Uint8List k = await _channel.invokeMethod(
+        'crypto_aead_chacha20poly1305_keygen',
+        {'bgThread': useBackgroundThread});
     return k;
   }
 
@@ -485,8 +486,9 @@ class Sodium {
   /// Generates a random key.
   static Future<Uint8List> cryptoAeadXchacha20poly1305IetfKeygen(
       {bool useBackgroundThread = false}) async {
-    final Uint8List k = await _channel
-        .invokeMethod('crypto_aead_xchacha20poly1305_ietf_keygen');
+    final Uint8List k = await _channel.invokeMethod(
+        'crypto_aead_xchacha20poly1305_ietf_keygen',
+        {'bgThread': useBackgroundThread});
     return k;
   }
 

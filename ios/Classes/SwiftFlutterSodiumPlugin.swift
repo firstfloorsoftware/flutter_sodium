@@ -17,8 +17,8 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       result(FlutterError.init(code: "Failure", message: "Sodium failed to initialize", details: nil))
       return
     }
-    let args = call.arguments as! NSDictionary
-    if (args["bgThread"] as? Bool == true) {
+    
+    if (shouldRunInBackground(call)) {
       // run on background thread
       DispatchQueue.global(qos: .background).async {
         let r = self.execute(call)
@@ -32,6 +32,17 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       // run on UI thread
       result(execute(call))
     }
+  }
+
+  private func shouldRunInBackground(_ call: FlutterMethodCall) -> Bool
+  {
+    if (call.arguments != nil)
+    {
+      let args = call.arguments as! NSDictionary
+      let bgThread = args["bgThread"] as? Bool
+      return (bgThread != nil && bgThread!)
+    }
+    return false
   }
 
   private func execute(_ call: FlutterMethodCall) -> Any
