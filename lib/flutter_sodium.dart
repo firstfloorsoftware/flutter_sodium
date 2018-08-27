@@ -775,6 +775,7 @@ class Sodium {
   static Future<Uint8List> cryptoGenerichash(
       int outlen, Uint8List i, Uint8List key,
       {bool useBackgroundThread = false}) async {
+    assert(outlen != null);
     assert(i != null);
     RangeError.checkValueInInterval(
         outlen, crypto_generichash_BYTES_MIN, crypto_generichash_BYTES_MAX);
@@ -799,6 +800,7 @@ class Sodium {
   /// Initializes the hash state for the streaming API.
   static Future<Uint8List> cryptoGenerichashInit(Uint8List key, int outlen,
       {bool useBackgroundThread = false}) async {
+    assert(outlen != null);
     if (key != null) {
       RangeError.checkValueInInterval(
           key.length,
@@ -832,6 +834,7 @@ class Sodium {
   static Future<Uint8List> cryptoGenerichashFinal(Uint8List state, int outlen,
       {bool useBackgroundThread = false}) async {
     assert(state != null);
+    assert(outlen != null);
     RangeError.checkValueInInterval(
         outlen, crypto_generichash_BYTES_MIN, crypto_generichash_BYTES_MAX);
 
@@ -864,6 +867,15 @@ class Sodium {
   static Future<Uint8List> cryptoKdfDeriveFromKey(
       int subkeyLen, int subkeyId, Uint8List ctx, Uint8List key,
       {bool useBackgroundThread = false}) async {
+    assert(subkeyLen != null);
+    assert(subkeyId != null);
+    assert(ctx != null);
+    assert(key != null);
+    RangeError.checkValueInInterval(ctx.length, crypto_kdf_CONTEXTBYTES,
+        crypto_kdf_CONTEXTBYTES, 'ctx', 'Invalid length');
+    RangeError.checkValueInInterval(key.length, crypto_kdf_KEYBYTES,
+        crypto_kdf_KEYBYTES, 'key', 'Invalid length');
+
     final Uint8List result =
         await _channel.invokeMethod('crypto_kdf_derive_from_key', {
       'subkey_len': subkeyLen,
@@ -889,6 +901,10 @@ class Sodium {
   /// Computes a deterministic key pair from the seed.
   static Future<Map<String, Uint8List>> cryptoKxSeedKeypair(Uint8List seed,
       {bool useBackgroundThread = false}) async {
+    assert(seed != null);
+    RangeError.checkValueInInterval(seed.length, crypto_kx_SEEDBYTES,
+        crypto_kx_SEEDBYTES, 'seed', 'Invalid length');
+
     final Map result = await _channel.invokeMethod('crypto_kx_seed_keypair',
         {'seed': seed, 'bgThread': useBackgroundThread});
     return result.cast<String, Uint8List>();
@@ -898,6 +914,16 @@ class Sodium {
   static Future<Map<String, Uint8List>> cryptoKxClientSessionKeys(
       Uint8List clientPk, Uint8List clientSk, Uint8List serverPk,
       {bool useBackgroundThread = false}) async {
+    assert(clientPk != null);
+    assert(clientSk != null);
+    assert(serverPk != null);
+    RangeError.checkValueInInterval(clientPk.length, crypto_kx_PUBLICKEYBYTES,
+        crypto_kx_PUBLICKEYBYTES, 'clientPk', 'Invalid length');
+    RangeError.checkValueInInterval(clientSk.length, crypto_kx_SECRETKEYBYTES,
+        crypto_kx_SECRETKEYBYTES, 'clientSk', 'Invalid length');
+    RangeError.checkValueInInterval(serverPk.length, crypto_kx_PUBLICKEYBYTES,
+        crypto_kx_PUBLICKEYBYTES, 'serverPk', 'Invalid length');
+
     final Map result =
         await _channel.invokeMethod('crypto_kx_client_session_keys', {
       'client_pk': clientPk,
@@ -912,6 +938,16 @@ class Sodium {
   static Future<Map<String, Uint8List>> cryptoKxServerSessionKeys(
       Uint8List serverPk, Uint8List serverSk, Uint8List clientPk,
       {bool useBackgroundThread = false}) async {
+    assert(serverPk != null);
+    assert(serverSk != null);
+    assert(clientPk != null);
+    RangeError.checkValueInInterval(serverPk.length, crypto_kx_PUBLICKEYBYTES,
+        crypto_kx_PUBLICKEYBYTES, 'serverPk', 'Invalid length');
+    RangeError.checkValueInInterval(serverSk.length, crypto_kx_SECRETKEYBYTES,
+        crypto_kx_SECRETKEYBYTES, 'serverSk', 'Invalid length');
+    RangeError.checkValueInInterval(clientPk.length, crypto_kx_PUBLICKEYBYTES,
+        crypto_kx_PUBLICKEYBYTES, 'clientPk', 'Invalid length');
+
     final Map result =
         await _channel.invokeMethod('crypto_kx_server_session_keys', {
       'server_pk': serverPk,
@@ -928,6 +964,10 @@ class Sodium {
   /// Authenticates a message using a secret key.
   static Future<Uint8List> cryptoOnetimeauth(Uint8List i, Uint8List k,
       {bool useBackgroundThread = false}) async {
+    assert(i != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(k.length, crypto_onetimeauth_KEYBYTES,
+        crypto_onetimeauth_KEYBYTES, 'k', 'Invalid length');
     final Uint8List result = await _channel.invokeMethod('crypto_onetimeauth',
         {'in': i, 'k': k, 'bgThread': useBackgroundThread});
     return result;
@@ -937,6 +977,14 @@ class Sodium {
   static Future<bool> cryptoOnetimeauthVerify(
       Uint8List h, Uint8List i, Uint8List k,
       {bool useBackgroundThread = false}) async {
+    assert(h != null);
+    assert(i != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(h.length, crypto_onetimeauth_BYTES,
+        crypto_onetimeauth_BYTES, 'h', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, crypto_onetimeauth_KEYBYTES,
+        crypto_onetimeauth_KEYBYTES, 'k', 'Invalid length');
+
     final bool result = await _channel.invokeMethod('crypto_onetimeauth_verify',
         {'h': h, 'in': i, 'k': k, 'bgThread': useBackgroundThread});
     return result;
@@ -945,6 +993,9 @@ class Sodium {
   /// Initializes the authentication state for the streaming API.
   static Future<Uint8List> cryptoOnetimeauthInit(Uint8List key,
       {bool useBackgroundThread = false}) async {
+    assert(key != null);
+    RangeError.checkValueInInterval(key.length, crypto_onetimeauth_KEYBYTES,
+        crypto_onetimeauth_KEYBYTES, 'key', 'Invalid length');
     final Uint8List result = await _channel.invokeMethod(
         'crypto_onetimeauth_init',
         {'key': key, 'bgThread': useBackgroundThread});
@@ -954,6 +1005,8 @@ class Sodium {
   /// Computes the authenticator from sequential chunks of the message.
   static Future<Uint8List> cryptoOnetimeauthUpdate(Uint8List state, Uint8List i,
       {bool useBackgroundThread = false}) async {
+    assert(state != null);
+    assert(i != null);
     final Uint8List result = await _channel.invokeMethod(
         'crypto_onetimeauth_update',
         {'state': state, 'in': i, 'bgThread': useBackgroundThread});
@@ -963,6 +1016,7 @@ class Sodium {
   /// Completes the computation and returns the authenticator.
   static Future<Uint8List> cryptoOnetimeauthFinal(Uint8List state,
       {bool useBackgroundThread = false}) async {
+    assert(state != null);
     final Uint8List result = await _channel.invokeMethod(
         'crypto_onetimeauth_final',
         {'state': state, 'bgThread': useBackgroundThread});
@@ -984,6 +1038,24 @@ class Sodium {
   static Future<Uint8List> cryptoPwhash(int outlen, Uint8List passwd,
       Uint8List salt, int opslimit, int memlimit, int alg,
       {bool useBackgroundThread = true}) async {
+    assert(outlen != null);
+    assert(passwd != null);
+    assert(salt != null);
+    assert(opslimit != null);
+    assert(memlimit != null);
+    assert(alg != null);
+    RangeError.checkValueInInterval(
+        outlen, crypto_pwhash_BYTES_MIN, crypto_pwhash_BYTES_MAX, 'outlen');
+    RangeError.checkValueInInterval(passwd.length, crypto_pwhash_PASSWD_MIN,
+        crypto_pwhash_PASSWD_MAX, 'passwd', 'Invalid length');
+    RangeError.checkValueInInterval(salt.length, crypto_pwhash_SALTBYTES,
+        crypto_pwhash_SALTBYTES, 'salt', 'Invalid length');
+    RangeError.checkValueInInterval(opslimit, crypto_pwhash_OPSLIMIT_MIN,
+        crypto_pwhash_OPSLIMIT_MAX, 'opslimit');
+    RangeError.checkValueInInterval(memlimit, crypto_pwhash_MEMLIMIT_MIN,
+        crypto_pwhash_MEMLIMIT_MAX, 'memlimit');
+    RangeError.checkValueInInterval(alg, crypto_pwhash_argon2i_ALG_ARGON2I13,
+        crypto_pwhash_argon2id_ALG_ARGON2ID13, 'alg');
     final Uint8List result = await _channel.invokeMethod('crypto_pwhash', {
       'outlen': outlen,
       'passwd': passwd,
@@ -1000,6 +1072,15 @@ class Sodium {
   static Future<Uint8List> cryptoPwhashStr(
       Uint8List passwd, int opslimit, int memlimit,
       {bool useBackgroundThread = true}) async {
+    assert(passwd != null);
+    assert(opslimit != null);
+    assert(memlimit != null);
+    RangeError.checkValueInInterval(passwd.length, crypto_pwhash_PASSWD_MIN,
+        crypto_pwhash_PASSWD_MAX, 'passwd', 'Invalid length');
+    RangeError.checkValueInInterval(opslimit, crypto_pwhash_OPSLIMIT_MIN,
+        crypto_pwhash_OPSLIMIT_MAX, 'opslimit');
+    RangeError.checkValueInInterval(memlimit, crypto_pwhash_MEMLIMIT_MIN,
+        crypto_pwhash_MEMLIMIT_MAX, 'memlimit');
     final Uint8List result = await _channel.invokeMethod('crypto_pwhash_str', {
       'passwd': passwd,
       'opslimit': opslimit,
@@ -1012,6 +1093,10 @@ class Sodium {
   /// Verifies that str is a valid password verification string.
   static Future<bool> cryptoPwhashStrVerify(Uint8List str, Uint8List passwd,
       {bool useBackgroundThread = true}) async {
+    assert(str != null);
+    assert(passwd != null);
+    RangeError.checkValueInInterval(passwd.length, crypto_pwhash_PASSWD_MIN,
+        crypto_pwhash_PASSWD_MAX, 'passwd', 'Invalid length');
     final bool result = await _channel.invokeMethod('crypto_pwhash_str_verify',
         {'str': str, 'passwd': passwd, 'bgThread': useBackgroundThread});
     return result;
@@ -1021,6 +1106,13 @@ class Sodium {
   static Future<bool> cryptoPwhashStrNeedsRehash(
       Uint8List str, int opslimit, int memlimit,
       {bool useBackgroundThread = false}) async {
+    assert(str != null);
+    assert(opslimit != null);
+    assert(memlimit != null);
+    RangeError.checkValueInInterval(opslimit, crypto_pwhash_OPSLIMIT_MIN,
+        crypto_pwhash_OPSLIMIT_MAX, 'opslimit');
+    RangeError.checkValueInInterval(memlimit, crypto_pwhash_MEMLIMIT_MIN,
+        crypto_pwhash_MEMLIMIT_MAX, 'memlimit');
     final bool result =
         await _channel.invokeMethod('crypto_pwhash_str_needs_rehash', {
       'str': str,
@@ -1038,6 +1130,13 @@ class Sodium {
   static Future<Uint8List> cryptoSecretboxEasy(
       Uint8List m, Uint8List n, Uint8List k,
       {bool useBackgroundThread = false}) async {
+    assert(m != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, crypto_secretbox_NONCEBYTES,
+        crypto_secretbox_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, crypto_secretbox_KEYBYTES,
+        crypto_secretbox_KEYBYTES, 'k', 'Invalid length');
     final Uint8List result = await _channel.invokeMethod(
         'crypto_secretbox_easy',
         {'m': m, 'n': n, 'k': k, 'bgThread': useBackgroundThread});
@@ -1048,6 +1147,14 @@ class Sodium {
   static Future<Uint8List> cryptoSecretboxOpenEasy(
       Uint8List c, Uint8List n, Uint8List k,
       {bool useBackgroundThread = false}) async {
+    assert(c != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, crypto_secretbox_NONCEBYTES,
+        crypto_secretbox_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, crypto_secretbox_KEYBYTES,
+        crypto_secretbox_KEYBYTES, 'k', 'Invalid length');
+
     final Uint8List result = await _channel.invokeMethod(
         'crypto_secretbox_open_easy',
         {'c': c, 'n': n, 'k': k, 'bgThread': useBackgroundThread});
@@ -1058,6 +1165,14 @@ class Sodium {
   static Future<Map<String, Uint8List>> cryptoSecretboxDetached(
       Uint8List m, Uint8List n, Uint8List k,
       {bool useBackgroundThread = false}) async {
+    assert(m != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, crypto_secretbox_NONCEBYTES,
+        crypto_secretbox_NONCEBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, crypto_secretbox_KEYBYTES,
+        crypto_secretbox_KEYBYTES, 'k', 'Invalid length');
+
     final Map result = await _channel.invokeMethod('crypto_secretbox_detached',
         {'m': m, 'n': n, 'k': k, 'bgThread': useBackgroundThread});
     return result.cast<String, Uint8List>();
@@ -1067,6 +1182,17 @@ class Sodium {
   static Future<Uint8List> cryptoSecretboxOpenDetached(
       Uint8List c, Uint8List mac, Uint8List n, Uint8List k,
       {bool useBackgroundThread = false}) async {
+    assert(c != null);
+    assert(mac != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(mac.length, crypto_secretbox_MACBYTES,
+        crypto_secretbox_MACBYTES, 'mac');
+    RangeError.checkValueInInterval(n.length, crypto_secretbox_NONCEBYTES,
+        crypto_secretbox_NONCEBYTES, 'n');
+    RangeError.checkValueInInterval(
+        k.length, crypto_secretbox_KEYBYTES, crypto_secretbox_KEYBYTES, 'k');
+
     final Uint8List result = await _channel.invokeMethod(
         'crypto_secretbox_open_detached',
         {'c': c, 'mac': mac, 'n': n, 'k': k, 'bgThread': useBackgroundThread});
@@ -1087,6 +1213,9 @@ class Sodium {
   /// Computes a public key given specified secret key.
   static Future<Uint8List> cryptoScalarmultBase(Uint8List n,
       {bool useBackgroundThread = false}) async {
+    assert(n != null);
+    RangeError.checkValueInInterval(n.length, crypto_scalarmult_SCALARBYTES,
+        crypto_scalarmult_SCALARBYTES, 'n', 'Invalid length');
     final Uint8List result = await _channel.invokeMethod(
         'crypto_scalarmult_base', {'n': n, 'bgThread': useBackgroundThread});
     return result;
@@ -1095,6 +1224,12 @@ class Sodium {
   /// Computes a shared secret given a user's secret key and another user's public key.
   static Future<Uint8List> cryptoScalarmult(Uint8List n, Uint8List p,
       {bool useBackgroundThread = false}) async {
+    assert(n != null);
+    assert(p != null);
+    RangeError.checkValueInInterval(n.length, crypto_scalarmult_SCALARBYTES,
+        crypto_scalarmult_SCALARBYTES, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(p.length, crypto_scalarmult_BYTES,
+        crypto_scalarmult_BYTES, 'p', 'Invalid length');
     final Uint8List result = await _channel.invokeMethod(
         'crypto_scalarmult', {'n': n, 'p': p, 'bgThread': useBackgroundThread});
     return result;
@@ -1106,6 +1241,10 @@ class Sodium {
   /// Computes a fixed-size fingerprint for specified input and key.
   static Future<Uint8List> cryptoShorthash(Uint8List i, Uint8List k,
       {bool useBackgroundThread = false}) async {
+    assert(i != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(k.length, crypto_shorthash_KEYBYTES,
+        crypto_shorthash_KEYBYTES, 'k', 'Invalid length');
     final Uint8List result = await _channel.invokeMethod(
         'crypto_shorthash', {'in': i, 'k': k, 'bgThread': useBackgroundThread});
     return result;
@@ -1125,6 +1264,10 @@ class Sodium {
   /// Deterministically derives a key pair from a single seed.
   static Future<Map<String, Uint8List>> cryptoSignSeedKeypair(Uint8List seed,
       {bool useBackgroundThread = false}) async {
+    assert(seed != null);
+    RangeError.checkValueInInterval(seed.length, crypto_sign_SEEDBYTES,
+        crypto_sign_SEEDBYTES, 'seed', 'Invalid length');
+
     final Map result = await _channel.invokeMethod('crypto_sign_seed_keypair',
         {'seed': seed, 'bgThread': useBackgroundThread});
     return result.cast<String, Uint8List>();
@@ -1141,6 +1284,11 @@ class Sodium {
   /// Prepends a signature to a message using specified secret key.
   static Future<Uint8List> cryptoSign(Uint8List m, Uint8List sk,
       {bool useBackgroundThread = false}) async {
+    assert(m != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(sk.length, crypto_sign_SECRETKEYBYTES,
+        crypto_sign_SECRETKEYBYTES, 'sk', 'Invalid length');
+
     final Uint8List result = await _channel.invokeMethod(
         'crypto_sign', {'m': m, 'sk': sk, 'bgThread': useBackgroundThread});
     return result;
@@ -1149,6 +1297,11 @@ class Sodium {
   /// Checks that the signed message has a valid signature for specified public key.
   static Future<Uint8List> cryptoSignOpen(Uint8List sm, Uint8List pk,
       {bool useBackgroundThread = false}) async {
+    assert(sm != null);
+    assert(pk != null);
+    RangeError.checkValueInInterval(pk.length, crypto_sign_PUBLICKEYBYTES,
+        crypto_sign_PUBLICKEYBYTES, 'pk', 'Invalid length');
+
     final Uint8List result = await _channel.invokeMethod('crypto_sign_open',
         {'sm': sm, 'pk': pk, 'bgThread': useBackgroundThread});
     return result;
@@ -1157,6 +1310,11 @@ class Sodium {
   /// Computes a signature for given message.
   static Future<Uint8List> cryptoSignDetached(Uint8List m, Uint8List sk,
       {bool useBackgroundThread = false}) async {
+    assert(m != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(sk.length, crypto_sign_SECRETKEYBYTES,
+        crypto_sign_SECRETKEYBYTES, 'sk', 'Invalid length');
+
     final Uint8List result = await _channel.invokeMethod('crypto_sign_detached',
         {'m': m, 'sk': sk, 'bgThread': useBackgroundThread});
     return result;
@@ -1166,6 +1324,14 @@ class Sodium {
   static Future<bool> cryptoSignVerifyDetached(
       Uint8List sig, Uint8List m, Uint8List pk,
       {bool useBackgroundThread = false}) async {
+    assert(sig != null);
+    assert(m != null);
+    assert(pk != null);
+    RangeError.checkValueInInterval(sig.length, crypto_sign_BYTES,
+        crypto_sign_BYTES, 'sig', 'Invalid length');
+    RangeError.checkValueInInterval(pk.length, crypto_sign_PUBLICKEYBYTES,
+        crypto_sign_PUBLICKEYBYTES, 'pk', 'Invalid length');
+
     final bool result = await _channel.invokeMethod(
         'crypto_sign_verify_detached',
         {'sig': sig, 'm': m, 'pk': pk, 'bgThread': useBackgroundThread});
@@ -1183,6 +1349,9 @@ class Sodium {
   /// Adds a new chunk to the message that will eventually be signed.
   static Future<Uint8List> cryptoSignUpdate(Uint8List state, Uint8List m,
       {bool useBackgroundThread = false}) async {
+    assert(state != null);
+    assert(m != null);
+
     final Uint8List result = await _channel.invokeMethod('crypto_sign_update',
         {'state': state, 'm': m, 'bgThread': useBackgroundThread});
     return result;
@@ -1191,6 +1360,11 @@ class Sodium {
   /// Computes a signature for the previously supplied message, using the secret key.
   static Future<Uint8List> cryptoSignFinalCreate(Uint8List state, Uint8List sk,
       {bool useBackgroundThread = false}) async {
+    assert(state != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(sk.length, crypto_sign_SECRETKEYBYTES,
+        crypto_sign_SECRETKEYBYTES, 'sk', 'Invalid length');
+
     final Uint8List result = await _channel.invokeMethod(
         'crypto_sign_final_create',
         {'state': state, 'sk': sk, 'bgThread': useBackgroundThread});
@@ -1201,6 +1375,14 @@ class Sodium {
   static Future<bool> cryptoSignFinalVerify(
       Uint8List state, Uint8List sig, Uint8List pk,
       {bool useBackgroundThread = false}) async {
+    assert(state != null);
+    assert(sig != null);
+    assert(pk != null);
+    RangeError.checkValueInInterval(sig.length, crypto_sign_BYTES,
+        crypto_sign_BYTES, 'sig', 'Invalid length');
+    RangeError.checkValueInInterval(pk.length, crypto_sign_PUBLICKEYBYTES,
+        crypto_sign_PUBLICKEYBYTES, 'pk', 'Invalid length');
+
     final bool result = await _channel.invokeMethod(
         'crypto_sign_final_verify', {
       'state': state,
