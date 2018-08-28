@@ -1,4 +1,4 @@
-## 0.0.7 - August 
+## 0.0.7 - August 28, 2018
 * Adds support for executing crypto tasks on a background thread
 * Implements missing Android bindings for crypto_aead_*
 * Completes argument assertions and range checks 
