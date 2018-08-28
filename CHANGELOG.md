@@ -1,3 +1,8 @@
+## 0.0.7 - August 
+* Adds support for executing crypto tasks on a background thread
+* Implements missing Android bindings for crypto_aead_*
+* Completes argument assertions and range checks 
+
 ## 0.0.6 - August 21, 2018
 * Adds ChaCha20Poly1305, ChaCha20Poly1305Ietf and XChaCha20Poly1305Ietf APIs
 * Adds argument assertions and range checks 
