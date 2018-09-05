@@ -1730,7 +1730,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let size = args["size"] as! Int
     var buf = Data(count: size)
     buf.withUnsafeMutableBytes { bufPtr in
-      flutter_sodium.randombytes_buf(bufPtr, buf.count)
+      flutter_sodium.randombytes_buf(bufPtr, size)
     }
     return FlutterStandardTypedData.init(bytes: buf)
   }
@@ -1744,7 +1744,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var buf = Data(count: size)
     buf.withUnsafeMutableBytes { bufPtr in
       seed.withUnsafeBytes { seedPtr in
-        flutter_sodium.randombytes_buf_deterministic(bufPtr, buf.count, seedPtr)
+        flutter_sodium.randombytes_buf_deterministic(bufPtr, size, seedPtr)
       }
     }
     return FlutterStandardTypedData.init(bytes: buf)
