@@ -1,3 +1,7 @@
+## 0.0.8 - September 10, 2018
+* Adds support for crypto_box_curve25519xchacha20poly1305_*
+* Fixes iOS build warnings
+
 ## 0.0.7 - August 28, 2018
 * Adds support for executing crypto tasks on a background thread
 * Implements missing Android bindings for crypto_aead_*
