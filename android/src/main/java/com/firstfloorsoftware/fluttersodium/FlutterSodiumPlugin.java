@@ -115,6 +115,34 @@ public class FlutterSodiumPlugin implements MethodCallHandler, CryptoTask {
             case "crypto_box_seal_open":
                 return crypto_box_seal_open(call);
 
+            case "crypto_box_curve25519xchacha20poly1305_seed_keypair":
+                return crypto_box_curve25519xchacha20poly1305_seed_keypair(call);
+            case "crypto_box_curve25519xchacha20poly1305_keypair":
+                return crypto_box_curve25519xchacha20poly1305_keypair(call);
+            case "crypto_box_curve25519xchacha20poly1305_easy":
+                return crypto_box_curve25519xchacha20poly1305_easy(call);
+            case "crypto_box_curve25519xchacha20poly1305_open_easy":
+                return crypto_box_curve25519xchacha20poly1305_open_easy(call);
+            case "crypto_box_curve25519xchacha20poly1305_detached":
+                return crypto_box_curve25519xchacha20poly1305_detached(call);
+            case "crypto_box_curve25519xchacha20poly1305_open_detached":
+                return crypto_box_curve25519xchacha20poly1305_open_detached(call);
+            case "crypto_box_curve25519xchacha20poly1305_beforenm":
+                return crypto_box_curve25519xchacha20poly1305_beforenm(call);
+            case "crypto_box_curve25519xchacha20poly1305_easy_afternm":
+                return crypto_box_curve25519xchacha20poly1305_easy_afternm(call);
+            case "crypto_box_curve25519xchacha20poly1305_open_easy_afternm":
+                return crypto_box_curve25519xchacha20poly1305_open_easy_afternm(call);
+            case "crypto_box_curve25519xchacha20poly1305_detached_afternm":
+                return crypto_box_curve25519xchacha20poly1305_detached_afternm(call);
+            case "crypto_box_curve25519xchacha20poly1305_open_detached_afternm":
+                return crypto_box_curve25519xchacha20poly1305_open_detached_afternm(call);
+
+            case "crypto_box_curve25519xchacha20poly1305_seal":
+                return crypto_box_curve25519xchacha20poly1305_seal(call);
+            case "crypto_box_curve25519xchacha20poly1305_seal_open":
+                return crypto_box_curve25519xchacha20poly1305_seal_open(call);
+
             case "crypto_generichash":
                 return crypto_generichash(call);
             case "crypto_generichash_init":
@@ -649,6 +677,173 @@ public class FlutterSodiumPlugin implements MethodCallHandler, CryptoTask {
         byte[] m = new byte[c.length - sodium().crypto_box_sealbytes()];
 
         requireSuccess(sodium().crypto_box_seal_open(m, c, c.length, pk, sk));
+
+        return m;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_seed_keypair(MethodCall call) throws Exception {
+        byte[] seed = call.argument("seed");
+        byte[] pk = new byte[sodium().crypto_box_curve25519xchacha20poly1305_publickeybytes()];
+        byte[] sk = new byte[sodium().crypto_box_curve25519xchacha20poly1305_secretkeybytes()];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_seed_keypair(pk, sk, seed));
+        HashMap map = new HashMap();
+        map.put("pk", pk);
+        map.put("sk", sk);
+
+        return map;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_keypair(MethodCall call) throws Exception {
+        byte[] pk = new byte[sodium().crypto_box_curve25519xchacha20poly1305_publickeybytes()];
+        byte[] sk = new byte[sodium().crypto_box_curve25519xchacha20poly1305_secretkeybytes()];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_keypair(pk, sk));
+        HashMap map = new HashMap();
+        map.put("pk", pk);
+        map.put("sk", sk);
+
+        return map;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_easy(MethodCall call) throws Exception {
+        byte[] m = call.argument("m");
+        byte[] n = call.argument("n");
+        byte[] pk = call.argument("pk");
+        byte[] sk = call.argument("sk");
+        byte[] c = new byte[sodium().crypto_box_curve25519xchacha20poly1305_macbytes() + m.length];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_easy(c, m, m.length, n, pk, sk));
+
+        return c;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_open_easy(MethodCall call) throws Exception {
+        byte[] c = call.argument("c");
+        byte[] n = call.argument("n");
+        byte[] pk = call.argument("pk");
+        byte[] sk = call.argument("sk");
+        byte[] m = new byte[c.length - sodium().crypto_box_curve25519xchacha20poly1305_macbytes()];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_open_easy(m, c, c.length, n, pk, sk));
+
+        return m;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_detached(MethodCall call) throws Exception {
+        byte[] m = call.argument("m");
+        byte[] n = call.argument("n");
+        byte[] pk = call.argument("pk");
+        byte[] sk = call.argument("sk");
+
+        byte[] c = new byte[m.length];
+        byte[] mac = new byte[sodium().crypto_box_curve25519xchacha20poly1305_macbytes()];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_detached(c, mac, m, m.length, n, pk, sk));
+
+        HashMap map = new HashMap();
+        map.put("c", c);
+        map.put("mac", mac);
+
+        return map;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_open_detached(MethodCall call) throws Exception {
+        byte[] c = call.argument("c");
+        byte[] mac = call.argument("mac");
+        byte[] n = call.argument("n");
+        byte[] pk = call.argument("pk");
+        byte[] sk = call.argument("sk");
+
+        byte[] m = new byte[c.length];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_open_detached(m, c, mac, c.length, n, pk, sk));
+
+        return m;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_beforenm(MethodCall call) throws Exception {
+        byte[] pk = call.argument("pk");
+        byte[] sk = call.argument("sk");
+
+        byte[] k = new byte[sodium().crypto_box_curve25519xchacha20poly1305_beforenmbytes()];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_beforenm(k, pk, sk));
+
+        return k;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_easy_afternm(MethodCall call) throws Exception {
+        byte[] m = call.argument("m");
+        byte[] n = call.argument("n");
+        byte[] k = call.argument("k");
+        byte[] c = new byte[sodium().crypto_box_curve25519xchacha20poly1305_macbytes() + m.length];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_easy_afternm(c, m, m.length, n, k));
+
+        return c;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_open_easy_afternm(MethodCall call) throws Exception {
+        byte[] c = call.argument("c");
+        byte[] n = call.argument("n");
+        byte[] k = call.argument("k");
+        byte[] m = new byte[c.length - sodium().crypto_box_curve25519xchacha20poly1305_macbytes()];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_open_easy_afternm(m, c, c.length, n, k));
+
+        return m;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_detached_afternm(MethodCall call) throws Exception {
+        byte[] m = call.argument("m");
+        byte[] n = call.argument("n");
+        byte[] k = call.argument("k");
+
+        byte[] c = new byte[m.length];
+        byte[] mac = new byte[sodium().crypto_box_curve25519xchacha20poly1305_macbytes()];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_detached_afternm(c, mac, m, m.length, n, k));
+
+        HashMap map = new HashMap();
+        map.put("c", c);
+        map.put("mac", mac);
+
+        return map;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_open_detached_afternm(MethodCall call) throws Exception {
+        byte[] c = call.argument("c");
+        byte[] mac = call.argument("mac");
+        byte[] n = call.argument("n");
+        byte[] k = call.argument("k");
+
+        byte[] m = new byte[c.length];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_open_detached_afternm(m, c, mac, c.length, n, k));
+
+        return m;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_seal(MethodCall call) throws Exception {
+        byte[] m = call.argument("m");
+        byte[] pk = call.argument("pk");
+
+        byte[] c = new byte[sodium().crypto_box_curve25519xchacha20poly1305_sealbytes() + m.length];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_seal(c, m, m.length, pk));
+
+        return c;
+    }
+
+    private Object crypto_box_curve25519xchacha20poly1305_seal_open(MethodCall call) throws Exception {
+        byte[] c = call.argument("c");
+        byte[] pk = call.argument("pk");
+        byte[] sk = call.argument("sk");
+
+        byte[] m = new byte[c.length - sodium().crypto_box_curve25519xchacha20poly1305_sealbytes()];
+
+        requireSuccess(sodium().crypto_box_curve25519xchacha20poly1305_seal_open(m, c, c.length, pk, sk));
 
         return m;
     }

@@ -769,6 +769,369 @@ class Sodium {
   }
 
   //
+  // crypto_box_curve25519xchacha20poly1305
+  //
+  /// Deterministically derive a key pair from a single key seed.
+  static Future<Map<String, Uint8List>>
+      cryptoBoxCurve25519xchacha20poly1305SeedKeypair(Uint8List seed,
+          {bool useBackgroundThread = false}) async {
+    assert(seed != null);
+    RangeError.checkValueInInterval(
+        seed.length,
+        crypto_box_curve25519xchacha20poly1305_SEEDBYTES,
+        crypto_box_curve25519xchacha20poly1305_SEEDBYTES,
+        'seed',
+        'Invalid length');
+
+    final Map result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_seed_keypair',
+        {'seed': seed, 'bgThread': useBackgroundThread});
+    return result.cast<String, Uint8List>();
+  }
+
+  /// Generates a random secret key and a corresponding public key.
+  static Future<Map<String, Uint8List>>
+      cryptoBoxCurve25519xchacha20poly1305Keypair(
+          {bool useBackgroundThread = false}) async {
+    final Map result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_keypair',
+        {'bgThread': useBackgroundThread});
+    return result.cast<String, Uint8List>();
+  }
+
+  /// Encrypts a message with a recipient's public key, a sender's secret key and a nonce.
+  static Future<Uint8List> cryptoBoxCurve25519xchacha20poly1305Easy(
+      Uint8List m, Uint8List n, Uint8List pk, Uint8List sk,
+      {bool useBackgroundThread = false}) async {
+    assert(m != null);
+    assert(n != null);
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(
+        n.length,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        'n',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        pk.length,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        'pk',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        sk.length,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        'sk',
+        'Invalid length');
+
+    final Uint8List result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_easy',
+        {'m': m, 'n': n, 'pk': pk, 'sk': sk, 'bgThread': useBackgroundThread});
+    return result;
+  }
+
+  /// Verifies and decrypts a ciphertext produced by [cryptoBoxCurve25519xchacha20poly1305Easy].
+  static Future<Uint8List> cryptoBoxCurve25519xchacha20poly1305OpenEasy(
+      Uint8List c, Uint8List n, Uint8List pk, Uint8List sk,
+      {bool useBackgroundThread = false}) async {
+    assert(c != null);
+    assert(n != null);
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(
+        n.length,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        'n',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        pk.length,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        'pk',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        sk.length,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        'sk',
+        'Invalid length');
+
+    final Uint8List result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_open_easy',
+        {'c': c, 'n': n, 'pk': pk, 'sk': sk, 'bgThread': useBackgroundThread});
+    return result;
+  }
+
+  /// Encrypts a message with a recipient's public key, a sender's secret key and a nonce. Returns the encrypted message and mac.
+  static Future<Map<String, Uint8List>>
+      cryptoBoxCurve25519xchacha20poly1305Detached(
+          Uint8List m, Uint8List n, Uint8List pk, Uint8List sk,
+          {bool useBackgroundThread = false}) async {
+    assert(m != null);
+    assert(n != null);
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(
+        n.length,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        'n',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        pk.length,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        'pk',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        sk.length,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        'sk',
+        'Invalid length');
+
+    final Map result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_detached',
+        {'m': m, 'n': n, 'pk': pk, 'sk': sk, 'bgThread': useBackgroundThread});
+    return result.cast<String, Uint8List>();
+  }
+
+  /// Verifies and decrypts a ciphertext produced by [cryptoBoxCurve25519xchacha20poly1305Detached].
+  static Future<Uint8List> cryptoBoxCurve25519xchacha20poly1305OpenDetached(
+      Uint8List c, Uint8List mac, Uint8List n, Uint8List pk, Uint8List sk,
+      {bool useBackgroundThread = false}) async {
+    assert(c != null);
+    assert(mac != null);
+    assert(n != null);
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(
+        mac.length,
+        crypto_box_curve25519xchacha20poly1305_MACBYTES,
+        crypto_box_curve25519xchacha20poly1305_MACBYTES,
+        'mac',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        n.length,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        'n',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        pk.length,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        'pk',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        sk.length,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        'sk',
+        'Invalid length');
+
+    final Uint8List result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_open_detached', {
+      'c': c,
+      'mac': mac,
+      'n': n,
+      'pk': pk,
+      'sk': sk,
+      'bgThread': useBackgroundThread
+    });
+    return result;
+  }
+
+  /// Computes a shared secret key given a public key and a secret key.
+  static Future<Uint8List> cryptoBoxCurve25519xchacha20poly1305Beforenm(
+      Uint8List pk, Uint8List sk,
+      {bool useBackgroundThread = false}) async {
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(
+        pk.length,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        'pk',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        sk.length,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        'sk',
+        'Invalid length');
+
+    final Uint8List result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_beforenm',
+        {'pk': pk, 'sk': sk, 'bgThread': useBackgroundThread});
+    return result;
+  }
+
+  /// Encrypts a message with a shared secret key and a nonce.
+  static Future<Uint8List> cryptoBoxCurve25519xchacha20poly1305EasyAfternm(
+      Uint8List m, Uint8List n, Uint8List k,
+      {bool useBackgroundThread = false}) async {
+    assert(m != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        n.length,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        'n',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_box_curve25519xchacha20poly1305_BEFORENMBYTES,
+        crypto_box_curve25519xchacha20poly1305_BEFORENMBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_easy_afternm',
+        {'m': m, 'n': n, 'k': k, 'bgThread': useBackgroundThread});
+    return result;
+  }
+
+  /// Verifies and decrypts a ciphertext with a shared secret key and a nonce.
+  static Future<Uint8List> cryptoBoxCurve25519xchacha20poly1305OpenEasyAfternm(
+      Uint8List c, Uint8List n, Uint8List k,
+      {bool useBackgroundThread = false}) async {
+    assert(c != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        n.length,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        'n',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_box_curve25519xchacha20poly1305_BEFORENMBYTES,
+        crypto_box_curve25519xchacha20poly1305_BEFORENMBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_open_easy_afternm',
+        {'c': c, 'n': n, 'k': k, 'bgThread': useBackgroundThread});
+    return result;
+  }
+
+  /// Encrypts a message with a shared secret key and a nonce. Returns the encrypted message and mac.
+  static Future<Map<String, Uint8List>>
+      cryptoBoxCurve25519xchacha20poly1305DetachedAfternm(
+          Uint8List m, Uint8List n, Uint8List k,
+          {bool useBackgroundThread = false}) async {
+    assert(m != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        n.length,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        'n',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_box_curve25519xchacha20poly1305_BEFORENMBYTES,
+        crypto_box_curve25519xchacha20poly1305_BEFORENMBYTES,
+        'k',
+        'Invalid length');
+
+    final Map result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_detached_afternm',
+        {'m': m, 'n': n, 'k': k, 'bgThread': useBackgroundThread});
+    return result.cast<String, Uint8List>();
+  }
+
+  /// Verifies and decrypts a ciphertext with a mac, a shared secret key and a nonce.
+  static Future<Uint8List>
+      cryptoBoxCurve25519xchacha20poly1305OpenDetachedAfternm(
+          Uint8List c, Uint8List mac, Uint8List n, Uint8List k,
+          {bool useBackgroundThread = false}) async {
+    assert(c != null);
+    assert(mac != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        mac.length,
+        crypto_box_curve25519xchacha20poly1305_MACBYTES,
+        crypto_box_curve25519xchacha20poly1305_MACBYTES,
+        'mac',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        n.length,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        crypto_box_curve25519xchacha20poly1305_NONCEBYTES,
+        'n',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        crypto_box_curve25519xchacha20poly1305_BEFORENMBYTES,
+        crypto_box_curve25519xchacha20poly1305_BEFORENMBYTES,
+        'k',
+        'Invalid length');
+
+    final Uint8List result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_open_detached_afternm',
+        {'c': c, 'mac': mac, 'n': n, 'k': k, 'bgThread': useBackgroundThread});
+    return result;
+  }
+
+  //
+  // crypto_box_curve25519xchacha20poly1305_seal
+  //
+  /// Encrypts a message for a recipient whose public key is pk
+  static Future<Uint8List> cryptoBoxCurve25519xchacha20poly1305Seal(
+      Uint8List m, Uint8List pk,
+      {bool useBackgroundThread = false}) async {
+    assert(m != null);
+    assert(pk != null);
+    RangeError.checkValueInInterval(
+        pk.length,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        'pk',
+        'Invalid length');
+
+    final Uint8List result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_seal',
+        {'m': m, 'pk': pk, 'bgThread': useBackgroundThread});
+    return result;
+  }
+
+  /// Decrypts the ciphertext using specified key pair.
+  static Future<Uint8List> cryptoBoxCurve25519xchacha20poly1305SealOpen(
+      Uint8List c, Uint8List pk, Uint8List sk,
+      {bool useBackgroundThread = false}) async {
+    assert(c != null);
+    assert(pk != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(
+        pk.length,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES,
+        'pk',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        sk.length,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES,
+        'sk',
+        'Invalid length');
+
+    final Uint8List result = await _channel.invokeMethod(
+        'crypto_box_curve25519xchacha20poly1305_seal_open',
+        {'c': c, 'pk': pk, 'sk': sk, 'bgThread': useBackgroundThread});
+    return result;
+  }
+
+  //
   // crypto_generichash
   //
   /// Computes a fingerprint of specified length for given input and key.

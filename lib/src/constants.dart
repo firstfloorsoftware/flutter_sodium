@@ -47,6 +47,13 @@ const int crypto_box_curve25519xsalsa20poly1305_NONCEBYTES = 24;
 const int crypto_box_curve25519xsalsa20poly1305_MACBYTES = 16;
 const int crypto_box_curve25519xsalsa20poly1305_BOXZEROBYTES = 16;
 
+const int crypto_box_curve25519xchacha20poly1305_SEEDBYTES = 32;
+const int crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES = 32;
+const int crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES = 32;
+const int crypto_box_curve25519xchacha20poly1305_BEFORENMBYTES = 32;
+const int crypto_box_curve25519xchacha20poly1305_NONCEBYTES = 24;
+const int crypto_box_curve25519xchacha20poly1305_MACBYTES = 16;
+
 const int crypto_generichash_BYTES_MIN = crypto_generichash_blake2b_BYTES_MIN;
 const int crypto_generichash_BYTES_MAX = crypto_generichash_blake2b_BYTES_MAX;
 const int crypto_generichash_BYTES = crypto_generichash_blake2b_BYTES;
