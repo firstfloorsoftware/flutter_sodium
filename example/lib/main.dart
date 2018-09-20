@@ -573,9 +573,9 @@ final subkey1 = await KeyDerivation.deriveFromKey(masterkey, 1, subKeyLength: 32
 final subkey2 = await KeyDerivation.deriveFromKey(masterkey, 2, subKeyLength: 32);
 final subkey3 = await KeyDerivation.deriveFromKey(masterkey, 3, subKeyLength: 64);
 
-print(subkey1: \${hex.encode(subkey1)})
-print(subkey2: \${hex.encode(subkey3)})
-print(subkey2: \${hex.encode(subkey3)});''', () async {
+print('subkey1: \${hex.encode(subkey1)}')
+print('subkey2: \${hex.encode(subkey2)}')
+print('subkey3: \${hex.encode(subkey3)}');''', () async {
             // Generate master key
             final masterkey = await KeyDerivation.generateKey();
 
