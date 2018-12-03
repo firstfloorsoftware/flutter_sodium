@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
     Example('Random data',
         description:
             'Provides a set of functions to generate unpredictable data, suitable for creating secret keys.',
-        docUrl: 'https://download.libsodium.org/doc/generating_random_data/',
+        docUrl: 'https://libsodium.gitbook.io/doc/generating_random_data/',
         samples: [
           Sample(
               'Random',
@@ -50,7 +50,7 @@ print(hex.encode(buffer));''', () async {
         ]),
     Example('Version',
         description: 'Provides libsodium version info.',
-        docUrl: 'https://download.libsodium.org/doc/',
+        docUrl: 'https://libsodium.gitbook.io/doc/',
         samples: [
           Sample(
               'Usage',
@@ -65,7 +65,7 @@ print(version);''', () async {
     Example('Authenticated encryption',
         description: 'Secret-key encryption and verification',
         docUrl:
-            'https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html',
+            'https://libsodium.gitbook.io/doc/secret-key_cryptography/authenticated_encryption',
         samples: [
           Sample(
               'Combined mode',
@@ -139,7 +139,7 @@ assert(msg == decrypted);''', () async {
         description:
             'Computes an authentication tag for a message and a secret key, and provides a way to verify that a given tag is valid for a given message and a key.',
         docUrl:
-            'https://download.libsodium.org/doc/secret-key_cryptography/secret-key_authentication.html',
+            'https://libsodium.gitbook.io/doc/secret-key_cryptography/secret-key_authentication',
         samples: [
           Sample('Usage', 'Secret key authentication.', '''// Generate secret
 var key = await CryptoAuth.generateKey();
@@ -172,7 +172,7 @@ assert(valid);''', () async {
     Example('Original ChaCha20-Poly1305',
         description: 'Authenticated Encryption with Additional Data.',
         docUrl:
-            'https://download.libsodium.org/doc/secret-key_cryptography/original_chacha20-poly1305_construction.html',
+            'https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/original_chacha20-poly1305_construction',
         samples: [
           Sample(
               'Combined mode',
@@ -214,7 +214,7 @@ assert(msg == decrypted);''', () async {
     Example('IETF ChaCha20-Poly1305',
         description: 'Authenticated Encryption with Additional Data.',
         docUrl:
-            'https://download.libsodium.org/doc/secret-key_cryptography/ietf_chacha20-poly1305_construction.html',
+            'https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/ietf_chacha20-poly1305_construction',
         samples: [
           Sample(
               'Combined mode',
@@ -256,7 +256,7 @@ assert(msg == decrypted);''', () async {
     Example('XChaCha20-Poly1305',
         description: 'Authenticated Encryption with Additional Data.',
         docUrl:
-            'https://download.libsodium.org/doc/secret-key_cryptography/xchacha20-poly1305_construction.html',
+            'https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction',
         samples: [
           Sample(
               'Combined mode',
@@ -336,7 +336,7 @@ assert(msg == decrypted);''', () async {
     Example('Authenticated encryption',
         description: 'Public-key authenticated encryption',
         docUrl:
-            'https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption.html',
+            'https://libsodium.gitbook.io/doc/public-key_cryptography/authenticated_encryption',
         samples: [
           Sample(
               'Combined mode',
@@ -420,7 +420,7 @@ assert(msg == decrypted);''', () async {
         description:
             'Computes a signature for a message using a secret key, and provides verification using a public key.',
         docUrl:
-            'https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures.html',
+            'https://libsodium.gitbook.io/doc/public-key_cryptography/public-key_signatures',
         samples: [
           Sample('Usage', 'Public key verification (detached mode).',
               '''// Author generates keypair
@@ -455,7 +455,7 @@ assert(valid);''', () async {
         description:
             'Anonymously send encrypted messages to a recipient given its public key.',
         docUrl:
-            'https://download.libsodium.org/doc/public-key_cryptography/sealed_boxes.html',
+            'https://libsodium.gitbook.io/doc/public-key_cryptography/sealed_boxes',
         samples: [
           Sample(
               'Usage',
@@ -493,7 +493,7 @@ assert(msg == decrypted);''', () async {
         description:
             'Computes a fixed-length fingerprint for an arbitrary long message using the BLAKE2b algorithm.',
         docUrl:
-            'https://download.libsodium.org/doc/hashing/generic_hashing.html',
+            'https://libsodium.gitbook.io/doc/hashing/generic_hashing',
         samples: [
           Sample(
               'Usage',
@@ -511,7 +511,7 @@ print(hex.encode(hash));''', () async {
     Example('Short-input hashing',
         description: 'Computes short hashes using the SipHash-2-4 algorithm.',
         docUrl:
-            'https://download.libsodium.org/doc/hashing/short-input_hashing.html',
+            'https://libsodium.gitbook.io/doc/hashing/short-input_hashing',
         samples: [
           Sample(
               'Usage',
@@ -532,7 +532,7 @@ print(hex.encode(hash));''', () async {
         description:
             'Provides an Argon2 password hashing scheme implementation.',
         docUrl:
-            'https://download.libsodium.org/doc/password_hashing/the_argon2i_function.html',
+            'https://libsodium.gitbook.io/doc/password_hashing/the_argon2i_function',
         samples: [
           Sample('Hash', 'Derives a hash from given password and salt.',
               '''var pw = 'hello world';
@@ -562,7 +562,7 @@ var valid = await PasswordHash.verifyStorage(str, pw);''', () async {
     Example('Key functions', isHeader: true),
     Example('Key derivation',
         description: 'Derive secret subkeys from a single master key.',
-        docUrl: 'https://download.libsodium.org/doc/key_derivation/',
+        docUrl: 'https://libsodium.gitbook.io/doc/key_derivation/',
         samples: [
           Sample('Usage', 'Compute a set of shared keys.',
               '''// Generate master key
@@ -592,7 +592,7 @@ print('subkey3: \${hex.encode(subkey3)}');''', () async {
         ]),
     Example('Key exchange',
         description: 'Securely compute a set of shared keys.',
-        docUrl: 'https://download.libsodium.org/doc/key_exchange/',
+        docUrl: 'https://libsodium.gitbook.io/doc/key_exchange/',
         samples: [
           Sample(
               'Usage', 'Compute a set of shared keys.', '''// Generate key pairs
@@ -632,7 +632,7 @@ print('client tx: \${hex.encode(clientKeys.tx)}');''', () async {
     Example('Diffie-Hellman',
         description: 'Perform scalar multiplication of elliptic curve points',
         docUrl:
-            'https://download.libsodium.org/doc/advanced/scalar_multiplication.html',
+            'https://libsodium.gitbook.io/doc/advanced/scalar_multiplication',
         samples: [
           Sample('Usage', 'Computes a shared secret.',
               '''// Create client's secret and public keys
@@ -696,7 +696,7 @@ print(hex.encode(sharedKeyClient));
         ]),
     Example('One-time authentication',
         description: 'Secret-key single-message authentication using Poly1305',
-        docUrl: 'https://download.libsodium.org/doc/advanced/poly1305.html',
+        docUrl: 'https://libsodium.gitbook.io/doc/advanced/poly1305',
         samples: [
           Sample(
               'Usage',
