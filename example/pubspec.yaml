@@ -6,8 +6,8 @@ dependencies:
     sdk: flutter
     
   cupertino_icons: ^0.1.2
-  url_launcher: ^3.0.0
-  convert: ^2.0.2
+  url_launcher: ^4.0.2
+  convert: ^2.1.0
 
 dev_dependencies:
   flutter_test:

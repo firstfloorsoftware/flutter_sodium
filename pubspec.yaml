@@ -5,8 +5,8 @@ author: First Floor Software <info@firstfloorsoftware.com>
 homepage: https://github.com/firstfloorsoftware/flutter_sodium
 
 environment:
-  sdk: '>=2.0.0-dev <3.0.0'
-  
+  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
