@@ -240,11 +240,7 @@ public class FlutterSodiumPlugin implements MethodCallHandler, CryptoTask {
                 return randombytes_random(call);
             case "randombytes_uniform":
                 return randombytes_uniform(call);
-            case "randombytes_stir":
-                return randombytes_stir(call);
-            case "randombytes_close":
-                return randombytes_close(call);
-
+                
             case "sodium_version_string":
                 return sodium_version_string(call);
             default:
@@ -1295,16 +1291,6 @@ public class FlutterSodiumPlugin implements MethodCallHandler, CryptoTask {
     private Object randombytes_uniform(MethodCall call) {
         int upper_bound = call.argument("upper_bound");
         return sodium().randombytes_uniform(upper_bound);
-    }
-
-    private Object randombytes_stir(MethodCall call) {
-        sodium().randombytes_stir();
-        return null;
-    }
-
-    private Object randombytes_close(MethodCall call) throws Exception {
-        requireSuccess(sodium().randombytes_close());
-        return null;
     }
 
     private Object sodium_version_string(MethodCall call) {

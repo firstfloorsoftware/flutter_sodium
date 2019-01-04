@@ -153,8 +153,6 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       case "randombytes_buf_deterministic": return randombytes_buf_deterministic(call: call)
       case "randombytes_random": return randombytes_random(call: call)
       case "randombytes_uniform": return randombytes_uniform(call: call)
-      case "randombytes_stir": return randombytes_stir(call: call)
-      case "randombytes_close": return randombytes_close(call: call)
 
       case "sodium_version_string": return sodium_version_string(call: call)
       
@@ -2064,18 +2062,6 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let args = call.arguments as! NSDictionary
     let upper_bound = args["upper_bound"] as! UInt32
     return flutter_sodium.randombytes_uniform(upper_bound)
-  }
-  
-  private func randombytes_stir(call: FlutterMethodCall) -> Any
-  {
-    flutter_sodium.randombytes_stir()
-    return 0
-  }
-  
-  private func randombytes_close(call: FlutterMethodCall) -> Any
-  {
-    flutter_sodium.randombytes_close()
-    return 0
   }
 
   private func sodium_version_string(call: FlutterMethodCall) -> Any
