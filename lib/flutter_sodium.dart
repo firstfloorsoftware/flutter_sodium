@@ -1466,7 +1466,7 @@ class Sodium {
   }
 
   /// Check if a password verification string matches the parameters opslimit and memlimit, and the current default algorithm.
-  static Future<bool> cryptoPwhashStrNeedsRehash(
+  static Future<int> cryptoPwhashStrNeedsRehash(
       Uint8List str, int opslimit, int memlimit,
       {bool useBackgroundThread = false}) async {
     assert(str != null);
@@ -1476,7 +1476,7 @@ class Sodium {
         crypto_pwhash_OPSLIMIT_MAX, 'opslimit');
     RangeError.checkValueInInterval(memlimit, crypto_pwhash_MEMLIMIT_MIN,
         crypto_pwhash_MEMLIMIT_MAX, 'memlimit');
-    final bool result =
+    final int result =
         await _channel.invokeMethod('crypto_pwhash_str_needs_rehash', {
       'str': str,
       'opslimit': opslimit,
