@@ -1804,24 +1804,7 @@ class Sodium {
         {'upper_bound': upperBound, 'bgThread': useBackgroundThread});
     return result;
   }
-
-  /// Reseeds the pseudo-random number generator.
-  static Future<int> randombytesStir({bool useBackgroundThread = false}) async {
-    final int result = await _channel
-        .invokeMethod('randombytes_stir', {'bgThread': useBackgroundThread});
-    return result;
-  }
-
-  /// Deallocates the global resources used by the pseudo-random number generator.
-  ///
-  /// Explicitly calling this function is almost never required.
-  static Future<int> randombytesClose(
-      {bool useBackgroundThread = false}) async {
-    final int result = await _channel
-        .invokeMethod('randombytes_close', {'bgThread': useBackgroundThread});
-    return result;
-  }
-
+  
   //
   // sodium_version
   //
