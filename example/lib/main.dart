@@ -722,6 +722,25 @@ assert(valid);
             return hex.encode(tag);
           })
         ]),
+    Example('Ed25519 To Curve25519 Secret Key',
+        description:
+        'Converts an Ed25519 Secret Key to a Curve25519 Secret Key',
+        docUrl:
+        'https://download.libsodium.org/doc/advanced/ed25519-curve25519',
+        samples: [
+          Sample(
+              'Usage',
+              'Converts an Ed25519 secret key to a Curve25519 secret key',
+              '''var ed25519Sk = await CryptoSign.generateKeyPair();
+var curveSk = await Sodium.cryptoSignEd25519SkToCurve25519(ed25519Sk.secretKey);
+
+print(hex.encode(curveSk));''', () async {
+            var ed25519Sk = await CryptoSign.generateKeyPair();
+            var curveSk = await Sodium.cryptoSignEd25519SkToCurve25519(ed25519Sk.secretKey);
+
+            return hex.encode(curveSk);
+          })
+        ]),
   ];
 
   Widget _buildListTile(BuildContext context, Example example) {
