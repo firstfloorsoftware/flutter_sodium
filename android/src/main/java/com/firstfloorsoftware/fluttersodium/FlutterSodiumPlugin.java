@@ -231,6 +231,8 @@ public class FlutterSodiumPlugin implements MethodCallHandler, CryptoTask {
                 return crypto_sign_final_create(call);
             case "crypto_sign_final_verify":
                 return crypto_sign_final_verify(call);
+            case "crypto_sign_ed25519_sk_to_curve25519":
+                return crypto_sign_ed25519_sk_to_curve25519(call);
 
             case "randombytes_buf":
                 return randombytes_buf(call);
@@ -1272,6 +1274,14 @@ public class FlutterSodiumPlugin implements MethodCallHandler, CryptoTask {
 
         // FIXME: crypto_sign_final_verify not implemented in libsodium-jni
         throw new UnsupportedOperationException();
+    }
+
+    private Object crypto_sign_ed25519_sk_to_curve25519(MethodCall call) throws Exception {
+        byte[] sk = call.argument("sk");
+        byte[] curve25519Sk = new byte[sodium().crypto_scalarmult_curve25519_bytes()];
+        requireSuccess(sodium().crypto_sign_ed25519_sk_to_curve25519(curve25519Sk, sk));
+
+        return curve25519Sk;
     }
 
     private Object randombytes_buf(MethodCall call) {
