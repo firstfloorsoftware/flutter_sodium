@@ -1,3 +1,7 @@
+## 0.0.9 - February 24, 2018
+* Adds support for crypto_sign_ed25519_sk_to_curve25519 (by sporkins)
+* Fixes sample app issues
+
 ## 0.0.8 - September 10, 2018
 * Adds support for crypto_box_curve25519xchacha20poly1305_*
 * Fixes iOS build warnings
