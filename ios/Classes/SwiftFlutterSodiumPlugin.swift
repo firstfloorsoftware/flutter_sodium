@@ -1355,13 +1355,13 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     if let key = key {
       ret = state.withUnsafeMutableBytes { statePtr in 
         key.withUnsafeBytes { keyPtr in 
-          flutter_sodium.crypto_generichash_init(statePtr, keyPtr, key.count, outlen)
+          flutter_sodium.crypto_generichash_init(OpaquePointer(statePtr.baseAddress), keyPtr, key.count, outlen)
         }
       }
     }
     else {
       ret = state.withUnsafeMutableBytes { statePtr in 
-        flutter_sodium.crypto_generichash_init(statePtr, nil, 0, outlen)
+        flutter_sodium.crypto_generichash_init(OpaquePointer(statePtr.baseAddress), nil, 0, outlen)
       }
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
@@ -1375,7 +1375,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
 
     let ret = state.withUnsafeMutableBytes { statePtr in 
       i.withUnsafeBytes { iPtr in 
-        flutter_sodium.crypto_generichash_update(statePtr, iPtr, CUnsignedLongLong(i.count))
+        flutter_sodium.crypto_generichash_update(OpaquePointer(statePtr.baseAddress), iPtr, CUnsignedLongLong(i.count))
       }
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
@@ -1391,7 +1391,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
 
     let ret = state.withUnsafeMutableBytes { statePtr in 
       out.withUnsafeMutableBytes { outPtr in 
-        flutter_sodium.crypto_generichash_final(statePtr, outPtr, outlen)
+        flutter_sodium.crypto_generichash_final(OpaquePointer(statePtr.baseAddress), outPtr, outlen)
       }
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
