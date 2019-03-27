@@ -181,12 +181,12 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var ret: Int32 = -1
     
     if let ad = ad {
-      ret = c.withUnsafeMutableBytes { cPtr in
+      ret = c.withUnsafeMutableBytes { (cPtr: UnsafeMutableRawBufferPointer) -> Void in
         m.withUnsafeBytes { mPtr in
           ad.withUnsafeBytes { adPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_encrypt(cPtr, nil, mPtr, CUnsignedLongLong(m.count), adPtr, CUnsignedLongLong(ad.count), nil, npubPtr, kPtr)
+                flutter_sodium.crypto_aead_chacha20poly1305_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -198,7 +198,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         m.withUnsafeBytes { mPtr in
           npub.withUnsafeBytes { npubPtr in
             k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_chacha20poly1305_encrypt(cPtr, nil, mPtr, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr, kPtr)
+              flutter_sodium.crypto_aead_chacha20poly1305_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
             }
           }
         }
@@ -224,7 +224,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           ad.withUnsafeBytes { adPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_decrypt(mPtr, nil, nil, cPtr, CUnsignedLongLong(c.count), adPtr, CUnsignedLongLong(ad.count), npubPtr, kPtr)
+                flutter_sodium.crypto_aead_chacha20poly1305_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -236,7 +236,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         c.withUnsafeBytes { cPtr in
           npub.withUnsafeBytes { npubPtr in
             k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_chacha20poly1305_decrypt(mPtr, nil, nil, cPtr, CUnsignedLongLong(c.count), nil, 0, npubPtr, kPtr)
+              flutter_sodium.crypto_aead_chacha20poly1305_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
             }
           }
         }
@@ -264,7 +264,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
             ad.withUnsafeBytes { adPtr in
               npub.withUnsafeBytes { npubPtr in
                 k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_chacha20poly1305_encrypt_detached(cPtr, macPtr, nil, mPtr, CUnsignedLongLong(m.count), adPtr, CUnsignedLongLong(ad.count), nil, npubPtr, kPtr)
+                  flutter_sodium.crypto_aead_chacha20poly1305_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
                 }
               }
             }
@@ -278,7 +278,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           m.withUnsafeBytes { mPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_encrypt_detached(cPtr, macPtr, nil, mPtr, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr, kPtr)
+                flutter_sodium.crypto_aead_chacha20poly1305_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -311,7 +311,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
             ad.withUnsafeBytes { adPtr in
               npub.withUnsafeBytes { npubPtr in
                 k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_chacha20poly1305_decrypt_detached(mPtr, nil, cPtr, CUnsignedLongLong(c.count), macPtr, adPtr, CUnsignedLongLong(ad.count), npubPtr, kPtr)
+                  flutter_sodium.crypto_aead_chacha20poly1305_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
                 }
               }
             }
@@ -325,7 +325,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           mac.withUnsafeBytes { macPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_decrypt_detached(mPtr, nil, cPtr, CUnsignedLongLong(c.count), macPtr, nil, 0, npubPtr, kPtr)
+                flutter_sodium.crypto_aead_chacha20poly1305_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -339,7 +339,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     var k = Data(count: flutter_sodium.crypto_aead_chacha20poly1305_keybytes())
     k.withUnsafeMutableBytes { kPtr in
-      flutter_sodium.crypto_aead_chacha20poly1305_keygen(kPtr)
+      flutter_sodium.crypto_aead_chacha20poly1305_keygen(kPtr.baseAddress)
     }
     return FlutterStandardTypedData.init(bytes: k)
   }
@@ -361,7 +361,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           ad.withUnsafeBytes { adPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt(cPtr, nil, mPtr, CUnsignedLongLong(m.count), adPtr, CUnsignedLongLong(ad.count), nil, npubPtr, kPtr)
+                flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -373,7 +373,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         m.withUnsafeBytes { mPtr in
           npub.withUnsafeBytes { npubPtr in
             k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt(cPtr, nil, mPtr, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr, kPtr)
+              flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
             }
           }
         }
@@ -399,7 +399,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           ad.withUnsafeBytes { adPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt(mPtr, nil, nil, cPtr, CUnsignedLongLong(c.count), adPtr, CUnsignedLongLong(ad.count), npubPtr, kPtr)
+                flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -411,7 +411,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         c.withUnsafeBytes { cPtr in
           npub.withUnsafeBytes { npubPtr in
             k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt(mPtr, nil, nil, cPtr, CUnsignedLongLong(c.count), nil, 0, npubPtr, kPtr)
+              flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
             }
           }
         }
@@ -439,7 +439,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
             ad.withUnsafeBytes { adPtr in
               npub.withUnsafeBytes { npubPtr in
                 k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(cPtr, macPtr, nil, mPtr, CUnsignedLongLong(m.count), adPtr, CUnsignedLongLong(ad.count), nil, npubPtr, kPtr)
+                  flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
                 }
               }
             }
@@ -453,7 +453,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           m.withUnsafeBytes { mPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(cPtr, macPtr, nil, mPtr, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr, kPtr)
+                flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -486,7 +486,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
             ad.withUnsafeBytes { adPtr in
               npub.withUnsafeBytes { npubPtr in
                 k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt_detached(mPtr, nil, cPtr, CUnsignedLongLong(c.count), macPtr, adPtr, CUnsignedLongLong(ad.count), npubPtr, kPtr)
+                  flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
                 }
               }
             }
@@ -500,7 +500,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           mac.withUnsafeBytes { macPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt_detached(mPtr, nil, cPtr, CUnsignedLongLong(c.count), macPtr, nil, 0, npubPtr, kPtr)
+                flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -514,7 +514,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     var k = Data(count: flutter_sodium.crypto_aead_chacha20poly1305_ietf_keybytes())
     k.withUnsafeMutableBytes { kPtr in
-      flutter_sodium.crypto_aead_chacha20poly1305_ietf_keygen(kPtr)
+      flutter_sodium.crypto_aead_chacha20poly1305_ietf_keygen(kPtr.baseAddress)
     }
     return FlutterStandardTypedData.init(bytes: k)
   }
@@ -536,7 +536,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           ad.withUnsafeBytes { adPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(cPtr, nil, mPtr, CUnsignedLongLong(m.count), adPtr, CUnsignedLongLong(ad.count), nil, npubPtr, kPtr)
+                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -548,7 +548,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         m.withUnsafeBytes { mPtr in
           npub.withUnsafeBytes { npubPtr in
             k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(cPtr, nil, mPtr, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr, kPtr)
+              flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
             }
           }
         }
@@ -574,7 +574,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           ad.withUnsafeBytes { adPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(mPtr, nil, nil, cPtr, CUnsignedLongLong(c.count), adPtr, CUnsignedLongLong(ad.count), npubPtr, kPtr)
+                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -586,7 +586,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         c.withUnsafeBytes { cPtr in
           npub.withUnsafeBytes { npubPtr in
             k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(mPtr, nil, nil, cPtr, CUnsignedLongLong(c.count), nil, 0, npubPtr, kPtr)
+              flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
             }
           }
         }
@@ -614,7 +614,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
             ad.withUnsafeBytes { adPtr in
               npub.withUnsafeBytes { npubPtr in
                 k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt_detached(cPtr, macPtr, nil, mPtr, CUnsignedLongLong(m.count), adPtr, CUnsignedLongLong(ad.count), nil, npubPtr, kPtr)
+                  flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
                 }
               }
             }
@@ -628,7 +628,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           m.withUnsafeBytes { mPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt_detached(cPtr, macPtr, nil, mPtr, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr, kPtr)
+                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -661,7 +661,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
             ad.withUnsafeBytes { adPtr in
               npub.withUnsafeBytes { npubPtr in
                 k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt_detached(mPtr, nil, cPtr, CUnsignedLongLong(c.count), macPtr, adPtr, CUnsignedLongLong(ad.count), npubPtr, kPtr)
+                  flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
                 }
               }
             }
@@ -675,7 +675,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           mac.withUnsafeBytes { macPtr in
             npub.withUnsafeBytes { npubPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt_detached(mPtr, nil, cPtr, CUnsignedLongLong(c.count), macPtr, nil, 0, npubPtr, kPtr)
+                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
               }
             }
           }
@@ -689,7 +689,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     var k = Data(count: flutter_sodium.crypto_aead_xchacha20poly1305_ietf_keybytes())
     k.withUnsafeMutableBytes { kPtr in
-      flutter_sodium.crypto_aead_xchacha20poly1305_ietf_keygen(kPtr)
+      flutter_sodium.crypto_aead_xchacha20poly1305_ietf_keygen(kPtr.baseAddress)
     }
     return FlutterStandardTypedData.init(bytes: k)
   }
@@ -705,7 +705,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = out.withUnsafeMutableBytes { outPtr in
       i.withUnsafeBytes { iPtr in 
         k.withUnsafeBytes { kPtr in
-          flutter_sodium.crypto_auth(outPtr, iPtr, CUnsignedLongLong(i.count), kPtr)
+          flutter_sodium.crypto_auth(outPtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count), kPtr.baseAddress)
         }
       }
     }
@@ -722,7 +722,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = h.withUnsafeBytes { hPtr in
       i.withUnsafeBytes { iPtr in
         k.withUnsafeBytes { kPtr in 
-          flutter_sodium.crypto_auth_verify(hPtr, iPtr, CUnsignedLongLong(i.count), kPtr)
+          flutter_sodium.crypto_auth_verify(hPtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count), kPtr.baseAddress)
         }
       }
     }
@@ -733,7 +733,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     var k = Data(count: flutter_sodium.crypto_auth_keybytes())
     k.withUnsafeMutableBytes { kPtr in
-      flutter_sodium.crypto_auth_keygen(kPtr)
+      flutter_sodium.crypto_auth_keygen(kPtr.baseAddress)
     }
     return FlutterStandardTypedData.init(bytes: k)
   }
@@ -748,7 +748,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = pk.withUnsafeMutableBytes { pkPtr in
       sk.withUnsafeMutableBytes { skPtr in
         seed.withUnsafeBytes { seedPtr in
-          flutter_sodium.crypto_box_seed_keypair(pkPtr, skPtr, seedPtr)
+          flutter_sodium.crypto_box_seed_keypair(pkPtr.baseAddress, skPtr.baseAddress, seedPtr.baseAddress)
         }
       }
     }
@@ -764,7 +764,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var sk = Data(count: flutter_sodium.crypto_box_secretkeybytes())
     let ret = pk.withUnsafeMutableBytes { pkPtr in
       sk.withUnsafeMutableBytes { skPtr in
-        flutter_sodium.crypto_box_keypair(pkPtr, skPtr)
+        flutter_sodium.crypto_box_keypair(pkPtr.baseAddress, skPtr.baseAddress)
       }
     }
     return error(ret: ret) ?? [
@@ -788,7 +788,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         n.withUnsafeBytes { nPtr in
           pk.withUnsafeBytes { pkPtr in
             sk.withUnsafeBytes { skPtr in
-              flutter_sodium.crypto_box_easy(cPtr, mPtr, CUnsignedLongLong(m.count), nPtr, pkPtr, skPtr)
+              flutter_sodium.crypto_box_easy(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
             }
           }
         }
@@ -812,7 +812,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         n.withUnsafeBytes { nPtr in
           pk.withUnsafeBytes { pkPtr in
             sk.withUnsafeBytes { skPtr in
-              flutter_sodium.crypto_box_open_easy(mPtr, cPtr, CUnsignedLongLong(c.count), nPtr, pkPtr, skPtr)
+              flutter_sodium.crypto_box_open_easy(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
             }
           }
         }
@@ -838,7 +838,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           n.withUnsafeBytes { nPtr in
             pk.withUnsafeBytes { pkPtr in
               sk.withUnsafeBytes { skPtr in
-                flutter_sodium.crypto_box_detached(cPtr, macPtr, mPtr, CUnsignedLongLong(m.count), nPtr, pkPtr, skPtr)
+                flutter_sodium.crypto_box_detached(cPtr.baseAddress, macPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
               }
             }
           }
@@ -868,7 +868,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           n.withUnsafeBytes { nPtr in
             pk.withUnsafeBytes { pkPtr in
               sk.withUnsafeBytes { skPtr in
-                flutter_sodium.crypto_box_open_detached(mPtr, cPtr, macPtr, CUnsignedLongLong(c.count), nPtr, pkPtr, skPtr)
+                flutter_sodium.crypto_box_open_detached(mPtr.baseAddress, cPtr.baseAddress, macPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
               }
             }
           }
@@ -888,7 +888,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = k.withUnsafeMutableBytes { kPtr in
       pk.withUnsafeBytes { pkPtr in
         sk.withUnsafeBytes { skPtr in
-          flutter_sodium.crypto_box_beforenm(kPtr, pkPtr, skPtr)
+          flutter_sodium.crypto_box_beforenm(kPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
         }
       }
     }
@@ -908,7 +908,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       m.withUnsafeBytes { mPtr in
         n.withUnsafeBytes { nPtr in
           k.withUnsafeBytes { kPtr in
-            flutter_sodium.crypto_box_easy_afternm(cPtr, mPtr, CUnsignedLongLong(m.count), nPtr, kPtr)
+            flutter_sodium.crypto_box_easy_afternm(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, kPtr.baseAddress)
           }
         }
       }
@@ -929,7 +929,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       c.withUnsafeBytes { cPtr in
         n.withUnsafeBytes { nPtr in
           k.withUnsafeBytes { kPtr in
-            flutter_sodium.crypto_box_open_easy_afternm(mPtr, cPtr, CUnsignedLongLong(c.count), nPtr, kPtr)
+            flutter_sodium.crypto_box_open_easy_afternm(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, kPtr.baseAddress)
           }
         }
       }
@@ -952,7 +952,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         m.withUnsafeBytes { mPtr in
           n.withUnsafeBytes { nPtr in
             k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_box_detached_afternm(cPtr, macPtr, mPtr, CUnsignedLongLong(m.count), nPtr, kPtr)
+              flutter_sodium.crypto_box_detached_afternm(cPtr.baseAddress, macPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, kPtr.baseAddress)
             }
           }
         }
@@ -979,7 +979,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         c.withUnsafeBytes { cPtr in
           n.withUnsafeBytes { nPtr in
             k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_box_open_detached_afternm(mPtr, cPtr, macPtr, CUnsignedLongLong(c.count), nPtr, kPtr)
+              flutter_sodium.crypto_box_open_detached_afternm(mPtr.baseAddress, cPtr.baseAddress, macPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, kPtr.baseAddress)
             }
           }
         }
@@ -999,7 +999,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = c.withUnsafeMutableBytes { cPtr in
       m.withUnsafeBytes { mPtr in
         pk.withUnsafeBytes { pkPtr in
-          flutter_sodium.crypto_box_seal(cPtr, mPtr, CUnsignedLongLong(m.count), pkPtr)
+          flutter_sodium.crypto_box_seal(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), pkPtr.baseAddress)
         }
       }
     }
@@ -1019,7 +1019,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       c.withUnsafeBytes { cPtr in
         pk.withUnsafeBytes { pkPtr in
           sk.withUnsafeBytes { skPtr in
-            flutter_sodium.crypto_box_seal_open(mPtr, cPtr, CUnsignedLongLong(c.count), pkPtr, skPtr)
+            flutter_sodium.crypto_box_seal_open(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), pkPtr.baseAddress, skPtr.baseAddress)
           }
         }
       }
@@ -1037,7 +1037,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = pk.withUnsafeMutableBytes { pkPtr in
       sk.withUnsafeMutableBytes { skPtr in
         seed.withUnsafeBytes { seedPtr in
-          flutter_sodium.crypto_box_curve25519xchacha20poly1305_seed_keypair(pkPtr, skPtr, seedPtr)
+          flutter_sodium.crypto_box_curve25519xchacha20poly1305_seed_keypair(pkPtr.baseAddress, skPtr.baseAddress, seedPtr.baseAddress)
         }
       }
     }
@@ -1053,7 +1053,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var sk = Data(count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_secretkeybytes())
     let ret = pk.withUnsafeMutableBytes { pkPtr in
       sk.withUnsafeMutableBytes { skPtr in
-        flutter_sodium.crypto_box_curve25519xchacha20poly1305_keypair(pkPtr, skPtr)
+        flutter_sodium.crypto_box_curve25519xchacha20poly1305_keypair(pkPtr.baseAddress, skPtr.baseAddress)
       }
     }
     return error(ret: ret) ?? [
@@ -1077,7 +1077,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         n.withUnsafeBytes { nPtr in
           pk.withUnsafeBytes { pkPtr in
             sk.withUnsafeBytes { skPtr in
-              flutter_sodium.crypto_box_curve25519xchacha20poly1305_easy(cPtr, mPtr, CUnsignedLongLong(m.count), nPtr, pkPtr, skPtr)
+              flutter_sodium.crypto_box_curve25519xchacha20poly1305_easy(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
             }
           }
         }
@@ -1101,7 +1101,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         n.withUnsafeBytes { nPtr in
           pk.withUnsafeBytes { pkPtr in
             sk.withUnsafeBytes { skPtr in
-              flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_easy(mPtr, cPtr, CUnsignedLongLong(c.count), nPtr, pkPtr, skPtr)
+              flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_easy(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
             }
           }
         }
@@ -1127,7 +1127,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           n.withUnsafeBytes { nPtr in
             pk.withUnsafeBytes { pkPtr in
               sk.withUnsafeBytes { skPtr in
-                flutter_sodium.crypto_box_curve25519xchacha20poly1305_detached(cPtr, macPtr, mPtr, CUnsignedLongLong(m.count), nPtr, pkPtr, skPtr)
+                flutter_sodium.crypto_box_curve25519xchacha20poly1305_detached(cPtr.baseAddress, macPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
               }
             }
           }
@@ -1157,7 +1157,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           n.withUnsafeBytes { nPtr in
             pk.withUnsafeBytes { pkPtr in
               sk.withUnsafeBytes { skPtr in
-                flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_detached(mPtr, cPtr, macPtr, CUnsignedLongLong(c.count), nPtr, pkPtr, skPtr)
+                flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_detached(mPtr.baseAddress, cPtr.baseAddress, macPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
               }
             }
           }
@@ -1177,7 +1177,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = k.withUnsafeMutableBytes { kPtr in
       pk.withUnsafeBytes { pkPtr in
         sk.withUnsafeBytes { skPtr in
-          flutter_sodium.crypto_box_curve25519xchacha20poly1305_beforenm(kPtr, pkPtr, skPtr)
+          flutter_sodium.crypto_box_curve25519xchacha20poly1305_beforenm(kPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
         }
       }
     }
@@ -1197,7 +1197,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       m.withUnsafeBytes { mPtr in
         n.withUnsafeBytes { nPtr in
           k.withUnsafeBytes { kPtr in
-            flutter_sodium.crypto_box_curve25519xchacha20poly1305_easy_afternm(cPtr, mPtr, CUnsignedLongLong(m.count), nPtr, kPtr)
+            flutter_sodium.crypto_box_curve25519xchacha20poly1305_easy_afternm(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, kPtr.baseAddress)
           }
         }
       }
@@ -1218,7 +1218,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       c.withUnsafeBytes { cPtr in
         n.withUnsafeBytes { nPtr in
           k.withUnsafeBytes { kPtr in
-            flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_easy_afternm(mPtr, cPtr, CUnsignedLongLong(c.count), nPtr, kPtr)
+            flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_easy_afternm(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, kPtr.baseAddress)
           }
         }
       }
@@ -1241,7 +1241,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         m.withUnsafeBytes { mPtr in
           n.withUnsafeBytes { nPtr in
             k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_box_curve25519xchacha20poly1305_detached_afternm(cPtr, macPtr, mPtr, CUnsignedLongLong(m.count), nPtr, kPtr)
+              flutter_sodium.crypto_box_curve25519xchacha20poly1305_detached_afternm(cPtr.baseAddress, macPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, kPtr.baseAddress)
             }
           }
         }
@@ -1268,7 +1268,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         c.withUnsafeBytes { cPtr in
           n.withUnsafeBytes { nPtr in
             k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_detached_afternm(mPtr, cPtr, macPtr, CUnsignedLongLong(c.count), nPtr, kPtr)
+              flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_detached_afternm(mPtr.baseAddress, cPtr.baseAddress, macPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, kPtr.baseAddress)
             }
           }
         }
@@ -1288,7 +1288,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = c.withUnsafeMutableBytes { cPtr in
       m.withUnsafeBytes { mPtr in
         pk.withUnsafeBytes { pkPtr in
-          flutter_sodium.crypto_box_curve25519xchacha20poly1305_seal(cPtr, mPtr, CUnsignedLongLong(m.count), pkPtr)
+          flutter_sodium.crypto_box_curve25519xchacha20poly1305_seal(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), pkPtr.baseAddress)
         }
       }
     }
@@ -1308,7 +1308,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       c.withUnsafeBytes { cPtr in
         pk.withUnsafeBytes { pkPtr in
           sk.withUnsafeBytes { skPtr in
-            flutter_sodium.crypto_box_curve25519xchacha20poly1305_seal_open(mPtr, cPtr, CUnsignedLongLong(c.count), pkPtr, skPtr)
+            flutter_sodium.crypto_box_curve25519xchacha20poly1305_seal_open(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), pkPtr.baseAddress, skPtr.baseAddress)
           }
         }
       }
@@ -1329,15 +1329,16 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       ret = out.withUnsafeMutableBytes { outPtr in
         i.withUnsafeBytes { inPtr in
           key.withUnsafeBytes { keyPtr in
-            flutter_sodium.crypto_generichash(outPtr, outlen, inPtr, CUnsignedLongLong(i.count), keyPtr, key.count)
+            flutter_sodium.crypto_generichash(outPtr.baseAddress, outlen, inPtr, CUnsignedLongLong(i.count), keyPtr, key.count)
           }
         }
       }
     }
     else {
+        // @inlinable public func withUnsafeMutableBytes<T, Result>(of value: inout T, _ body: (UnsafeMutableRawBufferPointer) throws -> Result) rethrows -> Result
       ret = out.withUnsafeMutableBytes { outPtr in
         i.withUnsafeBytes { iPtr in
-          flutter_sodium.crypto_generichash(outPtr, outlen, iPtr, CUnsignedLongLong(i.count), nil, 0)
+          flutter_sodium.crypto_generichash(outPtr.baseAddress, outlen, iPtr, CUnsignedLongLong(i.count), nil, 0)
         }
       }
     }
@@ -1352,16 +1353,18 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var ret: Int32 = -1
     var state = Data(count: crypto_generichash_statebytes())
     
+    //    @inlinable public mutating func withUnsafeMutableBytes<ResultType>(_ body: (UnsafeMutableRawBufferPointer) throws -> ResultType) rethrows -> ResultType
+    
     if let key = key {
       ret = state.withUnsafeMutableBytes { statePtr in 
         key.withUnsafeBytes { keyPtr in 
-          flutter_sodium.crypto_generichash_init(statePtr, keyPtr, key.count, outlen)
+          flutter_sodium.crypto_generichash_init(OpaquePointer(statePtr.baseAddress), keyPtr.baseAddress, key.count, outlen)
         }
       }
     }
     else {
       ret = state.withUnsafeMutableBytes { statePtr in 
-        flutter_sodium.crypto_generichash_init(statePtr, nil, 0, outlen)
+        flutter_sodium.crypto_generichash_init(OpaquePointer(statePtr.baseAddress), nil, 0, outlen)
       }
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
@@ -1375,7 +1378,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
 
     let ret = state.withUnsafeMutableBytes { statePtr in 
       i.withUnsafeBytes { iPtr in 
-        flutter_sodium.crypto_generichash_update(statePtr, iPtr, CUnsignedLongLong(i.count))
+        flutter_sodium.crypto_generichash_update(OpaquePointer(statePtr.baseAddress), iPtr.baseAddress, CUnsignedLongLong(i.count))
       }
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
@@ -1391,7 +1394,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
 
     let ret = state.withUnsafeMutableBytes { statePtr in 
       out.withUnsafeMutableBytes { outPtr in 
-        flutter_sodium.crypto_generichash_final(statePtr, outPtr, outlen)
+        flutter_sodium.crypto_generichash_final(OpaquePointer(statePtr.baseAddress), outPtr.baseAddress, outlen)
       }
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
@@ -1401,7 +1404,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     var k = Data(count: crypto_generichash_keybytes())
     k.withUnsafeMutableBytes { kPtr in
-        flutter_sodium.crypto_generichash_keygen(kPtr)
+        flutter_sodium.crypto_generichash_keygen(kPtr.baseAddress)
     }
     return FlutterStandardTypedData.init(bytes: k)
   }
@@ -1410,7 +1413,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     var k = Data(count: crypto_kdf_keybytes())
     k.withUnsafeMutableBytes { kPtr in
-        flutter_sodium.crypto_kdf_keygen(kPtr)
+        flutter_sodium.crypto_kdf_keygen(kPtr.baseAddress)
     }
     return FlutterStandardTypedData.init(bytes: k)
   }
@@ -1427,7 +1430,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = subkey.withUnsafeMutableBytes { subkeyPtr in 
       ctx.withUnsafeBytes { ctxPtr in 
         key.withUnsafeBytes { keyPtr in 
-          flutter_sodium.crypto_kdf_derive_from_key(subkeyPtr, size_t(subkey_len), subkey_id, ctxPtr, keyPtr)
+          flutter_sodium.crypto_kdf_derive_from_key(subkeyPtr.baseAddress, size_t(subkey_len), subkey_id, ctxPtr.baseAddress, keyPtr.baseAddress)
         }
       }
     }
@@ -1441,7 +1444,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var sk = Data(count: flutter_sodium.crypto_kx_secretkeybytes())
     let ret = pk.withUnsafeMutableBytes { pkPtr in
       sk.withUnsafeMutableBytes { skPtr in
-        flutter_sodium.crypto_kx_keypair(pkPtr, skPtr)
+        flutter_sodium.crypto_kx_keypair(pkPtr.baseAddress, skPtr.baseAddress)
       }
     }
     return error(ret: ret) ?? [
@@ -1460,7 +1463,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = pk.withUnsafeMutableBytes { pkPtr in
       sk.withUnsafeMutableBytes { skPtr in
         seed.withUnsafeBytes { seedPtr in
-          flutter_sodium.crypto_kx_seed_keypair(pkPtr, skPtr, seedPtr)
+          flutter_sodium.crypto_kx_seed_keypair(pkPtr.baseAddress, skPtr.baseAddress, seedPtr.baseAddress)
         }
       }
     }
@@ -1484,7 +1487,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         client_pk.withUnsafeBytes { client_pkPtr in
           client_sk.withUnsafeBytes { client_skPtr in
             server_pk.withUnsafeBytes { server_pkPtr in
-              flutter_sodium.crypto_kx_client_session_keys(rxPtr, txPtr, client_pkPtr, client_skPtr, server_pkPtr)
+              flutter_sodium.crypto_kx_client_session_keys(rxPtr.baseAddress, txPtr.baseAddress, client_pkPtr.baseAddress, client_skPtr.baseAddress, server_pkPtr.baseAddress)
             }
           }
         }
@@ -1510,7 +1513,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
         server_pk.withUnsafeBytes { server_pkPtr in
           server_sk.withUnsafeBytes { server_skPtr in
             client_pk.withUnsafeBytes { client_pkPtr in
-              flutter_sodium.crypto_kx_server_session_keys(rxPtr, txPtr, server_pkPtr, server_skPtr, client_pkPtr)
+              flutter_sodium.crypto_kx_server_session_keys(rxPtr.baseAddress, txPtr.baseAddress, server_pkPtr.baseAddress, server_skPtr.baseAddress, client_pkPtr.baseAddress)
             }
           }
         }
@@ -1533,7 +1536,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = out.withUnsafeMutableBytes { outPtr in
       i.withUnsafeBytes { iPtr in 
         k.withUnsafeBytes { kPtr in 
-          flutter_sodium.crypto_onetimeauth(outPtr, iPtr, CUnsignedLongLong(i.count), kPtr)
+          flutter_sodium.crypto_onetimeauth(outPtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count), kPtr.baseAddress)
         }
       }
     }
@@ -1550,7 +1553,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = h.withUnsafeBytes { hPtr in
       i.withUnsafeBytes { iPtr in 
         k.withUnsafeBytes { kPtr in 
-          flutter_sodium.crypto_onetimeauth_verify(hPtr, iPtr, CUnsignedLongLong(i.count), kPtr)
+          flutter_sodium.crypto_onetimeauth_verify(hPtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count), kPtr.baseAddress)
         }
       }
     }
@@ -1565,7 +1568,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var state = Data(count: crypto_onetimeauth_statebytes())
     let ret = state.withUnsafeMutableBytes { statePtr in
       key.withUnsafeBytes { keyPtr in 
-        flutter_sodium.crypto_onetimeauth_init(statePtr, keyPtr)
+        flutter_sodium.crypto_onetimeauth_init(statePtr.baseAddress, keyPtr.baseAddress)
       }
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
@@ -1579,7 +1582,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
 
     let ret = state.withUnsafeMutableBytes { statePtr in
       i.withUnsafeBytes { iPtr in 
-        flutter_sodium.crypto_onetimeauth_update(statePtr, iPtr, CUnsignedLongLong(i.count))
+        flutter_sodium.crypto_onetimeauth_update(statePtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count))
       }
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
@@ -1593,7 +1596,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var out = Data(count: crypto_onetimeauth_bytes())
     let ret = state.withUnsafeMutableBytes { statePtr in
       out.withUnsafeMutableBytes { outPtr in 
-        flutter_sodium.crypto_onetimeauth_final(statePtr, outPtr)
+        flutter_sodium.crypto_onetimeauth_final(statePtr.baseAddress, outPtr.baseAddress)
       }
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
@@ -1603,7 +1606,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     var k = Data(count: crypto_onetimeauth_keybytes())
     k.withUnsafeMutableBytes { kPtr in
-        flutter_sodium.crypto_onetimeauth_keygen(kPtr)
+        flutter_sodium.crypto_onetimeauth_keygen(kPtr.baseAddress)
     }
     return FlutterStandardTypedData.init(bytes: k)
   }
@@ -1622,11 +1625,11 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       let ret = out.withUnsafeMutableBytes { outPtr in
           passwd.withUnsafeBytes { passwdPtr in
             salt.withUnsafeBytes { saltPtr in
-              flutter_sodium.crypto_pwhash(outPtr, 
+              flutter_sodium.crypto_pwhash(outPtr.baseAddress,
                                             CUnsignedLongLong(outlen),
-                                            passwdPtr, 
+                                            passwdPtr.baseAddress,
                                             CUnsignedLongLong(passwd.count), 
-                                            saltPtr, 
+                                            saltPtr.baseAddress,
                                             CUnsignedLongLong(opslimit),
                                             size_t(memlimit), 
                                             alg)
@@ -1646,8 +1649,8 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     
     let ret = out.withUnsafeMutableBytes { outPtr in
       passwd.withUnsafeBytes { passwdPtr in
-        flutter_sodium.crypto_pwhash_str(outPtr, 
-                                         passwdPtr, 
+        flutter_sodium.crypto_pwhash_str(outPtr.baseAddress,
+                                         passwdPtr.baseAddress,
                                          CUnsignedLongLong(passwd.count), 
                                          CUnsignedLongLong(opslimit), 
                                          size_t(memlimit))
@@ -1664,7 +1667,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     
     let ret = str.withUnsafeBytes { strPtr in
       passwd.withUnsafeBytes { passwdPtr in
-        flutter_sodium.crypto_pwhash_str_verify(strPtr, passwdPtr, CUnsignedLongLong(passwd.count))
+        flutter_sodium.crypto_pwhash_str_verify(strPtr.baseAddress, passwdPtr.baseAddress, CUnsignedLongLong(passwd.count))
       }
     }
     return ret == 0
@@ -1678,7 +1681,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let memlimit = args["memlimit"] as! Int
     
     let ret = str.withUnsafeBytes { strPtr in
-      flutter_sodium.crypto_pwhash_str_needs_rehash(strPtr, CUnsignedLongLong(opslimit), size_t(memlimit))
+      flutter_sodium.crypto_pwhash_str_needs_rehash(strPtr.baseAddress, CUnsignedLongLong(opslimit), size_t(memlimit))
     }
     return ret != 0
   }
@@ -1691,7 +1694,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var q = Data(count: crypto_scalarmult_bytes())
     let ret = q.withUnsafeMutableBytes { qPtr in
       n.withUnsafeBytes { nPtr in 
-        flutter_sodium.crypto_scalarmult_base(qPtr, nPtr)
+        flutter_sodium.crypto_scalarmult_base(qPtr.baseAddress, nPtr.baseAddress)
       }
     }
 
@@ -1708,7 +1711,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = q.withUnsafeMutableBytes { qPtr in
       n.withUnsafeBytes { nPtr in 
         p.withUnsafeBytes { pPtr in 
-          flutter_sodium.crypto_scalarmult(qPtr, nPtr, pPtr)
+          flutter_sodium.crypto_scalarmult(qPtr.baseAddress, nPtr.baseAddress, pPtr.baseAddress)
         }
       }
     }
@@ -1729,11 +1732,11 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           m.withUnsafeBytes { mPtr in
             n.withUnsafeBytes { nPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_secretbox_easy(cPtr,
-                                              mPtr, 
+                flutter_sodium.crypto_secretbox_easy(cPtr.baseAddress,
+                                              mPtr.baseAddress,
                                               CUnsignedLongLong(m.count), 
-                                              nPtr, 
-                                              kPtr)
+                                              nPtr.baseAddress,
+                                              kPtr.baseAddress)
               }
             }
           }
@@ -1754,11 +1757,11 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
           c.withUnsafeBytes { cPtr in
             n.withUnsafeBytes { nPtr in
               k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_secretbox_open_easy(mPtr,
-                                              cPtr, 
+                flutter_sodium.crypto_secretbox_open_easy(mPtr.baseAddress,
+                                              cPtr.baseAddress,
                                               CUnsignedLongLong(c.count), 
-                                              nPtr, 
-                                              kPtr)
+                                              nPtr.baseAddress,
+                                              kPtr.baseAddress)
               }
             }
           }
@@ -1781,12 +1784,12 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
             m.withUnsafeBytes { mPtr in
               n.withUnsafeBytes { nPtr in
                 k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_secretbox_detached(cPtr,
-                                                macPtr, 
-                                                mPtr,
+                  flutter_sodium.crypto_secretbox_detached(cPtr.baseAddress,
+                                                macPtr.baseAddress,
+                                                mPtr.baseAddress,
                                                 CUnsignedLongLong(m.count), 
-                                                nPtr, 
-                                                kPtr)
+                                                nPtr.baseAddress,
+                                                kPtr.baseAddress)
                 }
               }
             }
@@ -1814,12 +1817,12 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
             mac.withUnsafeBytes { macPtr in 
               n.withUnsafeBytes { nPtr in
                 k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_secretbox_open_detached(mPtr,
-                                                cPtr, 
-                                                macPtr,
+                  flutter_sodium.crypto_secretbox_open_detached(mPtr.baseAddress,
+                                                cPtr.baseAddress,
+                                                macPtr.baseAddress,
                                                 CUnsignedLongLong(c.count), 
-                                                nPtr, 
-                                                kPtr)
+                                                nPtr.baseAddress,
+                                                kPtr.baseAddress)
                 }
               }
             }
@@ -1832,7 +1835,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     var k = Data(count: crypto_secretbox_keybytes())
     k.withUnsafeMutableBytes { kPtr in
-        flutter_sodium.crypto_secretbox_keygen(kPtr)
+        flutter_sodium.crypto_secretbox_keygen(kPtr.baseAddress)
     }
     return FlutterStandardTypedData.init(bytes: k)
   }
@@ -1847,7 +1850,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = out.withUnsafeMutableBytes { outPtr in
       i.withUnsafeBytes { iPtr in 
         key.withUnsafeBytes { keyPtr in
-          flutter_sodium.crypto_shorthash(outPtr, iPtr, CUnsignedLongLong(i.count), keyPtr)
+          flutter_sodium.crypto_shorthash(outPtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count), keyPtr.baseAddress)
         }
       }
     }
@@ -1858,7 +1861,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     var k = Data(count: flutter_sodium.crypto_shorthash_keybytes())
     k.withUnsafeMutableBytes { kPtr in
-      flutter_sodium.crypto_shorthash_keygen(kPtr)
+      flutter_sodium.crypto_shorthash_keygen(kPtr.baseAddress)
     }
     return FlutterStandardTypedData.init(bytes: k)
   }
@@ -1873,7 +1876,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = pk.withUnsafeMutableBytes { pkPtr in
       sk.withUnsafeMutableBytes { skPtr in
         seed.withUnsafeBytes { seedPtr in
-          flutter_sodium.crypto_sign_seed_keypair(pkPtr, skPtr, seedPtr)
+          flutter_sodium.crypto_sign_seed_keypair(pkPtr.baseAddress, skPtr.baseAddress, seedPtr.baseAddress)
         }
       }
     }
@@ -1889,7 +1892,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var sk = Data(count: flutter_sodium.crypto_sign_secretkeybytes())
     let ret = pk.withUnsafeMutableBytes { pkPtr in
       sk.withUnsafeMutableBytes { skPtr in
-        flutter_sodium.crypto_sign_keypair(pkPtr, skPtr)
+        flutter_sodium.crypto_sign_keypair(pkPtr.baseAddress, skPtr.baseAddress)
       }
     }
     return error(ret: ret) ?? [
@@ -1908,7 +1911,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = sm.withUnsafeMutableBytes { smPtr in 
       m.withUnsafeBytes { mPtr in
         sk.withUnsafeBytes { skPtr in 
-          flutter_sodium.crypto_sign(smPtr, nil, mPtr, CUnsignedLongLong(m.count), skPtr)
+          flutter_sodium.crypto_sign(smPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), skPtr.baseAddress)
         }
       }
     }
@@ -1925,7 +1928,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = m.withUnsafeMutableBytes { mPtr in 
       sm.withUnsafeBytes { smPtr in
         pk.withUnsafeBytes { pkPtr in 
-          flutter_sodium.crypto_sign_open(mPtr, nil, smPtr, CUnsignedLongLong(sm.count), pkPtr)
+          flutter_sodium.crypto_sign_open(mPtr.baseAddress, nil, smPtr.baseAddress, CUnsignedLongLong(sm.count), pkPtr.baseAddress)
         }
       }
     }
@@ -1943,7 +1946,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = sig.withUnsafeMutableBytes { sigPtr in 
       m.withUnsafeBytes { mPtr in
         sk.withUnsafeBytes { skPtr in 
-          flutter_sodium.crypto_sign_detached(sigPtr, nil, mPtr, CUnsignedLongLong(m.count), skPtr)
+          flutter_sodium.crypto_sign_detached(sigPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), skPtr.baseAddress)
         }
       }
     }
@@ -1961,7 +1964,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = sig.withUnsafeBytes { sigPtr in 
       m.withUnsafeBytes { mPtr in
         pk.withUnsafeBytes { pkPtr in 
-          flutter_sodium.crypto_sign_verify_detached(sigPtr, mPtr, CUnsignedLongLong(m.count), pkPtr)
+          flutter_sodium.crypto_sign_verify_detached(sigPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), pkPtr.baseAddress)
         }
       }
     }
@@ -1973,7 +1976,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     var state = Data(count: crypto_sign_statebytes())
     let ret = state.withUnsafeMutableBytes { statePtr in
-      flutter_sodium.crypto_sign_init(statePtr)
+      flutter_sodium.crypto_sign_init(statePtr.baseAddress)
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
@@ -1986,7 +1989,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
 
     let ret = state.withUnsafeMutableBytes { statePtr in
       m.withUnsafeBytes { mPtr in 
-        flutter_sodium.crypto_sign_update(statePtr, mPtr, CUnsignedLongLong(m.count))
+        flutter_sodium.crypto_sign_update(statePtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count))
       }
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
@@ -2003,7 +2006,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = state.withUnsafeMutableBytes { statePtr in
       sig.withUnsafeMutableBytes { sigPtr in 
         sk.withUnsafeBytes { skPtr in 
-          flutter_sodium.crypto_sign_final_create(statePtr, sigPtr, nil, skPtr)
+          flutter_sodium.crypto_sign_final_create(statePtr.baseAddress, sigPtr.baseAddress, nil, skPtr.baseAddress)
         }
       }
     }
@@ -2020,7 +2023,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let ret = state.withUnsafeMutableBytes { statePtr in
       sig.withUnsafeMutableBytes { sigPtr in 
         pk.withUnsafeBytes { pkPtr in 
-          flutter_sodium.crypto_sign_final_verify(statePtr, sigPtr, pkPtr)
+          flutter_sodium.crypto_sign_final_verify(statePtr.baseAddress, sigPtr.baseAddress, pkPtr.baseAddress)
         }
       }
     }
@@ -2035,7 +2038,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       var curve25519Sk = Data(count: flutter_sodium.crypto_scalarmult_curve25519_bytes())
       let ret = curve25519Sk.withUnsafeMutableBytes { curve25519SkPtr in
         sk.withUnsafeBytes { skPtr in
-          flutter_sodium.crypto_sign_ed25519_sk_to_curve25519(curve25519SkPtr, skPtr)
+          flutter_sodium.crypto_sign_ed25519_sk_to_curve25519(curve25519SkPtr.baseAddress, skPtr.baseAddress)
         }
       }
       return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: curve25519Sk)
@@ -2047,7 +2050,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let size = args["size"] as! Int
     var buf = Data(count: size)
     buf.withUnsafeMutableBytes { bufPtr in
-      flutter_sodium.randombytes_buf(bufPtr, size)
+      flutter_sodium.randombytes_buf(bufPtr.baseAddress, size)
     }
     return FlutterStandardTypedData.init(bytes: buf)
   }
@@ -2061,7 +2064,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var buf = Data(count: size)
     buf.withUnsafeMutableBytes { bufPtr in
       seed.withUnsafeBytes { seedPtr in
-        flutter_sodium.randombytes_buf_deterministic(bufPtr, size, seedPtr)
+        flutter_sodium.randombytes_buf_deterministic(bufPtr.baseAddress, size, seedPtr.baseAddress)
       }
     }
     return FlutterStandardTypedData.init(bytes: buf)
