@@ -1,6 +1,49 @@
 import Flutter
 import UIKit
-    
+
+extension FlutterStandardTypedData {
+  var uint8Array: Array<UInt8> {
+    return Array(data)
+  }
+  var int8Array: Array<Int8> {
+    return data.withUnsafeBytes { raw in
+      [Int8](raw.bindMemory(to: Int8.self))
+    }
+  }
+}
+
+extension Data {
+  @inlinable mutating func asCryptoOnetimeauthState<ResultType>(_ body: (inout crypto_onetimeauth_state) throws -> ResultType) rethrows -> ResultType {
+    return try withUnsafeMutableBytes { bytes in
+      try body(&bytes.baseAddress!.bindMemory(to: crypto_onetimeauth_state.self, capacity: 1).pointee)
+    }
+  }
+
+  @inlinable mutating func asCryptoSignState<ResultType>(_ body: (inout crypto_sign_state) throws -> ResultType) rethrows -> ResultType {
+    return try withUnsafeMutableBytes { bytes in
+      try body(&bytes.baseAddress!.bindMemory(to: crypto_sign_state.self, capacity: 1).pointee)
+    }
+  }
+}
+
+extension crypto_onetimeauth_state {
+  init?(array: Array<UInt8>) {
+    guard array.count == MemoryLayout<crypto_onetimeauth_state>.size else {
+      return nil
+    }
+
+    self = array.withUnsafeBytes { data in
+      data.load(as: crypto_onetimeauth_state.self)
+    }
+  }
+
+  init(fromData data: inout Data) {
+    self = data.withUnsafeMutableBytes { data in
+      data.baseAddress!.bindMemory(to: crypto_onetimeauth_state.self, capacity: 1).pointee
+    }
+  }
+}
+
 public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   private static var sodiumInitResult : Int32 = -1
 
@@ -17,7 +60,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
       result(FlutterError.init(code: "Failure", message: "Sodium failed to initialize", details: nil))
       return
     }
-    
+
     if (shouldRunInBackground(call)) {
       // run on background thread
       DispatchQueue.global(qos: .background).async {
@@ -48,116 +91,116 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   private func execute(_ call: FlutterMethodCall) -> Any
   {
     switch call.method {
-      case "crypto_aead_chacha20poly1305_encrypt": return crypto_aead_chacha20poly1305_encrypt(call:call)
-      case "crypto_aead_chacha20poly1305_decrypt": return crypto_aead_chacha20poly1305_decrypt(call:call)
-      case "crypto_aead_chacha20poly1305_encrypt_detached": return crypto_aead_chacha20poly1305_encrypt_detached(call:call)
-      case "crypto_aead_chacha20poly1305_decrypt_detached": return crypto_aead_chacha20poly1305_decrypt_detached(call:call)
-      case "crypto_aead_chacha20poly1305_keygen": return crypto_aead_chacha20poly1305_keygen(call:call)
+    case "crypto_aead_chacha20poly1305_encrypt": return crypto_aead_chacha20poly1305_encrypt(call:call)
+    case "crypto_aead_chacha20poly1305_decrypt": return crypto_aead_chacha20poly1305_decrypt(call:call)
+    case "crypto_aead_chacha20poly1305_encrypt_detached": return crypto_aead_chacha20poly1305_encrypt_detached(call:call)
+    case "crypto_aead_chacha20poly1305_decrypt_detached": return crypto_aead_chacha20poly1305_decrypt_detached(call:call)
+    case "crypto_aead_chacha20poly1305_keygen": return crypto_aead_chacha20poly1305_keygen(call:call)
 
-      case "crypto_aead_chacha20poly1305_ietf_encrypt": return crypto_aead_chacha20poly1305_ietf_encrypt(call:call)
-      case "crypto_aead_chacha20poly1305_ietf_decrypt": return crypto_aead_chacha20poly1305_ietf_decrypt(call:call)
-      case "crypto_aead_chacha20poly1305_ietf_encrypt_detached": return crypto_aead_chacha20poly1305_ietf_encrypt_detached(call:call)
-      case "crypto_aead_chacha20poly1305_ietf_decrypt_detached": return crypto_aead_chacha20poly1305_ietf_decrypt_detached(call:call)
-      case "crypto_aead_chacha20poly1305_ietf_keygen": return crypto_aead_chacha20poly1305_ietf_keygen(call:call)
+    case "crypto_aead_chacha20poly1305_ietf_encrypt": return crypto_aead_chacha20poly1305_ietf_encrypt(call:call)
+    case "crypto_aead_chacha20poly1305_ietf_decrypt": return crypto_aead_chacha20poly1305_ietf_decrypt(call:call)
+    case "crypto_aead_chacha20poly1305_ietf_encrypt_detached": return crypto_aead_chacha20poly1305_ietf_encrypt_detached(call:call)
+    case "crypto_aead_chacha20poly1305_ietf_decrypt_detached": return crypto_aead_chacha20poly1305_ietf_decrypt_detached(call:call)
+    case "crypto_aead_chacha20poly1305_ietf_keygen": return crypto_aead_chacha20poly1305_ietf_keygen(call:call)
 
-      case "crypto_aead_xchacha20poly1305_ietf_encrypt": return crypto_aead_xchacha20poly1305_ietf_encrypt(call:call)
-      case "crypto_aead_xchacha20poly1305_ietf_decrypt": return crypto_aead_xchacha20poly1305_ietf_decrypt(call:call)
-      case "crypto_aead_xchacha20poly1305_ietf_encrypt_detached": return crypto_aead_xchacha20poly1305_ietf_encrypt_detached(call:call)
-      case "crypto_aead_xchacha20poly1305_ietf_decrypt_detached": return crypto_aead_xchacha20poly1305_ietf_decrypt_detached(call:call)
-      case "crypto_aead_xchacha20poly1305_ietf_keygen": return crypto_aead_xchacha20poly1305_ietf_keygen(call:call)
+    case "crypto_aead_xchacha20poly1305_ietf_encrypt": return crypto_aead_xchacha20poly1305_ietf_encrypt(call:call)
+    case "crypto_aead_xchacha20poly1305_ietf_decrypt": return crypto_aead_xchacha20poly1305_ietf_decrypt(call:call)
+    case "crypto_aead_xchacha20poly1305_ietf_encrypt_detached": return crypto_aead_xchacha20poly1305_ietf_encrypt_detached(call:call)
+    case "crypto_aead_xchacha20poly1305_ietf_decrypt_detached": return crypto_aead_xchacha20poly1305_ietf_decrypt_detached(call:call)
+    case "crypto_aead_xchacha20poly1305_ietf_keygen": return crypto_aead_xchacha20poly1305_ietf_keygen(call:call)
 
-      case "crypto_auth": return crypto_auth(call:call)
-      case "crypto_auth_verify": return crypto_auth_verify(call:call)
-      case "crypto_auth_keygen": return crypto_auth_keygen(call:call)
+    case "crypto_auth": return crypto_auth(call:call)
+    case "crypto_auth_verify": return crypto_auth_verify(call:call)
+    case "crypto_auth_keygen": return crypto_auth_keygen(call:call)
 
-      case "crypto_box_seed_keypair": return crypto_box_seed_keypair(call: call)
-      case "crypto_box_keypair": return crypto_box_keypair(call: call)
-      case "crypto_box_easy": return crypto_box_easy(call:call)
-      case "crypto_box_open_easy": return crypto_box_open_easy(call:call)
-      case "crypto_box_detached": return crypto_box_detached(call:call)
-      case "crypto_box_open_detached": return crypto_box_open_detached(call:call)
-      case "crypto_box_beforenm": return crypto_box_beforenm(call:call)
-      case "crypto_box_easy_afternm": return crypto_box_easy_afternm(call:call)
-      case "crypto_box_open_easy_afternm": return crypto_box_open_easy_afternm(call:call)
-      case "crypto_box_detached_afternm": return crypto_box_detached_afternm(call:call)
-      case "crypto_box_open_detached_afternm": return crypto_box_open_detached_afternm(call:call)
+    case "crypto_box_seed_keypair": return crypto_box_seed_keypair(call: call)
+    case "crypto_box_keypair": return crypto_box_keypair(call: call)
+    case "crypto_box_easy": return crypto_box_easy(call:call)
+    case "crypto_box_open_easy": return crypto_box_open_easy(call:call)
+    case "crypto_box_detached": return crypto_box_detached(call:call)
+    case "crypto_box_open_detached": return crypto_box_open_detached(call:call)
+    case "crypto_box_beforenm": return crypto_box_beforenm(call:call)
+    case "crypto_box_easy_afternm": return crypto_box_easy_afternm(call:call)
+    case "crypto_box_open_easy_afternm": return crypto_box_open_easy_afternm(call:call)
+    case "crypto_box_detached_afternm": return crypto_box_detached_afternm(call:call)
+    case "crypto_box_open_detached_afternm": return crypto_box_open_detached_afternm(call:call)
 
-      case "crypto_box_seal": return crypto_box_seal(call: call)
-      case "crypto_box_seal_open": return crypto_box_seal_open(call: call)
+    case "crypto_box_seal": return crypto_box_seal(call: call)
+    case "crypto_box_seal_open": return crypto_box_seal_open(call: call)
 
-      case "crypto_box_curve25519xchacha20poly1305_seed_keypair": return crypto_box_curve25519xchacha20poly1305_seed_keypair(call: call)
-      case "crypto_box_curve25519xchacha20poly1305_keypair": return crypto_box_curve25519xchacha20poly1305_keypair(call: call)
-      case "crypto_box_curve25519xchacha20poly1305_easy": return crypto_box_curve25519xchacha20poly1305_easy(call:call)
-      case "crypto_box_curve25519xchacha20poly1305_open_easy": return crypto_box_curve25519xchacha20poly1305_open_easy(call:call)
-      case "crypto_box_curve25519xchacha20poly1305_detached": return crypto_box_curve25519xchacha20poly1305_detached(call:call)
-      case "crypto_box_curve25519xchacha20poly1305_open_detached": return crypto_box_curve25519xchacha20poly1305_open_detached(call:call)
-      case "crypto_box_curve25519xchacha20poly1305_beforenm": return crypto_box_curve25519xchacha20poly1305_beforenm(call:call)
-      case "crypto_box_curve25519xchacha20poly1305_easy_afternm": return crypto_box_curve25519xchacha20poly1305_easy_afternm(call:call)
-      case "crypto_box_curve25519xchacha20poly1305_open_easy_afternm": return crypto_box_curve25519xchacha20poly1305_open_easy_afternm(call:call)
-      case "crypto_box_curve25519xchacha20poly1305_detached_afternm": return crypto_box_curve25519xchacha20poly1305_detached_afternm(call:call)
-      case "crypto_box_curve25519xchacha20poly1305_open_detached_afternm": return crypto_box_curve25519xchacha20poly1305_open_detached_afternm(call:call)
+    case "crypto_box_curve25519xchacha20poly1305_seed_keypair": return crypto_box_curve25519xchacha20poly1305_seed_keypair(call: call)
+    case "crypto_box_curve25519xchacha20poly1305_keypair": return crypto_box_curve25519xchacha20poly1305_keypair(call: call)
+    case "crypto_box_curve25519xchacha20poly1305_easy": return crypto_box_curve25519xchacha20poly1305_easy(call:call)
+    case "crypto_box_curve25519xchacha20poly1305_open_easy": return crypto_box_curve25519xchacha20poly1305_open_easy(call:call)
+    case "crypto_box_curve25519xchacha20poly1305_detached": return crypto_box_curve25519xchacha20poly1305_detached(call:call)
+    case "crypto_box_curve25519xchacha20poly1305_open_detached": return crypto_box_curve25519xchacha20poly1305_open_detached(call:call)
+    case "crypto_box_curve25519xchacha20poly1305_beforenm": return crypto_box_curve25519xchacha20poly1305_beforenm(call:call)
+    case "crypto_box_curve25519xchacha20poly1305_easy_afternm": return crypto_box_curve25519xchacha20poly1305_easy_afternm(call:call)
+    case "crypto_box_curve25519xchacha20poly1305_open_easy_afternm": return crypto_box_curve25519xchacha20poly1305_open_easy_afternm(call:call)
+    case "crypto_box_curve25519xchacha20poly1305_detached_afternm": return crypto_box_curve25519xchacha20poly1305_detached_afternm(call:call)
+    case "crypto_box_curve25519xchacha20poly1305_open_detached_afternm": return crypto_box_curve25519xchacha20poly1305_open_detached_afternm(call:call)
 
-      case "crypto_box_curve25519xchacha20poly1305_seal": return crypto_box_curve25519xchacha20poly1305_seal(call: call)
-      case "crypto_box_curve25519xchacha20poly1305_seal_open": return crypto_box_curve25519xchacha20poly1305_seal_open(call: call)
+    case "crypto_box_curve25519xchacha20poly1305_seal": return crypto_box_curve25519xchacha20poly1305_seal(call: call)
+    case "crypto_box_curve25519xchacha20poly1305_seal_open": return crypto_box_curve25519xchacha20poly1305_seal_open(call: call)
 
-      case "crypto_generichash": return crypto_generichash(call: call)
-      case "crypto_generichash_init": return crypto_generichash_init(call: call)
-      case "crypto_generichash_update": return crypto_generichash_update(call: call)
-      case "crypto_generichash_final": return crypto_generichash_final(call: call)
-      case "crypto_generichash_keygen": return crypto_generichash_keygen(call: call)
+    case "crypto_generichash": return crypto_generichash(call: call)
+    case "crypto_generichash_init": return crypto_generichash_init(call: call)
+    case "crypto_generichash_update": return crypto_generichash_update(call: call)
+    case "crypto_generichash_final": return crypto_generichash_final(call: call)
+    case "crypto_generichash_keygen": return crypto_generichash_keygen(call: call)
 
-      case "crypto_kdf_keygen": return crypto_kdf_keygen(call: call)
-      case "crypto_kdf_derive_from_key": return crypto_kdf_derive_from_key(call: call)
+    case "crypto_kdf_keygen": return crypto_kdf_keygen(call: call)
+    case "crypto_kdf_derive_from_key": return crypto_kdf_derive_from_key(call: call)
 
-      case "crypto_kx_keypair": return crypto_kx_keypair(call: call)
-      case "crypto_kx_seed_keypair": return crypto_kx_seed_keypair(call: call)
-      case "crypto_kx_client_session_keys": return crypto_kx_client_session_keys(call: call)
-      case "crypto_kx_server_session_keys": return crypto_kx_server_session_keys(call: call)
+    case "crypto_kx_keypair": return crypto_kx_keypair(call: call)
+    case "crypto_kx_seed_keypair": return crypto_kx_seed_keypair(call: call)
+    case "crypto_kx_client_session_keys": return crypto_kx_client_session_keys(call: call)
+    case "crypto_kx_server_session_keys": return crypto_kx_server_session_keys(call: call)
 
-      case "crypto_onetimeauth": return crypto_onetimeauth(call: call)
-      case "crypto_onetimeauth_verify": return crypto_onetimeauth_verify(call: call)
-      case "crypto_onetimeauth_init": return crypto_onetimeauth_init(call: call)
-      case "crypto_onetimeauth_update": return crypto_onetimeauth_update(call: call)
-      case "crypto_onetimeauth_final": return crypto_onetimeauth_final(call: call)
-      case "crypto_onetimeauth_keygen": return crypto_onetimeauth_keygen(call: call)
+    case "crypto_onetimeauth": return crypto_onetimeauth(call: call)
+    case "crypto_onetimeauth_verify": return crypto_onetimeauth_verify(call: call)
+    case "crypto_onetimeauth_init": return crypto_onetimeauth_init(call: call)
+    case "crypto_onetimeauth_update": return crypto_onetimeauth_update(call: call)
+    case "crypto_onetimeauth_final": return crypto_onetimeauth_final(call: call)
+    case "crypto_onetimeauth_keygen": return crypto_onetimeauth_keygen(call: call)
 
-      case "crypto_pwhash": return crypto_pwhash(call: call)
-      case "crypto_pwhash_str": return crypto_pwhash_str(call: call)
-      case "crypto_pwhash_str_verify": return crypto_pwhash_str_verify(call: call)
-      case "crypto_pwhash_str_needs_rehash": return crypto_pwhash_str_needs_rehash(call: call)
+    case "crypto_pwhash": return crypto_pwhash(call: call)
+    case "crypto_pwhash_str": return crypto_pwhash_str(call: call)
+    case "crypto_pwhash_str_verify": return crypto_pwhash_str_verify(call: call)
+    case "crypto_pwhash_str_needs_rehash": return crypto_pwhash_str_needs_rehash(call: call)
 
-      case "crypto_scalarmult_base": return crypto_scalarmult_base(call: call)
-      case "crypto_scalarmult": return crypto_scalarmult(call: call)
+    case "crypto_scalarmult_base": return crypto_scalarmult_base(call: call)
+    case "crypto_scalarmult": return crypto_scalarmult(call: call)
 
-      case "crypto_secretbox_easy": return crypto_secretbox_easy(call: call)
-      case "crypto_secretbox_open_easy": return crypto_secretbox_open_easy(call: call)
-      case "crypto_secretbox_detached": return crypto_secretbox_detached(call: call)
-      case "crypto_secretbox_open_detached": return crypto_secretbox_open_detached(call: call)
-      case "crypto_secretbox_keygen": return crypto_secretbox_keygen(call: call)
+    case "crypto_secretbox_easy": return crypto_secretbox_easy(call: call)
+    case "crypto_secretbox_open_easy": return crypto_secretbox_open_easy(call: call)
+    case "crypto_secretbox_detached": return crypto_secretbox_detached(call: call)
+    case "crypto_secretbox_open_detached": return crypto_secretbox_open_detached(call: call)
+    case "crypto_secretbox_keygen": return crypto_secretbox_keygen(call: call)
 
-      case "crypto_shorthash": return crypto_shorthash(call: call)
-      case "crypto_shorthash_keygen": return crypto_shorthash_keygen(call: call)
+    case "crypto_shorthash": return crypto_shorthash(call: call)
+    case "crypto_shorthash_keygen": return crypto_shorthash_keygen(call: call)
 
-      case "crypto_sign_seed_keypair": return crypto_sign_seed_keypair(call: call)
-      case "crypto_sign_keypair": return crypto_sign_keypair(call: call)
-      case "crypto_sign": return crypto_sign(call: call)
-      case "crypto_sign_open": return crypto_sign_open(call: call)
-      case "crypto_sign_detached": return crypto_sign_detached(call: call)
-      case "crypto_sign_verify_detached": return crypto_sign_verify_detached(call: call)
-      case "crypto_sign_init": return crypto_sign_init(call: call)
-      case "crypto_sign_update": return crypto_sign_update(call: call)
-      case "crypto_sign_final_create": return crypto_sign_final_create(call: call)
-      case "crypto_sign_final_verify": return crypto_sign_final_verify(call: call)
-      case "crypto_sign_ed25519_sk_to_curve25519": return crypto_sign_ed25519_sk_to_curve25519(call: call)
+    case "crypto_sign_seed_keypair": return crypto_sign_seed_keypair(call: call)
+    case "crypto_sign_keypair": return crypto_sign_keypair(call: call)
+    case "crypto_sign": return crypto_sign(call: call)
+    case "crypto_sign_open": return crypto_sign_open(call: call)
+    case "crypto_sign_detached": return crypto_sign_detached(call: call)
+    case "crypto_sign_verify_detached": return crypto_sign_verify_detached(call: call)
+    case "crypto_sign_init": return crypto_sign_init(call: call)
+    case "crypto_sign_update": return crypto_sign_update(call: call)
+    case "crypto_sign_final_create": return crypto_sign_final_create(call: call)
+    case "crypto_sign_final_verify": return crypto_sign_final_verify(call: call)
+    case "crypto_sign_ed25519_sk_to_curve25519": return crypto_sign_ed25519_sk_to_curve25519(call: call)
 
-      case "randombytes_buf": return randombytes_buf(call: call)
-      case "randombytes_buf_deterministic": return randombytes_buf_deterministic(call: call)
-      case "randombytes_random": return randombytes_random(call: call)
-      case "randombytes_uniform": return randombytes_uniform(call: call)
+    case "randombytes_buf": return randombytes_buf(call: call)
+    case "randombytes_buf_deterministic": return randombytes_buf_deterministic(call: call)
+    case "randombytes_random": return randombytes_random(call: call)
+    case "randombytes_uniform": return randombytes_uniform(call: call)
 
-      case "sodium_version_string": return sodium_version_string(call: call)
-      
-      default: return FlutterMethodNotImplemented
+    case "sodium_version_string": return sodium_version_string(call: call)
+
+    default: return FlutterMethodNotImplemented
     }
   }
 
@@ -172,1250 +215,749 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   private func crypto_aead_chacha20poly1305_encrypt(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count + flutter_sodium.crypto_aead_chacha20poly1305_abytes())
+    var c = [UInt8](repeating: 0, count: m.count + flutter_sodium.crypto_aead_chacha20poly1305_abytes())
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = c.withUnsafeMutableBytes { (cPtr: UnsafeMutableRawBufferPointer) -> Void in
-        m.withUnsafeBytes { mPtr in
-          ad.withUnsafeBytes { adPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_encrypt(&c, nil, m, CUnsignedLongLong(m.count), ad, CUnsignedLongLong(ad.count), nil, npub, k)
     }
     else {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        m.withUnsafeBytes { mPtr in
-          npub.withUnsafeBytes { npubPtr in
-            k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_chacha20poly1305_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_encrypt(&c, nil, m, CUnsignedLongLong(m.count), nil, 0, nil, npub, k)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(c))
   }
 
   private func crypto_aead_chacha20poly1305_decrypt(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count - flutter_sodium.crypto_aead_chacha20poly1305_abytes())
+    var m = [UInt8](repeating: 0, count: c.count - flutter_sodium.crypto_aead_chacha20poly1305_abytes())
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          ad.withUnsafeBytes { adPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_decrypt(&m, nil, nil, c, CUnsignedLongLong(c.count), ad, CUnsignedLongLong(ad.count), npub, k)
     }
     else {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          npub.withUnsafeBytes { npubPtr in
-            k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_chacha20poly1305_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_decrypt(&m, nil, nil, c, CUnsignedLongLong(c.count), nil, 0, npub, k)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_aead_chacha20poly1305_encrypt_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count)
-    var mac = Data(count: flutter_sodium.crypto_aead_chacha20poly1305_abytes())
+    var c = [UInt8](repeating: 0, count: m.count)
+    var mac = [UInt8](repeating: 0, count: flutter_sodium.crypto_aead_chacha20poly1305_abytes())
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        mac.withUnsafeMutableBytes { macPtr in
-          m.withUnsafeBytes { mPtr in
-            ad.withUnsafeBytes { adPtr in
-              npub.withUnsafeBytes { npubPtr in
-                k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_chacha20poly1305_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
-                }
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_encrypt_detached(&c, &mac, nil, m, CUnsignedLongLong(m.count), ad, CUnsignedLongLong(ad.count), nil, npub, k)
     }
     else {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        mac.withUnsafeMutableBytes { macPtr in
-          m.withUnsafeBytes { mPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_encrypt_detached(&c, &mac, nil, m, CUnsignedLongLong(m.count), nil, 0, nil, npub, k)
     }
 
     return error(ret: ret) ?? [
-      "c": FlutterStandardTypedData.init(bytes: c),
-      "mac": FlutterStandardTypedData.init(bytes: mac)
+      "c": FlutterStandardTypedData.init(bytes: Data(c)),
+      "mac": FlutterStandardTypedData.init(bytes: Data(mac))
     ]
   }
 
   private func crypto_aead_chacha20poly1305_decrypt_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let mac = (args["mac"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let mac = (args["mac"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count)
+    var m = [UInt8](repeating: 0, count: c.count)
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          mac.withUnsafeBytes { macPtr in
-            ad.withUnsafeBytes { adPtr in
-              npub.withUnsafeBytes { npubPtr in
-                k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_chacha20poly1305_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
-                }
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_decrypt_detached(&m, nil, c, CUnsignedLongLong(c.count), mac, ad, CUnsignedLongLong(ad.count), npub, k)
     }
     else {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          mac.withUnsafeBytes { macPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_decrypt_detached(&m, nil, c, CUnsignedLongLong(c.count), mac, nil, 0, npub, k)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_aead_chacha20poly1305_keygen(call: FlutterMethodCall) -> Any
   {
-    var k = Data(count: flutter_sodium.crypto_aead_chacha20poly1305_keybytes())
-    k.withUnsafeMutableBytes { kPtr in
-      flutter_sodium.crypto_aead_chacha20poly1305_keygen(kPtr.baseAddress)
-    }
-    return FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: flutter_sodium.crypto_aead_chacha20poly1305_keybytes())
+    flutter_sodium.crypto_aead_chacha20poly1305_keygen(&k)
+    return FlutterStandardTypedData.init(bytes: Data(k))
   }
 
   private func crypto_aead_chacha20poly1305_ietf_encrypt(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count + flutter_sodium.crypto_aead_chacha20poly1305_ietf_abytes())
+    var c = [UInt8](repeating: 0, count: m.count + flutter_sodium.crypto_aead_chacha20poly1305_ietf_abytes())
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        m.withUnsafeBytes { mPtr in
-          ad.withUnsafeBytes { adPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt(&c, nil, m, CUnsignedLongLong(m.count), ad, CUnsignedLongLong(ad.count), nil, npub, k)
     }
     else {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        m.withUnsafeBytes { mPtr in
-          npub.withUnsafeBytes { npubPtr in
-            k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt(&c, nil, m, CUnsignedLongLong(m.count), nil, 0, nil, npub, k)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(c))
   }
 
   private func crypto_aead_chacha20poly1305_ietf_decrypt(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count - flutter_sodium.crypto_aead_chacha20poly1305_ietf_abytes())
+    var m = [UInt8](repeating: 0, count: c.count - flutter_sodium.crypto_aead_chacha20poly1305_ietf_abytes())
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          ad.withUnsafeBytes { adPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt(&m, nil, nil, c, CUnsignedLongLong(c.count), ad, CUnsignedLongLong(ad.count), npub, k)
     }
     else {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          npub.withUnsafeBytes { npubPtr in
-            k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt(&m, nil, nil, c, CUnsignedLongLong(c.count), nil, 0, npub, k)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_aead_chacha20poly1305_ietf_encrypt_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count)
-    var mac = Data(count: flutter_sodium.crypto_aead_chacha20poly1305_ietf_abytes())
+    var c = [UInt8](repeating: 0, count: m.count)
+    var mac = [UInt8](repeating: 0, count: flutter_sodium.crypto_aead_chacha20poly1305_ietf_abytes())
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        mac.withUnsafeMutableBytes { macPtr in
-          m.withUnsafeBytes { mPtr in
-            ad.withUnsafeBytes { adPtr in
-              npub.withUnsafeBytes { npubPtr in
-                k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
-                }
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(&c, &mac, nil, m, CUnsignedLongLong(m.count), ad, CUnsignedLongLong(ad.count), nil, npub, k)
     }
     else {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        mac.withUnsafeMutableBytes { macPtr in
-          m.withUnsafeBytes { mPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(&c, &mac, nil, m, CUnsignedLongLong(m.count), nil, 0, nil, npub, k)
     }
 
     return error(ret: ret) ?? [
-      "c": FlutterStandardTypedData.init(bytes: c),
-      "mac": FlutterStandardTypedData.init(bytes: mac)
+      "c": FlutterStandardTypedData.init(bytes: Data(c)),
+      "mac": FlutterStandardTypedData.init(bytes: Data(mac))
     ]
   }
 
   private func crypto_aead_chacha20poly1305_ietf_decrypt_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let mac = (args["mac"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let mac = (args["mac"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count)
+    var m = [UInt8](repeating: 0, count: c.count)
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          mac.withUnsafeBytes { macPtr in
-            ad.withUnsafeBytes { adPtr in
-              npub.withUnsafeBytes { npubPtr in
-                k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
-                }
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt_detached(&m, nil, c, CUnsignedLongLong(c.count), mac, ad, CUnsignedLongLong(ad.count), npub, k)
     }
     else {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          mac.withUnsafeBytes { macPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_chacha20poly1305_ietf_decrypt_detached(&m, nil, c, CUnsignedLongLong(c.count), mac, nil, 0, npub, k)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_aead_chacha20poly1305_ietf_keygen(call: FlutterMethodCall) -> Any
   {
-    var k = Data(count: flutter_sodium.crypto_aead_chacha20poly1305_ietf_keybytes())
-    k.withUnsafeMutableBytes { kPtr in
-      flutter_sodium.crypto_aead_chacha20poly1305_ietf_keygen(kPtr.baseAddress)
-    }
-    return FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: flutter_sodium.crypto_aead_chacha20poly1305_ietf_keybytes())
+
+    flutter_sodium.crypto_aead_chacha20poly1305_ietf_keygen(&k)
+    return FlutterStandardTypedData.init(bytes: Data(k))
   }
 
   private func crypto_aead_xchacha20poly1305_ietf_encrypt(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count + flutter_sodium.crypto_aead_xchacha20poly1305_ietf_abytes())
+    var c = [UInt8](repeating: 0, count: m.count + flutter_sodium.crypto_aead_xchacha20poly1305_ietf_abytes())
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        m.withUnsafeBytes { mPtr in
-          ad.withUnsafeBytes { adPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(&c, nil, m, CUnsignedLongLong(m.count), ad, CUnsignedLongLong(ad.count), nil, npub, k)
     }
     else {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        m.withUnsafeBytes { mPtr in
-          npub.withUnsafeBytes { npubPtr in
-            k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(cPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(&c, nil, m, CUnsignedLongLong(m.count), nil, 0, nil, npub, k)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(c))
   }
 
   private func crypto_aead_xchacha20poly1305_ietf_decrypt(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count - flutter_sodium.crypto_aead_xchacha20poly1305_ietf_abytes())
+    var m = [UInt8](repeating: 0, count: c.count - flutter_sodium.crypto_aead_xchacha20poly1305_ietf_abytes())
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          ad.withUnsafeBytes { adPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(&m, nil, nil, c, CUnsignedLongLong(c.count), ad, CUnsignedLongLong(ad.count), npub, k)
     }
     else {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          npub.withUnsafeBytes { npubPtr in
-            k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(mPtr.baseAddress, nil, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(&m, nil, nil, c, CUnsignedLongLong(c.count), nil, 0, npub, k)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_aead_xchacha20poly1305_ietf_encrypt_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count)
-    var mac = Data(count: flutter_sodium.crypto_aead_xchacha20poly1305_ietf_abytes())
+    var c = [UInt8](repeating: 0, count: m.count)
+    var mac = [UInt8](repeating: 0, count: flutter_sodium.crypto_aead_xchacha20poly1305_ietf_abytes())
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        mac.withUnsafeMutableBytes { macPtr in
-          m.withUnsafeBytes { mPtr in
-            ad.withUnsafeBytes { adPtr in
-              npub.withUnsafeBytes { npubPtr in
-                k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), adPtr.baseAddress, CUnsignedLongLong(ad.count), nil, npubPtr.baseAddress, kPtr.baseAddress)
-                }
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt_detached(&c, &mac, nil, m, CUnsignedLongLong(m.count), ad, CUnsignedLongLong(ad.count), nil, npub, k)
     }
     else {
-      ret = c.withUnsafeMutableBytes { cPtr in
-        mac.withUnsafeMutableBytes { macPtr in
-          m.withUnsafeBytes { mPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt_detached(cPtr.baseAddress, macPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), nil, 0, nil, npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_xchacha20poly1305_ietf_encrypt_detached(&c, &mac, nil, m, CUnsignedLongLong(m.count), nil, 0, nil, npub, k)
     }
 
     return error(ret: ret) ?? [
-      "c": FlutterStandardTypedData.init(bytes: c),
-      "mac": FlutterStandardTypedData.init(bytes: mac)
+      "c": FlutterStandardTypedData.init(bytes: Data(c)),
+      "mac": FlutterStandardTypedData.init(bytes: Data(mac))
     ]
   }
 
   private func crypto_aead_xchacha20poly1305_ietf_decrypt_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let mac = (args["mac"] as! FlutterStandardTypedData).data
-    let ad = (args["ad"] as? FlutterStandardTypedData)?.data
-    let npub = (args["npub"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let mac = (args["mac"] as! FlutterStandardTypedData).uint8Array
+    let ad = (args["ad"] as? FlutterStandardTypedData)?.uint8Array
+    let npub = (args["npub"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count)
+    var m = [UInt8](repeating: 0, count: c.count)
     var ret: Int32 = -1
-    
+
     if let ad = ad {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          mac.withUnsafeBytes { macPtr in
-            ad.withUnsafeBytes { adPtr in
-              npub.withUnsafeBytes { npubPtr in
-                k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, adPtr.baseAddress, CUnsignedLongLong(ad.count), npubPtr.baseAddress, kPtr.baseAddress)
-                }
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt_detached(&m, nil, c, CUnsignedLongLong(c.count), mac, ad, CUnsignedLongLong(ad.count), npub, k)
     }
     else {
-      ret = m.withUnsafeMutableBytes { mPtr in
-        c.withUnsafeBytes { cPtr in
-          mac.withUnsafeBytes { macPtr in
-            npub.withUnsafeBytes { npubPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt_detached(mPtr.baseAddress, nil, cPtr.baseAddress, CUnsignedLongLong(c.count), macPtr.baseAddress, nil, 0, npubPtr.baseAddress, kPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_aead_xchacha20poly1305_ietf_decrypt_detached(&m, nil, c, CUnsignedLongLong(c.count), mac, nil, 0, npub, k)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_aead_xchacha20poly1305_ietf_keygen(call: FlutterMethodCall) -> Any
   {
-    var k = Data(count: flutter_sodium.crypto_aead_xchacha20poly1305_ietf_keybytes())
-    k.withUnsafeMutableBytes { kPtr in
-      flutter_sodium.crypto_aead_xchacha20poly1305_ietf_keygen(kPtr.baseAddress)
-    }
-    return FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: flutter_sodium.crypto_aead_xchacha20poly1305_ietf_keybytes())
+    flutter_sodium.crypto_aead_xchacha20poly1305_ietf_keygen(&k)
+    return FlutterStandardTypedData.init(bytes: Data(k))
   }
 
   private func crypto_auth(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let i = (args["in"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let i = (args["in"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var out = Data(count: flutter_sodium.crypto_auth_bytes())
+    var out = [UInt8](repeating: 0, count: flutter_sodium.crypto_auth_bytes())
 
-    let ret = out.withUnsafeMutableBytes { outPtr in
-      i.withUnsafeBytes { iPtr in 
-        k.withUnsafeBytes { kPtr in
-          flutter_sodium.crypto_auth(outPtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count), kPtr.baseAddress)
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+    let ret = flutter_sodium.crypto_auth(&out, i, CUnsignedLongLong(i.count), k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(out))
   }
 
   private func crypto_auth_verify(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let h = (args["h"] as! FlutterStandardTypedData).data
-    let i = (args["in"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
-    
-    let ret = h.withUnsafeBytes { hPtr in
-      i.withUnsafeBytes { iPtr in
-        k.withUnsafeBytes { kPtr in 
-          flutter_sodium.crypto_auth_verify(hPtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count), kPtr.baseAddress)
-        }
-      }
-    }
+    let h = (args["h"] as! FlutterStandardTypedData).uint8Array
+    let i = (args["in"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
+
+    let ret = flutter_sodium.crypto_auth_verify(h, i, CUnsignedLongLong(i.count), k)
     return ret == 0
   }
 
   private func crypto_auth_keygen(call: FlutterMethodCall) -> Any
   {
-    var k = Data(count: flutter_sodium.crypto_auth_keybytes())
-    k.withUnsafeMutableBytes { kPtr in
-      flutter_sodium.crypto_auth_keygen(kPtr.baseAddress)
-    }
-    return FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: flutter_sodium.crypto_auth_keybytes())
+    flutter_sodium.crypto_auth_keygen(&k)
+    return FlutterStandardTypedData.init(bytes: Data(k))
   }
 
   private func crypto_box_seed_keypair(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let seed = (args["seed"] as! FlutterStandardTypedData).data
-    
-    var pk = Data(count: flutter_sodium.crypto_box_publickeybytes())
-    var sk = Data(count: flutter_sodium.crypto_box_secretkeybytes())
-    let ret = pk.withUnsafeMutableBytes { pkPtr in
-      sk.withUnsafeMutableBytes { skPtr in
-        seed.withUnsafeBytes { seedPtr in
-          flutter_sodium.crypto_box_seed_keypair(pkPtr.baseAddress, skPtr.baseAddress, seedPtr.baseAddress)
-        }
-      }
-    }
+    let seed = (args["seed"] as! FlutterStandardTypedData).uint8Array
+
+    var pk = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_publickeybytes())
+    var sk = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_secretkeybytes())
+    let ret = flutter_sodium.crypto_box_seed_keypair(&pk, &sk, seed)
     return error(ret: ret) ?? [
-      "pk": FlutterStandardTypedData.init(bytes: pk),
-      "sk": FlutterStandardTypedData.init(bytes: sk)
+      "pk": FlutterStandardTypedData.init(bytes: Data(pk)),
+      "sk": FlutterStandardTypedData.init(bytes: Data(sk))
     ]
   }
-  
+
   private func crypto_box_keypair(call: FlutterMethodCall) -> Any
   {
-    var pk = Data(count: flutter_sodium.crypto_box_publickeybytes())
-    var sk = Data(count: flutter_sodium.crypto_box_secretkeybytes())
-    let ret = pk.withUnsafeMutableBytes { pkPtr in
-      sk.withUnsafeMutableBytes { skPtr in
-        flutter_sodium.crypto_box_keypair(pkPtr.baseAddress, skPtr.baseAddress)
-      }
-    }
+    var pk = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_publickeybytes())
+    var sk = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_secretkeybytes())
+    let ret = flutter_sodium.crypto_box_keypair(&pk, &sk)
     return error(ret: ret) ?? [
-      "pk": FlutterStandardTypedData.init(bytes: pk),
-      "sk": FlutterStandardTypedData.init(bytes: sk)
+      "pk": FlutterStandardTypedData.init(bytes: Data(pk)),
+      "sk": FlutterStandardTypedData.init(bytes: Data(sk))
     ]
   }
 
   private func crypto_box_easy(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: flutter_sodium.crypto_box_macbytes() + m.count)
+    var c = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_macbytes() + m.count)
 
-    let ret = c.withUnsafeMutableBytes { cPtr in
-      m.withUnsafeBytes { mPtr in
-        n.withUnsafeBytes { nPtr in
-          pk.withUnsafeBytes { pkPtr in
-            sk.withUnsafeBytes { skPtr in
-              flutter_sodium.crypto_box_easy(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
-            }
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+    let ret = flutter_sodium.crypto_box_easy(&c, m, CUnsignedLongLong(m.count), n, pk, sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(c))
   }
 
   private func crypto_box_open_easy(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count - flutter_sodium.crypto_box_macbytes())
+    var m = [UInt8](repeating: 0, count: c.count - flutter_sodium.crypto_box_macbytes())
 
-    let ret = m.withUnsafeMutableBytes { mPtr in
-      c.withUnsafeBytes { cPtr in
-        n.withUnsafeBytes { nPtr in
-          pk.withUnsafeBytes { pkPtr in
-            sk.withUnsafeBytes { skPtr in
-              flutter_sodium.crypto_box_open_easy(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
-            }
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let ret = flutter_sodium.crypto_box_open_easy(&m, c, CUnsignedLongLong(c.count), n, pk, sk)
+
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_box_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count)
-    var mac = Data(count: flutter_sodium.crypto_box_macbytes())
+    var c = [UInt8](repeating: 0, count: m.count)
+    var mac = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_macbytes())
 
-    let ret = c.withUnsafeMutableBytes { cPtr in
-      mac.withUnsafeMutableBytes { macPtr in
-        m.withUnsafeBytes { mPtr in
-          n.withUnsafeBytes { nPtr in
-            pk.withUnsafeBytes { pkPtr in
-              sk.withUnsafeBytes { skPtr in
-                flutter_sodium.crypto_box_detached(cPtr.baseAddress, macPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
-    }
+    let ret = flutter_sodium.crypto_box_detached(&c, &mac, m, CUnsignedLongLong(m.count), n, pk, sk)
     return error(ret: ret) ?? [
-      "c": FlutterStandardTypedData.init(bytes: c),
-      "mac": FlutterStandardTypedData.init(bytes: mac)
+      "c": FlutterStandardTypedData.init(bytes: Data(c)),
+      "mac": FlutterStandardTypedData.init(bytes: Data(mac))
     ]
   }
 
   private func crypto_box_open_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let mac = (args["mac"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let mac = (args["mac"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count)
+    var m = [UInt8](repeating: 0, count: c.count)
 
-    let ret = m.withUnsafeMutableBytes { mPtr in
-      mac.withUnsafeBytes { macPtr in
-        c.withUnsafeBytes { cPtr in
-          n.withUnsafeBytes { nPtr in
-            pk.withUnsafeBytes { pkPtr in
-              sk.withUnsafeBytes { skPtr in
-                flutter_sodium.crypto_box_open_detached(mPtr.baseAddress, cPtr.baseAddress, macPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let ret = flutter_sodium.crypto_box_open_detached(&m, c, mac, CUnsignedLongLong(c.count), n, pk, sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_box_beforenm(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var k = Data(count: flutter_sodium.crypto_box_beforenmbytes())
-    let ret = k.withUnsafeMutableBytes { kPtr in
-      pk.withUnsafeBytes { pkPtr in
-        sk.withUnsafeBytes { skPtr in
-          flutter_sodium.crypto_box_beforenm(kPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_beforenmbytes())
+    let ret = flutter_sodium.crypto_box_beforenm(&k, pk, sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(k))
   }
 
   private func crypto_box_easy_afternm(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: flutter_sodium.crypto_box_macbytes() + m.count)
+    var c = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_macbytes() + m.count)
 
-    let ret = c.withUnsafeMutableBytes { cPtr in
-      m.withUnsafeBytes { mPtr in
-        n.withUnsafeBytes { nPtr in
-          k.withUnsafeBytes { kPtr in
-            flutter_sodium.crypto_box_easy_afternm(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, kPtr.baseAddress)
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+    let ret = flutter_sodium.crypto_box_easy_afternm(&c, m, CUnsignedLongLong(m.count), n, k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(c))
   }
 
   private func crypto_box_open_easy_afternm(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count - flutter_sodium.crypto_box_macbytes())
+    var m = [UInt8](repeating: 0, count: c.count - flutter_sodium.crypto_box_macbytes())
 
-    let ret = m.withUnsafeMutableBytes { mPtr in
-      c.withUnsafeBytes { cPtr in
-        n.withUnsafeBytes { nPtr in
-          k.withUnsafeBytes { kPtr in
-            flutter_sodium.crypto_box_open_easy_afternm(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, kPtr.baseAddress)
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let ret = flutter_sodium.crypto_box_open_easy_afternm(&m, c, CUnsignedLongLong(c.count), n, k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_box_detached_afternm(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count)
-    var mac = Data(count: flutter_sodium.crypto_box_macbytes())
+    var c = [UInt8](repeating: 0, count: m.count)
+    var mac = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_macbytes())
 
-    let ret = c.withUnsafeMutableBytes { cPtr in
-      mac.withUnsafeMutableBytes { macPtr in
-        m.withUnsafeBytes { mPtr in
-          n.withUnsafeBytes { nPtr in
-            k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_box_detached_afternm(cPtr.baseAddress, macPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, kPtr.baseAddress)
-            }
-          }
-        }
-      }
-    }
+    let ret = flutter_sodium.crypto_box_detached_afternm(&c, &mac, m, CUnsignedLongLong(m.count), n, k)
     return error(ret: ret) ?? [
-      "c": FlutterStandardTypedData.init(bytes: c),
-      "mac": FlutterStandardTypedData.init(bytes: mac)
+      "c": FlutterStandardTypedData.init(bytes: Data(c)),
+      "mac": FlutterStandardTypedData.init(bytes: Data(mac))
     ]
   }
-  
+
   private func crypto_box_open_detached_afternm(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let mac = (args["mac"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let mac = (args["mac"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count)
+    var m = [UInt8](repeating: 0, count: c.count)
 
-    let ret = m.withUnsafeMutableBytes { mPtr in
-      mac.withUnsafeBytes { macPtr in
-        c.withUnsafeBytes { cPtr in
-          n.withUnsafeBytes { nPtr in
-            k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_box_open_detached_afternm(mPtr.baseAddress, cPtr.baseAddress, macPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, kPtr.baseAddress)
-            }
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let ret = flutter_sodium.crypto_box_open_detached_afternm(&m, c, mac, CUnsignedLongLong(c.count), n, k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
-  
+
   private func crypto_box_seal(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    
-    var c = Data(count: m.count + flutter_sodium.crypto_box_sealbytes())
-    
-    let ret = c.withUnsafeMutableBytes { cPtr in
-      m.withUnsafeBytes { mPtr in
-        pk.withUnsafeBytes { pkPtr in
-          flutter_sodium.crypto_box_seal(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), pkPtr.baseAddress)
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+
+    var c = [UInt8](repeating: 0, count: m.count + flutter_sodium.crypto_box_sealbytes())
+
+    let ret = flutter_sodium.crypto_box_seal(&c, m, CUnsignedLongLong(m.count), pk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(c))
   }
-  
+
   private func crypto_box_seal_open(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
-    
-    var m = Data(count: c.count - flutter_sodium.crypto_box_sealbytes())
-    
-    let ret = m.withUnsafeMutableBytes { mPtr in
-      c.withUnsafeBytes { cPtr in
-        pk.withUnsafeBytes { pkPtr in
-          sk.withUnsafeBytes { skPtr in
-            flutter_sodium.crypto_box_seal_open(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), pkPtr.baseAddress, skPtr.baseAddress)
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
+
+    var m = [UInt8](repeating: 0, count: c.count - flutter_sodium.crypto_box_sealbytes())
+
+    let ret = flutter_sodium.crypto_box_seal_open(&m, c, CUnsignedLongLong(c.count), pk, sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_box_curve25519xchacha20poly1305_seed_keypair(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let seed = (args["seed"] as! FlutterStandardTypedData).data
-    
-    var pk = Data(count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_publickeybytes())
-    var sk = Data(count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_secretkeybytes())
-    let ret = pk.withUnsafeMutableBytes { pkPtr in
-      sk.withUnsafeMutableBytes { skPtr in
-        seed.withUnsafeBytes { seedPtr in
-          flutter_sodium.crypto_box_curve25519xchacha20poly1305_seed_keypair(pkPtr.baseAddress, skPtr.baseAddress, seedPtr.baseAddress)
-        }
-      }
-    }
+    let seed = (args["seed"] as! FlutterStandardTypedData).uint8Array
+
+    var pk = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_publickeybytes())
+    var sk = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_secretkeybytes())
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_seed_keypair(&pk, &sk, seed)
     return error(ret: ret) ?? [
-      "pk": FlutterStandardTypedData.init(bytes: pk),
-      "sk": FlutterStandardTypedData.init(bytes: sk)
+      "pk": FlutterStandardTypedData.init(bytes: Data(pk)),
+      "sk": FlutterStandardTypedData.init(bytes: Data(sk))
     ]
   }
-  
+
   private func crypto_box_curve25519xchacha20poly1305_keypair(call: FlutterMethodCall) -> Any
   {
-    var pk = Data(count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_publickeybytes())
-    var sk = Data(count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_secretkeybytes())
-    let ret = pk.withUnsafeMutableBytes { pkPtr in
-      sk.withUnsafeMutableBytes { skPtr in
-        flutter_sodium.crypto_box_curve25519xchacha20poly1305_keypair(pkPtr.baseAddress, skPtr.baseAddress)
-      }
-    }
+    var pk = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_publickeybytes())
+    var sk = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_secretkeybytes())
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_keypair(&pk, &sk)
     return error(ret: ret) ?? [
-      "pk": FlutterStandardTypedData.init(bytes: pk),
-      "sk": FlutterStandardTypedData.init(bytes: sk)
+      "pk": FlutterStandardTypedData.init(bytes: Data(pk)),
+      "sk": FlutterStandardTypedData.init(bytes: Data(sk))
     ]
   }
 
   private func crypto_box_curve25519xchacha20poly1305_easy(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes() + m.count)
+    var c = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes() + m.count)
 
-    let ret = c.withUnsafeMutableBytes { cPtr in
-      m.withUnsafeBytes { mPtr in
-        n.withUnsafeBytes { nPtr in
-          pk.withUnsafeBytes { pkPtr in
-            sk.withUnsafeBytes { skPtr in
-              flutter_sodium.crypto_box_curve25519xchacha20poly1305_easy(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
-            }
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_easy(&c, m, CUnsignedLongLong(m.count), n, pk, sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(c))
   }
 
   private func crypto_box_curve25519xchacha20poly1305_open_easy(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count - flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes())
+    var m = [UInt8](repeating: 0, count: c.count - flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes())
 
-    let ret = m.withUnsafeMutableBytes { mPtr in
-      c.withUnsafeBytes { cPtr in
-        n.withUnsafeBytes { nPtr in
-          pk.withUnsafeBytes { pkPtr in
-            sk.withUnsafeBytes { skPtr in
-              flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_easy(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
-            }
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_easy(&m, c, CUnsignedLongLong(c.count), n, pk, sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_box_curve25519xchacha20poly1305_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count)
-    var mac = Data(count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes())
+    var c = [UInt8](repeating: 0, count: m.count)
+    var mac = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes())
 
-    let ret = c.withUnsafeMutableBytes { cPtr in
-      mac.withUnsafeMutableBytes { macPtr in
-        m.withUnsafeBytes { mPtr in
-          n.withUnsafeBytes { nPtr in
-            pk.withUnsafeBytes { pkPtr in
-              sk.withUnsafeBytes { skPtr in
-                flutter_sodium.crypto_box_curve25519xchacha20poly1305_detached(cPtr.baseAddress, macPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
-    }
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_detached(&c, &mac, m, CUnsignedLongLong(m.count), n, pk, sk)
     return error(ret: ret) ?? [
-      "c": FlutterStandardTypedData.init(bytes: c),
-      "mac": FlutterStandardTypedData.init(bytes: mac)
+      "c": FlutterStandardTypedData.init(bytes: Data(c)),
+      "mac": FlutterStandardTypedData.init(bytes: Data(mac))
     ]
   }
 
   private func crypto_box_curve25519xchacha20poly1305_open_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let mac = (args["mac"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let mac = (args["mac"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count)
+    var m = [UInt8](repeating: 0, count: c.count)
 
-    let ret = m.withUnsafeMutableBytes { mPtr in
-      mac.withUnsafeBytes { macPtr in
-        c.withUnsafeBytes { cPtr in
-          n.withUnsafeBytes { nPtr in
-            pk.withUnsafeBytes { pkPtr in
-              sk.withUnsafeBytes { skPtr in
-                flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_detached(mPtr.baseAddress, cPtr.baseAddress, macPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
-              }
-            }
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_detached(&m, c, mac, CUnsignedLongLong(c.count), n, pk, sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_box_curve25519xchacha20poly1305_beforenm(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var k = Data(count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_beforenmbytes())
-    let ret = k.withUnsafeMutableBytes { kPtr in
-      pk.withUnsafeBytes { pkPtr in
-        sk.withUnsafeBytes { skPtr in
-          flutter_sodium.crypto_box_curve25519xchacha20poly1305_beforenm(kPtr.baseAddress, pkPtr.baseAddress, skPtr.baseAddress)
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_beforenmbytes())
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_beforenm(&k, pk, sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(k))
   }
 
   private func crypto_box_curve25519xchacha20poly1305_easy_afternm(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes() + m.count)
+    var c = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes() + m.count)
 
-    let ret = c.withUnsafeMutableBytes { cPtr in
-      m.withUnsafeBytes { mPtr in
-        n.withUnsafeBytes { nPtr in
-          k.withUnsafeBytes { kPtr in
-            flutter_sodium.crypto_box_curve25519xchacha20poly1305_easy_afternm(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, kPtr.baseAddress)
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_easy_afternm(&c, m, CUnsignedLongLong(m.count), n, k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(c))
   }
 
   private func crypto_box_curve25519xchacha20poly1305_open_easy_afternm(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count - flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes())
+    var m = [UInt8](repeating: 0, count: c.count - flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes())
 
-    let ret = m.withUnsafeMutableBytes { mPtr in
-      c.withUnsafeBytes { cPtr in
-        n.withUnsafeBytes { nPtr in
-          k.withUnsafeBytes { kPtr in
-            flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_easy_afternm(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, kPtr.baseAddress)
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_easy_afternm(&m, c, CUnsignedLongLong(c.count), n, k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_box_curve25519xchacha20poly1305_detached_afternm(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count)
-    var mac = Data(count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes())
+    var c = [UInt8](repeating: 0, count: m.count)
+    var mac = [UInt8](repeating: 0, count: flutter_sodium.crypto_box_curve25519xchacha20poly1305_macbytes())
 
-    let ret = c.withUnsafeMutableBytes { cPtr in
-      mac.withUnsafeMutableBytes { macPtr in
-        m.withUnsafeBytes { mPtr in
-          n.withUnsafeBytes { nPtr in
-            k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_box_curve25519xchacha20poly1305_detached_afternm(cPtr.baseAddress, macPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), nPtr.baseAddress, kPtr.baseAddress)
-            }
-          }
-        }
-      }
-    }
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_detached_afternm(&c, &mac, m, CUnsignedLongLong(m.count), n, k)
     return error(ret: ret) ?? [
-      "c": FlutterStandardTypedData.init(bytes: c),
-      "mac": FlutterStandardTypedData.init(bytes: mac)
+      "c": FlutterStandardTypedData.init(bytes: Data(c)),
+      "mac": FlutterStandardTypedData.init(bytes: Data(mac))
     ]
   }
-  
+
   private func crypto_box_curve25519xchacha20poly1305_open_detached_afternm(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let mac = (args["mac"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let mac = (args["mac"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count)
+    var m = [UInt8](repeating: 0, count: c.count)
 
-    let ret = m.withUnsafeMutableBytes { mPtr in
-      mac.withUnsafeBytes { macPtr in
-        c.withUnsafeBytes { cPtr in
-          n.withUnsafeBytes { nPtr in
-            k.withUnsafeBytes { kPtr in
-              flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_detached_afternm(mPtr.baseAddress, cPtr.baseAddress, macPtr.baseAddress, CUnsignedLongLong(c.count), nPtr.baseAddress, kPtr.baseAddress)
-            }
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_open_detached_afternm(&m, c, mac, CUnsignedLongLong(c.count), n, k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
-  
+
   private func crypto_box_curve25519xchacha20poly1305_seal(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    
-    var c = Data(count: m.count + flutter_sodium.crypto_box_curve25519xchacha20poly1305_sealbytes())
-    
-    let ret = c.withUnsafeMutableBytes { cPtr in
-      m.withUnsafeBytes { mPtr in
-        pk.withUnsafeBytes { pkPtr in
-          flutter_sodium.crypto_box_curve25519xchacha20poly1305_seal(cPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), pkPtr.baseAddress)
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+
+    var c = [UInt8](repeating: 0, count: m.count + flutter_sodium.crypto_box_curve25519xchacha20poly1305_sealbytes())
+
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_seal(&c, m, CUnsignedLongLong(m.count), pk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(c))
   }
-  
+
   private func crypto_box_curve25519xchacha20poly1305_seal_open(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
-    
-    var m = Data(count: c.count - flutter_sodium.crypto_box_curve25519xchacha20poly1305_sealbytes())
-    
-    let ret = m.withUnsafeMutableBytes { mPtr in
-      c.withUnsafeBytes { cPtr in
-        pk.withUnsafeBytes { pkPtr in
-          sk.withUnsafeBytes { skPtr in
-            flutter_sodium.crypto_box_curve25519xchacha20poly1305_seal_open(mPtr.baseAddress, cPtr.baseAddress, CUnsignedLongLong(c.count), pkPtr.baseAddress, skPtr.baseAddress)
-          }
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
+
+    var m = [UInt8](repeating: 0, count: c.count - flutter_sodium.crypto_box_curve25519xchacha20poly1305_sealbytes())
+
+    let ret = flutter_sodium.crypto_box_curve25519xchacha20poly1305_seal_open(&m, c, CUnsignedLongLong(c.count), pk, sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_generichash(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
     let outlen = args["outlen"] as! Int
-    let i = (args["in"] as! FlutterStandardTypedData).data
-    let key: Data? = (args["key"] as? FlutterStandardTypedData)?.data
-    var out = Data(count: outlen)
+    let i = (args["in"] as! FlutterStandardTypedData).uint8Array
+    let key = (args["key"] as? FlutterStandardTypedData)?.uint8Array
+    var out = [UInt8](repeating: 0, count: outlen)
     var ret: Int32 = -1
-    
+
     if let key = key {
-      ret = out.withUnsafeMutableBytes { outPtr in
-        i.withUnsafeBytes { inPtr in
-          key.withUnsafeBytes { keyPtr in
-            flutter_sodium.crypto_generichash(outPtr.baseAddress, outlen, inPtr, CUnsignedLongLong(i.count), keyPtr, key.count)
-          }
-        }
-      }
+      ret = flutter_sodium.crypto_generichash(&out, outlen, i, CUnsignedLongLong(i.count), key, key.count)
     }
     else {
-        // @inlinable public func withUnsafeMutableBytes<T, Result>(of value: inout T, _ body: (UnsafeMutableRawBufferPointer) throws -> Result) rethrows -> Result
-      ret = out.withUnsafeMutableBytes { outPtr in
-        i.withUnsafeBytes { iPtr in
-          flutter_sodium.crypto_generichash(outPtr.baseAddress, outlen, iPtr, CUnsignedLongLong(i.count), nil, 0)
-        }
-      }
+      ret = flutter_sodium.crypto_generichash(&out, outlen, i, CUnsignedLongLong(i.count), nil, 0)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(out))
   }
-    
+
   private func crypto_generichash_init(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let key: Data? = (args["key"] as? FlutterStandardTypedData)?.data
+    let key = (args["key"] as? FlutterStandardTypedData)?.uint8Array
     let outlen = args["outlen"] as! Int
     var ret: Int32 = -1
-    var state = Data(count: crypto_generichash_statebytes())
-    
-    //    @inlinable public mutating func withUnsafeMutableBytes<ResultType>(_ body: (UnsafeMutableRawBufferPointer) throws -> ResultType) rethrows -> ResultType
-    
+    var state = [UInt8](repeating: 0, count: crypto_generichash_statebytes())
+
     if let key = key {
-      ret = state.withUnsafeMutableBytes { statePtr in 
-        key.withUnsafeBytes { keyPtr in 
-          flutter_sodium.crypto_generichash_init(OpaquePointer(statePtr.baseAddress), keyPtr.baseAddress, key.count, outlen)
-        }
+      state.withUnsafeMutableBytes { state in
+        ret = flutter_sodium.crypto_generichash_init(OpaquePointer(state.baseAddress), key, key.count, outlen)
       }
     }
     else {
-      ret = state.withUnsafeMutableBytes { statePtr in 
-        flutter_sodium.crypto_generichash_init(OpaquePointer(statePtr.baseAddress), nil, 0, outlen)
+      state.withUnsafeMutableBytes { state in
+        ret = flutter_sodium.crypto_generichash_init(OpaquePointer(state.baseAddress), nil, 0, outlen)
       }
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(state))
   }
-  
+
   private func crypto_generichash_update(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    var state = (args["state"] as! FlutterStandardTypedData).data
-    let i = (args["in"] as! FlutterStandardTypedData).data
+    var state = (args["state"] as! FlutterStandardTypedData).uint8Array
+    let i = (args["in"] as! FlutterStandardTypedData).uint8Array
 
-    let ret = state.withUnsafeMutableBytes { statePtr in 
-      i.withUnsafeBytes { iPtr in 
-        flutter_sodium.crypto_generichash_update(OpaquePointer(statePtr.baseAddress), iPtr.baseAddress, CUnsignedLongLong(i.count))
-      }
+    let ret = state.withUnsafeMutableBytes { state in
+      flutter_sodium.crypto_generichash_update(OpaquePointer(state.baseAddress), i, CUnsignedLongLong(i.count))
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(state))
   }
-  
+
   private func crypto_generichash_final(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    var state = (args["state"] as! FlutterStandardTypedData).data
+    var state = (args["state"] as! FlutterStandardTypedData).uint8Array
     let outlen = args["outlen"] as! Int
 
-    var out = Data(count: outlen)
+    var out = [UInt8](repeating: 0, count: outlen)
 
-    let ret = state.withUnsafeMutableBytes { statePtr in 
-      out.withUnsafeMutableBytes { outPtr in 
-        flutter_sodium.crypto_generichash_final(OpaquePointer(statePtr.baseAddress), outPtr.baseAddress, outlen)
-      }
+    let ret = state.withUnsafeMutableBytes { state in
+      flutter_sodium.crypto_generichash_final(OpaquePointer(state.baseAddress), &out, outlen)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(out))
   }
-  
+
   private func crypto_generichash_keygen(call: FlutterMethodCall) -> Any
   {
-    var k = Data(count: crypto_generichash_keybytes())
-    k.withUnsafeMutableBytes { kPtr in
-        flutter_sodium.crypto_generichash_keygen(kPtr.baseAddress)
-    }
-    return FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: crypto_generichash_keybytes())
+    flutter_sodium.crypto_generichash_keygen(&k)
+    return FlutterStandardTypedData.init(bytes: Data(k))
   }
 
   private func crypto_kdf_keygen(call: FlutterMethodCall) -> Any
   {
-    var k = Data(count: crypto_kdf_keybytes())
-    k.withUnsafeMutableBytes { kPtr in
-        flutter_sodium.crypto_kdf_keygen(kPtr.baseAddress)
-    }
-    return FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: crypto_kdf_keybytes())
+    flutter_sodium.crypto_kdf_keygen(&k)
+    return FlutterStandardTypedData.init(bytes: Data(k))
   }
 
   private func crypto_kdf_derive_from_key(call: FlutterMethodCall) -> Any
@@ -1423,168 +965,119 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let args = call.arguments as! NSDictionary
     let subkey_len = args["subkey_len"] as! Int
     let subkey_id = args["subkey_id"] as! UInt64
-    let ctx = (args["ctx"] as! FlutterStandardTypedData).data
-    let key = (args["key"] as! FlutterStandardTypedData).data
+    let ctx = (args["ctx"] as! FlutterStandardTypedData).int8Array
+    let key = (args["key"] as! FlutterStandardTypedData).uint8Array
 
-    var subkey = Data(count: subkey_len)
-    let ret = subkey.withUnsafeMutableBytes { subkeyPtr in 
-      ctx.withUnsafeBytes { ctxPtr in 
-        key.withUnsafeBytes { keyPtr in 
-          flutter_sodium.crypto_kdf_derive_from_key(subkeyPtr.baseAddress, size_t(subkey_len), subkey_id, ctxPtr.baseAddress, keyPtr.baseAddress)
-        }
-      }
-    }
+    var subkey = [UInt8](repeating: 0, count: subkey_len)
+    let ret = flutter_sodium.crypto_kdf_derive_from_key(&subkey, size_t(subkey_len), subkey_id, ctx, key)
 
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: subkey)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(subkey))
   }
 
   private func crypto_kx_keypair(call: FlutterMethodCall) -> Any
   {
-    var pk = Data(count: flutter_sodium.crypto_kx_publickeybytes())
-    var sk = Data(count: flutter_sodium.crypto_kx_secretkeybytes())
-    let ret = pk.withUnsafeMutableBytes { pkPtr in
-      sk.withUnsafeMutableBytes { skPtr in
-        flutter_sodium.crypto_kx_keypair(pkPtr.baseAddress, skPtr.baseAddress)
-      }
-    }
+    var pk = [UInt8](repeating: 0, count: flutter_sodium.crypto_kx_publickeybytes())
+    var sk = [UInt8](repeating: 0, count: flutter_sodium.crypto_kx_secretkeybytes())
+    let ret = flutter_sodium.crypto_kx_keypair(&pk, &sk)
     return error(ret: ret) ?? [
-      "pk": FlutterStandardTypedData.init(bytes: pk),
-      "sk": FlutterStandardTypedData.init(bytes: sk)
+      "pk": FlutterStandardTypedData.init(bytes: Data(pk)),
+      "sk": FlutterStandardTypedData.init(bytes: Data(sk))
     ]
   }
 
   private func crypto_kx_seed_keypair(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let seed = (args["seed"] as! FlutterStandardTypedData).data
+    let seed = (args["seed"] as! FlutterStandardTypedData).uint8Array
 
-    var pk = Data(count: flutter_sodium.crypto_kx_publickeybytes())
-    var sk = Data(count: flutter_sodium.crypto_kx_secretkeybytes())
-    let ret = pk.withUnsafeMutableBytes { pkPtr in
-      sk.withUnsafeMutableBytes { skPtr in
-        seed.withUnsafeBytes { seedPtr in
-          flutter_sodium.crypto_kx_seed_keypair(pkPtr.baseAddress, skPtr.baseAddress, seedPtr.baseAddress)
-        }
-      }
-    }
+    var pk = [UInt8](repeating: 0, count: flutter_sodium.crypto_kx_publickeybytes())
+    var sk = [UInt8](repeating: 0, count: flutter_sodium.crypto_kx_secretkeybytes())
+    let ret = flutter_sodium.crypto_kx_seed_keypair(&pk, &sk, seed)
     return error(ret: ret) ?? [
-      "pk": FlutterStandardTypedData.init(bytes: pk),
-      "sk": FlutterStandardTypedData.init(bytes: sk)
+      "pk": FlutterStandardTypedData.init(bytes: Data(pk)),
+      "sk": FlutterStandardTypedData.init(bytes: Data(sk))
     ]
   }
 
   private func crypto_kx_client_session_keys(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let client_pk = (args["client_pk"] as! FlutterStandardTypedData).data
-    let client_sk = (args["client_sk"] as! FlutterStandardTypedData).data
-    let server_pk = (args["server_pk"] as! FlutterStandardTypedData).data
+    let client_pk = (args["client_pk"] as! FlutterStandardTypedData).uint8Array
+    let client_sk = (args["client_sk"] as! FlutterStandardTypedData).uint8Array
+    let server_pk = (args["server_pk"] as! FlutterStandardTypedData).uint8Array
 
-    var rx = Data(count: flutter_sodium.crypto_kx_sessionkeybytes())
-    var tx = Data(count: flutter_sodium.crypto_kx_sessionkeybytes())
-    let ret = rx.withUnsafeMutableBytes { rxPtr in
-      tx.withUnsafeMutableBytes { txPtr in
-        client_pk.withUnsafeBytes { client_pkPtr in
-          client_sk.withUnsafeBytes { client_skPtr in
-            server_pk.withUnsafeBytes { server_pkPtr in
-              flutter_sodium.crypto_kx_client_session_keys(rxPtr.baseAddress, txPtr.baseAddress, client_pkPtr.baseAddress, client_skPtr.baseAddress, server_pkPtr.baseAddress)
-            }
-          }
-        }
-      }
-    }
+    var rx = [UInt8](repeating: 0, count: flutter_sodium.crypto_kx_sessionkeybytes())
+    var tx = [UInt8](repeating: 0, count: flutter_sodium.crypto_kx_sessionkeybytes())
+    let ret = flutter_sodium.crypto_kx_client_session_keys(&rx, &tx, client_pk, client_sk, server_pk)
     return error(ret: ret) ?? [
-      "rx": FlutterStandardTypedData.init(bytes: rx),
-      "tx": FlutterStandardTypedData.init(bytes: tx)
+      "rx": FlutterStandardTypedData.init(bytes: Data(rx)),
+      "tx": FlutterStandardTypedData.init(bytes: Data(tx))
     ]
   }
 
   private func crypto_kx_server_session_keys(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let server_pk = (args["server_pk"] as! FlutterStandardTypedData).data
-    let server_sk = (args["server_sk"] as! FlutterStandardTypedData).data
-    let client_pk = (args["client_pk"] as! FlutterStandardTypedData).data
+    let server_pk = (args["server_pk"] as! FlutterStandardTypedData).uint8Array
+    let server_sk = (args["server_sk"] as! FlutterStandardTypedData).uint8Array
+    let client_pk = (args["client_pk"] as! FlutterStandardTypedData).uint8Array
 
-    var rx = Data(count: flutter_sodium.crypto_kx_sessionkeybytes())
-    var tx = Data(count: flutter_sodium.crypto_kx_sessionkeybytes())
-    let ret = rx.withUnsafeMutableBytes { rxPtr in
-      tx.withUnsafeMutableBytes { txPtr in
-        server_pk.withUnsafeBytes { server_pkPtr in
-          server_sk.withUnsafeBytes { server_skPtr in
-            client_pk.withUnsafeBytes { client_pkPtr in
-              flutter_sodium.crypto_kx_server_session_keys(rxPtr.baseAddress, txPtr.baseAddress, server_pkPtr.baseAddress, server_skPtr.baseAddress, client_pkPtr.baseAddress)
-            }
-          }
-        }
-      }
-    }
+    var rx = [UInt8](repeating: 0, count: flutter_sodium.crypto_kx_sessionkeybytes())
+    var tx = [UInt8](repeating: 0, count: flutter_sodium.crypto_kx_sessionkeybytes())
+    let ret = flutter_sodium.crypto_kx_server_session_keys(&rx, &tx, server_pk, server_sk, client_pk)
     return error(ret: ret) ?? [
-      "rx": FlutterStandardTypedData.init(bytes: rx),
-      "tx": FlutterStandardTypedData.init(bytes: tx)
+      "rx": FlutterStandardTypedData.init(bytes: Data(rx)),
+      "tx": FlutterStandardTypedData.init(bytes: Data(tx))
     ]
   }
 
   private func crypto_onetimeauth(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let i = (args["in"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let i = (args["in"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var out = Data(count: flutter_sodium.crypto_onetimeauth_bytes())
+    var out = [UInt8](repeating: 0, count: flutter_sodium.crypto_onetimeauth_bytes())
 
-    let ret = out.withUnsafeMutableBytes { outPtr in
-      i.withUnsafeBytes { iPtr in 
-        k.withUnsafeBytes { kPtr in 
-          flutter_sodium.crypto_onetimeauth(outPtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count), kPtr.baseAddress)
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+    let ret = flutter_sodium.crypto_onetimeauth(&out, i, CUnsignedLongLong(i.count), k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(out))
   }
 
   private func crypto_onetimeauth_verify(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let h = (args["h"] as! FlutterStandardTypedData).data
-    let i = (args["in"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let h = (args["h"] as! FlutterStandardTypedData).uint8Array
+    let i = (args["in"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    let ret = h.withUnsafeBytes { hPtr in
-      i.withUnsafeBytes { iPtr in 
-        k.withUnsafeBytes { kPtr in 
-          flutter_sodium.crypto_onetimeauth_verify(hPtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count), kPtr.baseAddress)
-        }
-      }
-    }
+    let ret = flutter_sodium.crypto_onetimeauth_verify(h, i, CUnsignedLongLong(i.count), k)
     return ret == 0
   }
 
   private func crypto_onetimeauth_init(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let key = (args["key"] as! FlutterStandardTypedData).data
+    let key = (args["key"] as! FlutterStandardTypedData).uint8Array
 
-    var state = Data(count: crypto_onetimeauth_statebytes())
-    let ret = state.withUnsafeMutableBytes { statePtr in
-      key.withUnsafeBytes { keyPtr in 
-        flutter_sodium.crypto_onetimeauth_init(statePtr.baseAddress, keyPtr.baseAddress)
-      }
+    var state = crypto_onetimeauth_state()
+    let ret = flutter_sodium.crypto_onetimeauth_init(&state, key)
+
+    return error(ret: ret) ?? withUnsafeBytes(of: &state) { state in
+      FlutterStandardTypedData.init(bytes: Data(state))
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
 
   private func crypto_onetimeauth_update(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
     var state = (args["state"] as! FlutterStandardTypedData).data
-    let i = (args["in"] as! FlutterStandardTypedData).data
+    let i = (args["in"] as! FlutterStandardTypedData).uint8Array
 
-    let ret = state.withUnsafeMutableBytes { statePtr in
-      i.withUnsafeBytes { iPtr in 
-        flutter_sodium.crypto_onetimeauth_update(statePtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count))
-      }
+    let ret = state.asCryptoOnetimeauthState { state in
+      flutter_sodium.crypto_onetimeauth_update(&state, i, CUnsignedLongLong(i.count))
     }
+
+    //    let ret = flutter_sodium.crypto_onetimeauth_update(&state, i, CUnsignedLongLong(i.count))
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
 
@@ -1593,381 +1086,244 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     let args = call.arguments as! NSDictionary
     var state = (args["state"] as! FlutterStandardTypedData).data
 
-    var out = Data(count: crypto_onetimeauth_bytes())
-    let ret = state.withUnsafeMutableBytes { statePtr in
-      out.withUnsafeMutableBytes { outPtr in 
-        flutter_sodium.crypto_onetimeauth_final(statePtr.baseAddress, outPtr.baseAddress)
-      }
+    var out = [UInt8](repeating: 0, count: crypto_onetimeauth_bytes())
+    let ret = state.asCryptoOnetimeauthState { state in
+      flutter_sodium.crypto_onetimeauth_final(&state, &out)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(out))
   }
 
   private func crypto_onetimeauth_keygen(call: FlutterMethodCall) -> Any
   {
-    var k = Data(count: crypto_onetimeauth_keybytes())
-    k.withUnsafeMutableBytes { kPtr in
-        flutter_sodium.crypto_onetimeauth_keygen(kPtr.baseAddress)
-    }
-    return FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: crypto_onetimeauth_keybytes())
+    flutter_sodium.crypto_onetimeauth_keygen(&k)
+    return FlutterStandardTypedData.init(bytes: Data(k))
   }
-  
+
   private func crypto_pwhash(call: FlutterMethodCall) -> Any
   {
-      let args = call.arguments as! NSDictionary
-      let outlen = args["outlen"] as! Int
-      let passwd = (args["passwd"] as! FlutterStandardTypedData).data
-      let salt = (args["salt"] as! FlutterStandardTypedData).data
-      let opslimit = args["opslimit"] as! Int
-      let memlimit = args["memlimit"] as! Int
-      let alg = args["alg"] as! Int32
-      var out = Data(count: outlen)
-      
-      let ret = out.withUnsafeMutableBytes { outPtr in
-          passwd.withUnsafeBytes { passwdPtr in
-            salt.withUnsafeBytes { saltPtr in
-              flutter_sodium.crypto_pwhash(outPtr.baseAddress,
-                                            CUnsignedLongLong(outlen),
-                                            passwdPtr.baseAddress,
-                                            CUnsignedLongLong(passwd.count), 
-                                            saltPtr.baseAddress,
-                                            CUnsignedLongLong(opslimit),
-                                            size_t(memlimit), 
-                                            alg)
-            }
-          }
-      }
-      return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+    let args = call.arguments as! NSDictionary
+    let outlen = args["outlen"] as! Int
+    let passwd = (args["passwd"] as! FlutterStandardTypedData).int8Array
+    let salt = (args["salt"] as! FlutterStandardTypedData).uint8Array
+    let opslimit = args["opslimit"] as! Int
+    let memlimit = args["memlimit"] as! Int
+    let alg = args["alg"] as! Int32
+    var out = [UInt8](repeating: 0, count: outlen)
+
+    let ret = flutter_sodium.crypto_pwhash(&out, CUnsignedLongLong(outlen), passwd, CUnsignedLongLong(passwd.count), salt, CUnsignedLongLong(opslimit), size_t(memlimit),alg)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(out))
   }
-  
+
   private func crypto_pwhash_str(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let passwd = (args["passwd"] as! FlutterStandardTypedData).data
+    let passwd = (args["passwd"] as! FlutterStandardTypedData).int8Array
     let opslimit = args["opslimit"] as! Int
     let memlimit = args["memlimit"] as! Int
-    var out = Data(count: flutter_sodium.crypto_pwhash_strbytes())
-    
-    let ret = out.withUnsafeMutableBytes { outPtr in
-      passwd.withUnsafeBytes { passwdPtr in
-        flutter_sodium.crypto_pwhash_str(outPtr.baseAddress,
-                                         passwdPtr.baseAddress,
-                                         CUnsignedLongLong(passwd.count), 
-                                         CUnsignedLongLong(opslimit), 
-                                         size_t(memlimit))
-      }
+    var out = [Int8](repeating: 0, count: flutter_sodium.crypto_pwhash_strbytes())
+
+    let ret = flutter_sodium.crypto_pwhash_str(&out, passwd, CUnsignedLongLong(passwd.count), CUnsignedLongLong(opslimit), size_t(memlimit))
+    return error(ret: ret) ?? out.withUnsafeBytes { out in
+      FlutterStandardTypedData.init(bytes: Data(bytes: out.baseAddress!, count: out.count))
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
   }
-  
+
   private func crypto_pwhash_str_verify(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let str = (args["str"] as! FlutterStandardTypedData).data
-    let passwd = (args["passwd"] as! FlutterStandardTypedData).data
-    
-    let ret = str.withUnsafeBytes { strPtr in
-      passwd.withUnsafeBytes { passwdPtr in
-        flutter_sodium.crypto_pwhash_str_verify(strPtr.baseAddress, passwdPtr.baseAddress, CUnsignedLongLong(passwd.count))
-      }
-    }
+    let str = (args["str"] as! FlutterStandardTypedData).int8Array
+    let passwd = (args["passwd"] as! FlutterStandardTypedData).int8Array
+
+    let ret = flutter_sodium.crypto_pwhash_str_verify(str, passwd, CUnsignedLongLong(passwd.count))
     return ret == 0
   }
-  
+
   private func crypto_pwhash_str_needs_rehash(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let str = (args["str"] as! FlutterStandardTypedData).data
+    let str = (args["str"] as! FlutterStandardTypedData).int8Array
     let opslimit = args["opslimit"] as! Int
     let memlimit = args["memlimit"] as! Int
-    
-    let ret = str.withUnsafeBytes { strPtr in
-      flutter_sodium.crypto_pwhash_str_needs_rehash(strPtr.baseAddress, CUnsignedLongLong(opslimit), size_t(memlimit))
-    }
+
+    let ret = flutter_sodium.crypto_pwhash_str_needs_rehash(str, CUnsignedLongLong(opslimit), size_t(memlimit))
     return ret != 0
   }
 
   private func crypto_scalarmult_base(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let n = (args["n"] as! FlutterStandardTypedData).data
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
 
-    var q = Data(count: crypto_scalarmult_bytes())
-    let ret = q.withUnsafeMutableBytes { qPtr in
-      n.withUnsafeBytes { nPtr in 
-        flutter_sodium.crypto_scalarmult_base(qPtr.baseAddress, nPtr.baseAddress)
-      }
-    }
+    var q = [UInt8](repeating: 0, count: crypto_scalarmult_bytes())
+    let ret = flutter_sodium.crypto_scalarmult_base(&q, n)
 
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: q)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(q))
   }
 
   private func crypto_scalarmult(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let p = (args["p"] as! FlutterStandardTypedData).data
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let p = (args["p"] as! FlutterStandardTypedData).uint8Array
 
-    var q = Data(count: crypto_scalarmult_bytes())
-    let ret = q.withUnsafeMutableBytes { qPtr in
-      n.withUnsafeBytes { nPtr in 
-        p.withUnsafeBytes { pPtr in 
-          flutter_sodium.crypto_scalarmult(qPtr.baseAddress, nPtr.baseAddress, pPtr.baseAddress)
-        }
-      }
-    }
+    var q = [UInt8](repeating: 0, count: crypto_scalarmult_bytes())
+    let ret = flutter_sodium.crypto_scalarmult(&q, n, p)
 
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: q)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(q))
   }
 
   private func crypto_secretbox_easy(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: crypto_secretbox_macbytes() + m.count)
-    
-    let ret = c.withUnsafeMutableBytes { cPtr in
-          m.withUnsafeBytes { mPtr in
-            n.withUnsafeBytes { nPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_secretbox_easy(cPtr.baseAddress,
-                                              mPtr.baseAddress,
-                                              CUnsignedLongLong(m.count), 
-                                              nPtr.baseAddress,
-                                              kPtr.baseAddress)
-              }
-            }
-          }
-        }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: c)
+    var c = [UInt8](repeating: 0, count: crypto_secretbox_macbytes() + m.count)
+
+    let ret = flutter_sodium.crypto_secretbox_easy(&c, m, CUnsignedLongLong(m.count), n, k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(c))
   }
 
   private func crypto_secretbox_open_easy(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count - crypto_secretbox_macbytes())
+    var m = [UInt8](repeating: 0, count: c.count - crypto_secretbox_macbytes())
 
-    let ret = m.withUnsafeMutableBytes { mPtr in
-          c.withUnsafeBytes { cPtr in
-            n.withUnsafeBytes { nPtr in
-              k.withUnsafeBytes { kPtr in
-                flutter_sodium.crypto_secretbox_open_easy(mPtr.baseAddress,
-                                              cPtr.baseAddress,
-                                              CUnsignedLongLong(c.count), 
-                                              nPtr.baseAddress,
-                                              kPtr.baseAddress)
-              }
-            }
-          }
-        }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let ret = flutter_sodium.crypto_secretbox_open_easy(&m, c, CUnsignedLongLong(c.count), n, k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_secretbox_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var c = Data(count: m.count)
-    var mac = Data(count: crypto_secretbox_macbytes())
+    var c = [UInt8](repeating: 0, count: m.count)
+    var mac = [UInt8](repeating: 0, count: crypto_secretbox_macbytes())
 
-    let ret = c.withUnsafeMutableBytes { cPtr in
-          mac.withUnsafeMutableBytes { macPtr in
-            m.withUnsafeBytes { mPtr in
-              n.withUnsafeBytes { nPtr in
-                k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_secretbox_detached(cPtr.baseAddress,
-                                                macPtr.baseAddress,
-                                                mPtr.baseAddress,
-                                                CUnsignedLongLong(m.count), 
-                                                nPtr.baseAddress,
-                                                kPtr.baseAddress)
-                }
-              }
-            }
-          }
-        }
+    let ret = flutter_sodium.crypto_secretbox_detached(&c, &mac, m, CUnsignedLongLong(m.count), n, k)
 
     return error(ret: ret) ?? [
-      "c": FlutterStandardTypedData.init(bytes: c),
-      "mac": FlutterStandardTypedData.init(bytes: mac)
+      "c": FlutterStandardTypedData.init(bytes: Data(c)),
+      "mac": FlutterStandardTypedData.init(bytes: Data(mac))
     ]
   }
 
   private func crypto_secretbox_open_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let c = (args["c"] as! FlutterStandardTypedData).data
-    let mac = (args["mac"] as! FlutterStandardTypedData).data
-    let n = (args["n"] as! FlutterStandardTypedData).data
-    let k = (args["k"] as! FlutterStandardTypedData).data
+    let c = (args["c"] as! FlutterStandardTypedData).uint8Array
+    let mac = (args["mac"] as! FlutterStandardTypedData).uint8Array
+    let n = (args["n"] as! FlutterStandardTypedData).uint8Array
+    let k = (args["k"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: c.count)
+    var m = [UInt8](repeating: 0, count: c.count)
 
-    let ret = m.withUnsafeMutableBytes { mPtr in
-          c.withUnsafeBytes { cPtr in
-            mac.withUnsafeBytes { macPtr in 
-              n.withUnsafeBytes { nPtr in
-                k.withUnsafeBytes { kPtr in
-                  flutter_sodium.crypto_secretbox_open_detached(mPtr.baseAddress,
-                                                cPtr.baseAddress,
-                                                macPtr.baseAddress,
-                                                CUnsignedLongLong(c.count), 
-                                                nPtr.baseAddress,
-                                                kPtr.baseAddress)
-                }
-              }
-            }
-          }
-        }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    let ret = flutter_sodium.crypto_secretbox_open_detached(&m, c, mac, CUnsignedLongLong(c.count), n, k)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_secretbox_keygen(call: FlutterMethodCall) -> Any
   {
-    var k = Data(count: crypto_secretbox_keybytes())
-    k.withUnsafeMutableBytes { kPtr in
-        flutter_sodium.crypto_secretbox_keygen(kPtr.baseAddress)
-    }
-    return FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: crypto_secretbox_keybytes())
+    flutter_sodium.crypto_secretbox_keygen(&k)
+    return FlutterStandardTypedData.init(bytes: Data(k))
   }
 
   private func crypto_shorthash(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let i = (args["in"] as! FlutterStandardTypedData).data
-    let key = (args["k"] as! FlutterStandardTypedData).data
-    var out = Data(count: flutter_sodium.crypto_shorthash_bytes())
+    let i = (args["in"] as! FlutterStandardTypedData).uint8Array
+    let key = (args["k"] as! FlutterStandardTypedData).uint8Array
+    var out = [UInt8](repeating: 0, count: flutter_sodium.crypto_shorthash_bytes())
 
-    let ret = out.withUnsafeMutableBytes { outPtr in
-      i.withUnsafeBytes { iPtr in 
-        key.withUnsafeBytes { keyPtr in
-          flutter_sodium.crypto_shorthash(outPtr.baseAddress, iPtr.baseAddress, CUnsignedLongLong(i.count), keyPtr.baseAddress)
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: out)
+    let ret = flutter_sodium.crypto_shorthash(&out, i, CUnsignedLongLong(i.count), key)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(out))
   }
 
   private func crypto_shorthash_keygen(call: FlutterMethodCall) -> Any
   {
-    var k = Data(count: flutter_sodium.crypto_shorthash_keybytes())
-    k.withUnsafeMutableBytes { kPtr in
-      flutter_sodium.crypto_shorthash_keygen(kPtr.baseAddress)
-    }
-    return FlutterStandardTypedData.init(bytes: k)
+    var k = [UInt8](repeating: 0, count: flutter_sodium.crypto_shorthash_keybytes())
+    flutter_sodium.crypto_shorthash_keygen(&k)
+    return FlutterStandardTypedData.init(bytes: Data(k))
   }
 
   private func crypto_sign_seed_keypair(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let seed = (args["seed"] as! FlutterStandardTypedData).data
-    
-    var pk = Data(count: flutter_sodium.crypto_sign_publickeybytes())
-    var sk = Data(count: flutter_sodium.crypto_sign_secretkeybytes())
-    let ret = pk.withUnsafeMutableBytes { pkPtr in
-      sk.withUnsafeMutableBytes { skPtr in
-        seed.withUnsafeBytes { seedPtr in
-          flutter_sodium.crypto_sign_seed_keypair(pkPtr.baseAddress, skPtr.baseAddress, seedPtr.baseAddress)
-        }
-      }
-    }
+    let seed = (args["seed"] as! FlutterStandardTypedData).uint8Array
+
+    var pk = [UInt8](repeating: 0, count: flutter_sodium.crypto_sign_publickeybytes())
+    var sk = [UInt8](repeating: 0, count: flutter_sodium.crypto_sign_secretkeybytes())
+    let ret = flutter_sodium.crypto_sign_seed_keypair(&pk, &sk, seed)
     return error(ret: ret) ?? [
-      "pk": FlutterStandardTypedData.init(bytes: pk),
-      "sk": FlutterStandardTypedData.init(bytes: sk)
+      "pk": FlutterStandardTypedData.init(bytes: Data(pk)),
+      "sk": FlutterStandardTypedData.init(bytes: Data(sk))
     ]
   }
 
   private func crypto_sign_keypair(call: FlutterMethodCall) -> Any
   {
-    var pk = Data(count: flutter_sodium.crypto_sign_publickeybytes())
-    var sk = Data(count: flutter_sodium.crypto_sign_secretkeybytes())
-    let ret = pk.withUnsafeMutableBytes { pkPtr in
-      sk.withUnsafeMutableBytes { skPtr in
-        flutter_sodium.crypto_sign_keypair(pkPtr.baseAddress, skPtr.baseAddress)
-      }
-    }
+    var pk = [UInt8](repeating: 0, count: flutter_sodium.crypto_sign_publickeybytes())
+    var sk = [UInt8](repeating: 0, count: flutter_sodium.crypto_sign_secretkeybytes())
+    let ret = flutter_sodium.crypto_sign_keypair(&pk, &sk)
     return error(ret: ret) ?? [
-      "pk": FlutterStandardTypedData.init(bytes: pk),
-      "sk": FlutterStandardTypedData.init(bytes: sk)
+      "pk": FlutterStandardTypedData.init(bytes: Data(pk)),
+      "sk": FlutterStandardTypedData.init(bytes: Data(sk))
     ]
   }
 
   private func crypto_sign(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var sm = Data(count: m.count + flutter_sodium.crypto_sign_bytes())
-    let ret = sm.withUnsafeMutableBytes { smPtr in 
-      m.withUnsafeBytes { mPtr in
-        sk.withUnsafeBytes { skPtr in 
-          flutter_sodium.crypto_sign(smPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), skPtr.baseAddress)
-        }
-      }
-    }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: sm)
+    var sm = [UInt8](repeating: 0, count: m.count + flutter_sodium.crypto_sign_bytes())
+    let ret = flutter_sodium.crypto_sign(&sm, nil, m, CUnsignedLongLong(m.count), sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(sm))
   }
 
   private func crypto_sign_open(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let sm = (args["sm"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
+    let sm = (args["sm"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
 
-    var m = Data(count: sm.count - flutter_sodium.crypto_sign_bytes())
-    let ret = m.withUnsafeMutableBytes { mPtr in 
-      sm.withUnsafeBytes { smPtr in
-        pk.withUnsafeBytes { pkPtr in 
-          flutter_sodium.crypto_sign_open(mPtr.baseAddress, nil, smPtr.baseAddress, CUnsignedLongLong(sm.count), pkPtr.baseAddress)
-        }
-      }
-    }
+    var m = [UInt8](repeating: 0, count: sm.count - flutter_sodium.crypto_sign_bytes())
+    let ret = flutter_sodium.crypto_sign_open(&m, nil, sm, CUnsignedLongLong(sm.count), pk)
 
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: m)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(m))
   }
 
   private func crypto_sign_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var sig = Data(count: flutter_sodium.crypto_sign_bytes())
-    let ret = sig.withUnsafeMutableBytes { sigPtr in 
-      m.withUnsafeBytes { mPtr in
-        sk.withUnsafeBytes { skPtr in 
-          flutter_sodium.crypto_sign_detached(sigPtr.baseAddress, nil, mPtr.baseAddress, CUnsignedLongLong(m.count), skPtr.baseAddress)
-        }
-      }
-    }
+    var sig = [UInt8](repeating: 0, count: flutter_sodium.crypto_sign_bytes())
+    let ret = flutter_sodium.crypto_sign_detached(&sig, nil, m, CUnsignedLongLong(m.count), sk)
 
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: sig)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(sig))
   }
 
   private func crypto_sign_verify_detached(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
-    let sig = (args["sig"] as! FlutterStandardTypedData).data
-    let m = (args["m"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
+    let sig = (args["sig"] as! FlutterStandardTypedData).uint8Array
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
 
-    let ret = sig.withUnsafeBytes { sigPtr in 
-      m.withUnsafeBytes { mPtr in
-        pk.withUnsafeBytes { pkPtr in 
-          flutter_sodium.crypto_sign_verify_detached(sigPtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count), pkPtr.baseAddress)
-        }
-      }
-    }
+    let ret = flutter_sodium.crypto_sign_verify_detached(sig, m, CUnsignedLongLong(m.count), pk)
 
     return ret == 0
   }
@@ -1975,8 +1331,8 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   private func crypto_sign_init(call: FlutterMethodCall) -> Any
   {
     var state = Data(count: crypto_sign_statebytes())
-    let ret = state.withUnsafeMutableBytes { statePtr in
-      flutter_sodium.crypto_sign_init(statePtr.baseAddress)
+    let ret = state.asCryptoSignState { state in
+      flutter_sodium.crypto_sign_init(&state)
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
@@ -1985,12 +1341,10 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     let args = call.arguments as! NSDictionary
     var state = (args["state"] as! FlutterStandardTypedData).data
-    let m = (args["m"] as! FlutterStandardTypedData).data
+    let m = (args["m"] as! FlutterStandardTypedData).uint8Array
 
-    let ret = state.withUnsafeMutableBytes { statePtr in
-      m.withUnsafeBytes { mPtr in 
-        flutter_sodium.crypto_sign_update(statePtr.baseAddress, mPtr.baseAddress, CUnsignedLongLong(m.count))
-      }
+    let ret = state.asCryptoSignState { state in
+      flutter_sodium.crypto_sign_update(&state, m, CUnsignedLongLong(m.count))
     }
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: state)
   }
@@ -1999,82 +1353,65 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
   {
     let args = call.arguments as! NSDictionary
     var state = (args["state"] as! FlutterStandardTypedData).data
-    let sk = (args["sk"] as! FlutterStandardTypedData).data
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-    var sig = Data(count: crypto_sign_bytes())
+    var sig = [UInt8](repeating: 0, count: crypto_sign_bytes())
 
-    let ret = state.withUnsafeMutableBytes { statePtr in
-      sig.withUnsafeMutableBytes { sigPtr in 
-        sk.withUnsafeBytes { skPtr in 
-          flutter_sodium.crypto_sign_final_create(statePtr.baseAddress, sigPtr.baseAddress, nil, skPtr.baseAddress)
-        }
-      }
+    let ret = state.asCryptoSignState { state in
+      flutter_sodium.crypto_sign_final_create(&state, &sig, nil, sk)
     }
-    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: sig)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(sig))
   }
 
   private func crypto_sign_final_verify(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
     var state = (args["state"] as! FlutterStandardTypedData).data
-    var sig = (args["sig"] as! FlutterStandardTypedData).data
-    let pk = (args["pk"] as! FlutterStandardTypedData).data
+    var sig = (args["sig"] as! FlutterStandardTypedData).uint8Array
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
 
-    let ret = state.withUnsafeMutableBytes { statePtr in
-      sig.withUnsafeMutableBytes { sigPtr in 
-        pk.withUnsafeBytes { pkPtr in 
-          flutter_sodium.crypto_sign_final_verify(statePtr.baseAddress, sigPtr.baseAddress, pkPtr.baseAddress)
-        }
-      }
+    let ret = state.asCryptoSignState { state in
+      flutter_sodium.crypto_sign_final_verify(&state, &sig, pk)
     }
     return ret == 0
   }
 
   private func crypto_sign_ed25519_sk_to_curve25519(call: FlutterMethodCall) -> Any
-    {
-      let args = call.arguments as! NSDictionary
-      let sk = (args["sk"] as! FlutterStandardTypedData).data
+  {
+    let args = call.arguments as! NSDictionary
+    let sk = (args["sk"] as! FlutterStandardTypedData).uint8Array
 
-      var curve25519Sk = Data(count: flutter_sodium.crypto_scalarmult_curve25519_bytes())
-      let ret = curve25519Sk.withUnsafeMutableBytes { curve25519SkPtr in
-        sk.withUnsafeBytes { skPtr in
-          flutter_sodium.crypto_sign_ed25519_sk_to_curve25519(curve25519SkPtr.baseAddress, skPtr.baseAddress)
-        }
-      }
-      return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: curve25519Sk)
-    }
+    var curve25519Sk = [UInt8](repeating: 0, count: flutter_sodium.crypto_scalarmult_curve25519_bytes())
+    let ret = flutter_sodium.crypto_sign_ed25519_sk_to_curve25519(&curve25519Sk, sk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(curve25519Sk))
+  }
 
   private func randombytes_buf(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
     let size = args["size"] as! Int
-    var buf = Data(count: size)
-    buf.withUnsafeMutableBytes { bufPtr in
-      flutter_sodium.randombytes_buf(bufPtr.baseAddress, size)
-    }
-    return FlutterStandardTypedData.init(bytes: buf)
+
+    var buf = [UInt8](repeating: 0, count: size)
+    flutter_sodium.randombytes_buf(&buf, size)
+    return FlutterStandardTypedData.init(bytes: Data(buf))
   }
-  
+
   private func randombytes_buf_deterministic(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
     let size = args["size"] as! Int
-    let seed = (args["seed"] as! FlutterStandardTypedData).data
-    
-    var buf = Data(count: size)
-    buf.withUnsafeMutableBytes { bufPtr in
-      seed.withUnsafeBytes { seedPtr in
-        flutter_sodium.randombytes_buf_deterministic(bufPtr.baseAddress, size, seedPtr.baseAddress)
-      }
-    }
-    return FlutterStandardTypedData.init(bytes: buf)
+    let seed = (args["seed"] as! FlutterStandardTypedData).uint8Array
+
+    var buf = [UInt8](repeating: 0, count: size)
+    flutter_sodium.randombytes_buf_deterministic(&buf, size, seed)
+    return FlutterStandardTypedData.init(bytes: Data(buf))
   }
-  
+
   private func randombytes_random(call: FlutterMethodCall) -> Any
   {
     return flutter_sodium.randombytes_random()
   }
-  
+
   private func randombytes_uniform(call: FlutterMethodCall) -> Any
   {
     let args = call.arguments as! NSDictionary
