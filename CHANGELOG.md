@@ -1,4 +1,8 @@
-## 0.0.9 - February 24, 2018
+## 0.0.10 - June 27, 2019
+* Adds support for kdf to Android (by rmtmckenzie)
+* Update to Swift 5 & fix all warnings in iOS code (by rmtmckenzie)
+
+## 0.0.9 - February 24, 2019
 * Adds support for crypto_sign_ed25519_sk_to_curve25519 (by sporkins)
 * Fixes sample app issues
 
