@@ -1,11 +1,13 @@
 package com.firstfloorsoftware.fluttersodium;
 
+import java.util.HashMap;
+
+import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
-import java.util.HashMap;
+
 import static org.libsodium.jni.NaCl.sodium;
 
 /**
@@ -903,13 +905,23 @@ public class FlutterSodiumPlugin implements MethodCallHandler, CryptoTask {
     }
 
     private Object crypto_kdf_keygen(MethodCall call) {
-        // FIXME: crypto_kdf_keygen not implemented in libsodium-jni
-        throw new UnsupportedOperationException();
+        byte[] key = new byte[sodium().crypto_kdf_keybytes()];
+        sodium().crypto_kdf_keygen(key);
+
+        return key;
     }
 
-    private Object crypto_kdf_derive_from_key(MethodCall call) {
-        // FIXME: crypto_kdf_derive_from_key not implemented in libsodium-jni
-        throw new UnsupportedOperationException();
+    private Object crypto_kdf_derive_from_key(MethodCall call) throws Exception {
+        int subkey_len = call.argument("subkey_len");
+        int subkeyId = call.argument("subkey_id");
+        byte[] ctx = call.argument("ctx");
+        byte[] key = call.argument("key");
+
+        byte[] subkey = new byte[subkey_len];
+
+        requireSuccess(sodium().crypto_kdf_derive_from_key(subkey, subkey_len, subkeyId, ctx, key));
+
+        return subkey;
     }
 
     private Object crypto_kx_keypair(MethodCall call) throws Exception {

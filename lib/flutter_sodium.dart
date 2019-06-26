@@ -1234,6 +1234,8 @@ class Sodium {
     assert(subkeyId != null);
     assert(ctx != null);
     assert(key != null);
+    RangeError.checkValueInInterval(subkeyLen, crypto_kdf_BYTES_MIN,
+        crypto_kdf_BYTES_MAX, 'subkeyLen', 'Invalid length');
     RangeError.checkValueInInterval(ctx.length, crypto_kdf_CONTEXTBYTES,
         crypto_kdf_CONTEXTBYTES, 'ctx', 'Invalid length');
     RangeError.checkValueInInterval(key.length, crypto_kdf_KEYBYTES,
