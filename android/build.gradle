@@ -35,6 +35,4 @@ android {
 
 dependencies {
     implementation group: 'com.github.joshjdevl.libsodiumjni', name: 'libsodium-jni-aar', version: '2.0.2'
-
-    // implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:2.0.2-SNAPSHOT'
 }
