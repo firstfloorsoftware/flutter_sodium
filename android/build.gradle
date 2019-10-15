@@ -16,9 +16,6 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
     }
 }
 
@@ -37,5 +34,5 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:2.0.2-SNAPSHOT'
+    implementation group: 'com.github.joshjdevl.libsodiumjni', name: 'libsodium-jni-aar', version: '2.0.2'
 }
