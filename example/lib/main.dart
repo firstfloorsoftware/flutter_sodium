@@ -492,8 +492,7 @@ assert(msg == decrypted);''', () async {
     Example('Generic hashing',
         description:
             'Computes a fixed-length fingerprint for an arbitrary long message using the BLAKE2b algorithm.',
-        docUrl:
-            'https://libsodium.gitbook.io/doc/hashing/generic_hashing',
+        docUrl: 'https://libsodium.gitbook.io/doc/hashing/generic_hashing',
         samples: [
           Sample(
               'Usage',
@@ -510,8 +509,7 @@ print(hex.encode(hash));''', () async {
         ]),
     Example('Short-input hashing',
         description: 'Computes short hashes using the SipHash-2-4 algorithm.',
-        docUrl:
-            'https://libsodium.gitbook.io/doc/hashing/short-input_hashing',
+        docUrl: 'https://libsodium.gitbook.io/doc/hashing/short-input_hashing',
         samples: [
           Sample(
               'Usage',
@@ -678,14 +676,16 @@ print(hex.encode(sharedKeyClient));
             // Client derives shared key and hashes it
             final clientQ = await ScalarMult.computeSharedSecret(
                 clientSecretKey, serverPublicKey);
-            final sharedKeyClient = await GenericHash.hashByteStream(Stream
-                .fromIterable([clientQ, clientPublicKey, serverPublicKey]));
+            final sharedKeyClient = await GenericHash.hashByteStream(
+                Stream.fromIterable(
+                    [clientQ, clientPublicKey, serverPublicKey]));
 
             // Server derives shared key and hashes it
             final serverQ = await ScalarMult.computeSharedSecret(
                 serverSecretKey, clientPublicKey);
-            final sharedKeyServer = await GenericHash.hashByteStream(Stream
-                .fromIterable([serverQ, clientPublicKey, serverPublicKey]));
+            final sharedKeyServer = await GenericHash.hashByteStream(
+                Stream.fromIterable(
+                    [serverQ, clientPublicKey, serverPublicKey]));
 
             // assert shared keys do match
             assert(
@@ -724,9 +724,9 @@ assert(valid);
         ]),
     Example('Ed25519 To Curve25519 Secret Key',
         description:
-        'Converts an Ed25519 Secret Key to a Curve25519 Secret Key',
+            'Converts an Ed25519 Secret Key to a Curve25519 Secret Key',
         docUrl:
-        'https://download.libsodium.org/doc/advanced/ed25519-curve25519',
+            'https://download.libsodium.org/doc/advanced/ed25519-curve25519',
         samples: [
           Sample(
               'Usage',
@@ -736,7 +736,8 @@ var curveSk = await Sodium.cryptoSignEd25519SkToCurve25519(ed25519Sk.secretKey);
 
 print(hex.encode(curveSk));''', () async {
             var ed25519Sk = await CryptoSign.generateKeyPair();
-            var curveSk = await Sodium.cryptoSignEd25519SkToCurve25519(ed25519Sk.secretKey);
+            var curveSk = await Sodium.cryptoSignEd25519SkToCurve25519(
+                ed25519Sk.secretKey);
 
             return hex.encode(curveSk);
           })

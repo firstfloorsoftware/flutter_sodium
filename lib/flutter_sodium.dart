@@ -1806,7 +1806,7 @@ class Sodium {
         {'upper_bound': upperBound, 'bgThread': useBackgroundThread});
     return result;
   }
-  
+
   //
   // sodium_version
   //
@@ -1825,10 +1825,15 @@ class Sodium {
   static Future<Uint8List> cryptoSignEd25519SkToCurve25519(Uint8List sk,
       {bool useBackgroundThread = false}) async {
     assert(sk != null);
-    RangeError.checkValueInInterval(sk.length, crypto_sign_ed25519_SECRETKEYBYTES,
-        crypto_sign_ed25519_SECRETKEYBYTES, 'sk', 'Invalid length');
+    RangeError.checkValueInInterval(
+        sk.length,
+        crypto_sign_ed25519_SECRETKEYBYTES,
+        crypto_sign_ed25519_SECRETKEYBYTES,
+        'sk',
+        'Invalid length');
     final Uint8List result = await _channel.invokeMethod(
-        'crypto_sign_ed25519_sk_to_curve25519', {'sk': sk, 'bgThread': useBackgroundThread});
+        'crypto_sign_ed25519_sk_to_curve25519',
+        {'sk': sk, 'bgThread': useBackgroundThread});
     return result;
   }
 }
