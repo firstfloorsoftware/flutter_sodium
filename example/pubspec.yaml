@@ -1,6 +1,8 @@
 name: flutter_sodium_example
 description: Demonstrates how to use the flutter_sodium plugin.
 
+version: 1.0.0+1
+
 dependencies:
   flutter:
     sdk: flutter
