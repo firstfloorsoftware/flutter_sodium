@@ -1,3 +1,6 @@
+## 0.0.11 - Oct 21, 2019
+* Fixes Android dependency issues
+
 ## 0.0.10 - June 27, 2019
 * Adds support for kdf to Android (by rmtmckenzie)
 * Update to Swift 5 & fix all warnings in iOS code (by rmtmckenzie)
