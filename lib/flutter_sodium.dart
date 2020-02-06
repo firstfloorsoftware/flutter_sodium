@@ -1831,4 +1831,18 @@ class Sodium {
         'crypto_sign_ed25519_sk_to_curve25519', {'sk': sk, 'bgThread': useBackgroundThread});
     return result;
   }
+
+  //
+  //Advanced
+  //
+  /// Converts an Ed25519 public key pk to a Curve25519 public key
+  static Future<Uint8List> cryptoSignEd25519PkToCurve25519(Uint8List pk,
+      {bool useBackgroundThread = false}) async {
+    assert(pk != null);
+    RangeError.checkValueInInterval(pk.length, crypto_sign_ed25519_PUBLICKEYBYTES,
+        crypto_sign_ed25519_PUBLICKEYBYTES, 'pk', 'Invalid length');
+    final Uint8List result = await _channel.invokeMethod(
+        'crypto_sign_ed25519_pk_to_curve25519', {'pk': pk, 'bgThread': useBackgroundThread});
+    return result;
+  }
 }

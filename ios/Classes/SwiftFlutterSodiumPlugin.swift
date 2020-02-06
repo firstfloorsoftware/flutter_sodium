@@ -192,6 +192,7 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     case "crypto_sign_final_create": return crypto_sign_final_create(call: call)
     case "crypto_sign_final_verify": return crypto_sign_final_verify(call: call)
     case "crypto_sign_ed25519_sk_to_curve25519": return crypto_sign_ed25519_sk_to_curve25519(call: call)
+    case "crypto_sign_ed25519_pk_to_curve25519": return crypto_sign_ed25519_pk_to_curve25519(call: call)
 
     case "randombytes_buf": return randombytes_buf(call: call)
     case "randombytes_buf_deterministic": return randombytes_buf_deterministic(call: call)
@@ -1384,6 +1385,16 @@ public class SwiftFlutterSodiumPlugin: NSObject, FlutterPlugin {
     var curve25519Sk = [UInt8](repeating: 0, count: flutter_sodium.crypto_scalarmult_curve25519_bytes())
     let ret = flutter_sodium.crypto_sign_ed25519_sk_to_curve25519(&curve25519Sk, sk)
     return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(curve25519Sk))
+  }
+
+  private func crypto_sign_ed25519_pk_to_curve25519(call: FlutterMethodCall) -> Any
+  {
+    let args = call.arguments as! NSDictionary
+    let pk = (args["pk"] as! FlutterStandardTypedData).uint8Array
+
+    var curve25519Pk = [UInt8](repeating: 0, count: flutter_sodium.crypto_scalarmult_curve25519_bytes())
+    let ret = flutter_sodium.crypto_sign_ed25519_pk_to_curve25519(&curve25519Pk, pk)
+    return error(ret: ret) ?? FlutterStandardTypedData.init(bytes: Data(curve25519Pk))
   }
 
   private func randombytes_buf(call: FlutterMethodCall) -> Any
