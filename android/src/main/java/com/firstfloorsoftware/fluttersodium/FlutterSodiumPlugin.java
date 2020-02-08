@@ -1295,7 +1295,7 @@ public class FlutterSodiumPlugin implements MethodCallHandler, CryptoTask {
     }
 
     private Object crypto_sign_ed25519_pk_to_curve25519(MethodCall call) throws Exception {
-        byte[] sk = call.argument("pk");
+        byte[] pk = call.argument("pk");
         byte[] curve25519Pk = new byte[sodium().crypto_scalarmult_curve25519_bytes()];
         requireSuccess(sodium().crypto_sign_ed25519_pk_to_curve25519(curve25519Pk, pk));
 
