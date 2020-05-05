@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
-import 'package:convert/convert.dart';
 
 void main() {
   Sodium.sodiumInit();
@@ -31,13 +29,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _;
-
   void _runTests() {
     setState(() {
-      final buf = Sodium.randombytesBuf(4);
+      // Password hashing (using Argon)
+      final password = 'my password';
+      final str = PasswordHash.hashStorage(password);
 
-      print(hex.encode(buf));
+      print(str);
+
+      // verify hash str
+      final valid = PasswordHash.verifyStorage(str, password);
+
+      assert(valid);
     });
   }
 
