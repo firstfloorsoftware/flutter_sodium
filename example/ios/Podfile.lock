@@ -2,27 +2,21 @@ PODS:
   - Flutter (1.0.0)
   - flutter_sodium (0.0.1):
     - Flutter
-  - url_launcher (0.0.1):
-    - Flutter
 
 DEPENDENCIES:
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `Flutter`)
   - flutter_sodium (from `.symlinks/plugins/flutter_sodium/ios`)
-  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: Flutter
   flutter_sodium:
     :path: ".symlinks/plugins/flutter_sodium/ios"
-  url_launcher:
-    :path: ".symlinks/plugins/url_launcher/ios"
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_sodium: 562e27775421e43bfe223c3a1565f2ad14aea6fa
-  url_launcher: 0067ddb8f10d36786672aa0722a21717dba3a298
+  flutter_sodium: c34625e63aebe63b04bbaf955c05c014fd5e481e
 
-PODFILE CHECKSUM: ebd43b443038e611b86ede96e613bd6033c49497
+PODFILE CHECKSUM: 1b66dae606f75376c5f2135a8290850eeb09ae83
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.8.4
