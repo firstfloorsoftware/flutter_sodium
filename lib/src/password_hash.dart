@@ -57,6 +57,16 @@ class PasswordHash {
     return ascii.decode(hash);
   }
 
+  /// Computes a password verification string for given password in moderate mode.
+  static String hashStorageModerate(String password) => hashStorage(password,
+      opslimit: Sodium.cryptoPwhashOpslimitModerate,
+      memlimit: Sodium.cryptoPwhashMemlimitModerate);
+
+  /// Computes a password verification string for given password in sensitive mode.
+  static String hashStorageSensitive(String password) => hashStorage(password,
+      opslimit: Sodium.cryptoPwhashOpslimitSensitive,
+      memlimit: Sodium.cryptoPwhashMemlimitSensitive);
+
   /// Verifies that the storage is a valid password verification string for given password.
   static bool verifyStorage(String storage, String password) {
     var str = ascii.encode(storage);
