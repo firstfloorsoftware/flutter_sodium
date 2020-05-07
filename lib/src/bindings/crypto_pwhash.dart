@@ -45,48 +45,48 @@ final Pointer<Utf8> Function() crypto_pwhash_strprefix = libsodium
     .asFunction();
 
 final int Function() crypto_pwhash_opslimit_min = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>("crypto_pwhash_opslimit_min")
+    .lookup<NativeFunction<Uint64 Function()>>("crypto_pwhash_opslimit_min")
     .asFunction();
 
 final int Function() crypto_pwhash_opslimit_max = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>("crypto_pwhash_opslimit_max")
+    .lookup<NativeFunction<Uint64 Function()>>("crypto_pwhash_opslimit_max")
     .asFunction();
 
 final int Function() crypto_pwhash_memlimit_min = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>("crypto_pwhash_memlimit_min")
+    .lookup<NativeFunction<Uint64 Function()>>("crypto_pwhash_memlimit_min")
     .asFunction();
 
 final int Function() crypto_pwhash_memlimit_max = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>("crypto_pwhash_memlimit_max")
+    .lookup<NativeFunction<Uint64 Function()>>("crypto_pwhash_memlimit_max")
     .asFunction();
 
 final int Function() crypto_pwhash_opslimit_interactive = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>(
+    .lookup<NativeFunction<Uint64 Function()>>(
         "crypto_pwhash_opslimit_interactive")
     .asFunction();
 
 final int Function() crypto_pwhash_memlimit_interactive = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>(
+    .lookup<NativeFunction<Uint64 Function()>>(
         "crypto_pwhash_memlimit_interactive")
     .asFunction();
 
 final int Function() crypto_pwhash_opslimit_moderate = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>(
+    .lookup<NativeFunction<Uint64 Function()>>(
         "crypto_pwhash_opslimit_moderate")
     .asFunction();
 
 final int Function() crypto_pwhash_memlimit_moderate = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>(
+    .lookup<NativeFunction<Uint64 Function()>>(
         "crypto_pwhash_memlimit_moderate")
     .asFunction();
 
 final int Function() crypto_pwhash_opslimit_sensitive = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>(
+    .lookup<NativeFunction<Uint64 Function()>>(
         "crypto_pwhash_opslimit_sensitive")
     .asFunction();
 
 final int Function() crypto_pwhash_memlimit_sensitive = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>(
+    .lookup<NativeFunction<Uint64 Function()>>(
         "crypto_pwhash_memlimit_sensitive")
     .asFunction();
 
@@ -96,7 +96,7 @@ final int Function(Pointer<Uint8> out, int, Pointer<Uint8> passwd,
         .lookup<
             NativeFunction<
                 Int32 Function(Pointer<Uint8>, Uint64, Pointer<Uint8>, Uint64,
-                    Pointer<Uint8>, Uint64, Uint32, Int32)>>("crypto_pwhash")
+                    Pointer<Uint8>, Uint64, Uint64, Int32)>>("crypto_pwhash")
         .asFunction();
 
 final int Function(Pointer<Uint8> out, Pointer<Uint8> passwd, int passwdlen,
@@ -105,7 +105,7 @@ final int Function(Pointer<Uint8> out, Pointer<Uint8> passwd, int passwdlen,
         .lookup<
             NativeFunction<
                 Int32 Function(Pointer<Uint8>, Pointer<Uint8>, Uint64, Uint64,
-                    Uint32)>>("crypto_pwhash_str")
+                    Uint64)>>("crypto_pwhash_str")
         .asFunction();
 
 final int Function(Pointer<Uint8> out, Pointer<Uint8> passwd, int passwdlen,
@@ -114,7 +114,7 @@ final int Function(Pointer<Uint8> out, Pointer<Uint8> passwd, int passwdlen,
         .lookup<
             NativeFunction<
                 Int32 Function(Pointer<Uint8>, Pointer<Uint8>, Uint64, Uint64,
-                    Uint32, Int32)>>("crypto_pwhash_str_alg")
+                    Uint64, Int32)>>("crypto_pwhash_str_alg")
         .asFunction();
 
 final int Function(Pointer<Uint8> str, Pointer<Uint8> passwd, int passwdlen)
@@ -127,7 +127,7 @@ final int Function(Pointer<Uint8> str, Pointer<Uint8> passwd, int passwdlen)
 
 final int Function(Pointer<Uint8> str, int opslimit, int memlimit)
     crypto_pwhash_str_needs_rehash = libsodium
-        .lookup<NativeFunction<Int32 Function(Pointer<Uint8>, Uint64, Uint32)>>(
+        .lookup<NativeFunction<Int32 Function(Pointer<Uint8>, Uint64, Uint64)>>(
             "crypto_pwhash_str_needs_rehash")
         .asFunction();
 
