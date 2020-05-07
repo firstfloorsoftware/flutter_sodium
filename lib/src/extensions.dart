@@ -6,7 +6,7 @@ import 'sodium_exception.dart';
 
 extension Uint8Pointer on Pointer<Uint8> {
   Uint8List toList(int length) {
-    final builder = new BytesBuilder();
+    final builder = BytesBuilder();
     for (var i = 0; i < length; i++) {
       builder.addByte(this[i]);
     }

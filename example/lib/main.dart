@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
+import 'toc.dart';
+import 'topic_page.dart';
 
 void main() {
   Sodium.sodiumInit();
+
   runApp(MyApp());
 }
 
@@ -10,60 +13,53 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'flutter_sodium',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'flutter_sodium demo'),
+      home: HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  void _runTests() {
-    setState(() {
-      // Password hashing (using Argon)
-      final password = 'my password';
-      final str = PasswordHash.hashStorage(password);
-
-      print(str);
-
-      // verify hash str
-      final valid = PasswordHash.verifyStorage(str, password);
-
-      assert(valid);
-    });
-  }
-
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          title: Text('flutter_sodium'),
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Hit refresh to re-run tests',
-              ),
-            ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _runTests,
-          tooltip: 'Refresh',
-          child: Icon(Icons.refresh),
-        ));
+        body: SafeArea(
+            child: FutureBuilder(
+                // build table of contents
+                future: buildToc(context),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<Topic>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return snapshot.hasError
+                        ? Text('Build TOC failed')
+                        : ListView(children: <Widget>[
+                            for (var topic in snapshot.data)
+                              if (topic is Section)
+                                ListTile(
+                                    title: Text(topic.title,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6))
+                              else
+                                ListTile(
+                                    title: Text(topic.title),
+                                    trailing: Icon(Icons.arrow_forward_ios,
+                                        size: 12.0),
+                                    onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                TopicPage(topic))))
+                          ]);
+                  }
+
+                  return Container();
+                })));
   }
 }
