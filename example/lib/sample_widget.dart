@@ -75,16 +75,26 @@ class _SampleRunnerState extends State<SampleRunner> {
                       padding: EdgeInsets.only(bottom: 16.0),
                       child: Text('Result',
                           style: Theme.of(context).textTheme.headline6)),
-                  if (snapshot.connectionState == ConnectionState.done)
-                    CodeBlock(
-                        snapshot.hasError
-                            ? snapshot.error.toString()
-                            : snapshot.data,
-                        color: snapshot.hasError
-                            ? Colors.red.shade200
-                            : Colors.green.shade200)
-                  else
-                    Center(child: CircularProgressIndicator())
+                  // display progress only for async code snippets
+                  if (widget.sample.funcAsync != null &&
+                      snapshot.connectionState != ConnectionState.done)
+                    LinearProgressIndicator(),
+                  AnimatedOpacity(
+                      opacity: snapshot.connectionState == ConnectionState.done
+                          ? 1
+                          : 0,
+                      duration: Duration(
+                          milliseconds:
+                              snapshot.connectionState == ConnectionState.done
+                                  ? 150
+                                  : 0),
+                      child: CodeBlock(
+                          snapshot.hasError
+                              ? snapshot.error.toString()
+                              : snapshot.data,
+                          color: snapshot.hasError
+                              ? Colors.red.shade200
+                              : Colors.green.shade200)),
                 ]));
   }
 }
