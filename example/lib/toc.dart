@@ -171,15 +171,22 @@ Future<List<Topic>> buildToc(BuildContext context) async {
             print('Valid: $valid');
             // END pwhash2
           }),
-          Sample('Async hash storage',
+          Sample('Hash storage async',
               description:
-                  'Execute long running verification string computation in background.',
+                  'Execute long running hash operation in background using Flutter\'s compute.',
               name: 'pwhash3', funcAsync: (PrintFunc print) async {
             // BEGIN pwhash3
+            // time operation
+            final watch = Stopwatch();
+            watch.start();
+            
+            // compute hash
             final pw = 'hello world';
             final str = await compute(PasswordHash.hashStorageModerate, pw);
 
             print(str);
+            print('Compute took ${watch.elapsedMilliseconds}ms');
+            watch.stop();
             // END pwhash3
           }),
         ]),
