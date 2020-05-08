@@ -87,7 +87,7 @@ class _SampleRunnerState extends State<SampleRunner> {
                           milliseconds:
                               snapshot.connectionState == ConnectionState.done
                                   ? 150
-                                  : 0),
+                                  : 50),
                       child: CodeBlock(
                           snapshot.hasError
                               ? snapshot.error.toString()
