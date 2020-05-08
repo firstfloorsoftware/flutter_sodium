@@ -5,11 +5,11 @@ import 'package:ffi/ffi.dart';
 // ignore_for_file: non_constant_identifier_names
 
 final int Function() randombytes_seedbytes = libsodium
-    .lookup<NativeFunction<Uint32 Function()>>("randombytes_seedbytes")
+    .lookup<NativeFunction<IntPtr Function()>>("randombytes_seedbytes")
     .asFunction();
 
 final void Function(Pointer<Uint8> buf, int size) randombytes_buf = libsodium
-    .lookup<NativeFunction<Void Function(Pointer<Uint8>, Uint64)>>(
+    .lookup<NativeFunction<Void Function(Pointer<Uint8>, IntPtr)>>(
         "randombytes_buf")
     .asFunction();
 
@@ -17,7 +17,7 @@ final void Function(Pointer<Uint8> buf, int size, Pointer<Uint8> seed)
     randombytes_buf_deterministic = libsodium
         .lookup<
             NativeFunction<
-                Void Function(Pointer<Uint8>, Uint64,
+                Void Function(Pointer<Uint8>, IntPtr,
                     Pointer<Uint8>)>>("randombytes_buf_deterministic")
         .asFunction();
 
