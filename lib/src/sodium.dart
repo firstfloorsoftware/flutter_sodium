@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'bindings/core.dart';
+import 'bindings/crypto_generichash.dart';
 import 'bindings/crypto_pwhash.dart';
 import 'bindings/random_bytes.dart';
 import 'bindings/version.dart';
@@ -12,6 +13,57 @@ class Sodium {
   // init
   //
   static void sodiumInit() => sodium_init();
+
+  //
+  // crypto_generichash
+  //
+  static int get cryptoGenerichashBytesMin => crypto_generichash_bytes_min();
+  static int get cryptoGenerichashBytesMax => crypto_generichash_bytes_max();
+  static int get cryptoGenerichashBytes => crypto_generichash_bytes();
+  static int get cryptoGenerichashKeybytesMin =>
+      crypto_generichash_keybytes_min();
+  static int get cryptoGenerichashKeybytesMax =>
+      crypto_generichash_keybytes_max();
+  static int get cryptoGenerichashKeybytes => crypto_generichash_keybytes();
+  static String get cryptoGenerichashPrimitive =>
+      Utf8.fromUtf8(crypto_generichash_primitive());
+
+  static Uint8List cryptoGenerichash(int outlen, Uint8List i, Uint8List key) {
+    assert(outlen != null);
+    assert(i != null);
+    RangeError.checkValueInInterval(
+        outlen, cryptoGenerichashBytesMin, cryptoGenerichashBytesMax);
+    if (key != null) {
+      RangeError.checkValueInInterval(key.length, cryptoGenerichashKeybytesMin,
+          cryptoGenerichashKeybytesMax, 'key', 'Invalid length');
+    }
+
+    final _out = allocate<Uint8>(count: outlen);
+    final _in = i.toPointer();
+    final _key = key.toPointer();
+
+    try {
+      crypto_generichash(_out, outlen, _in, i.length, _key, key?.length ?? 0)
+          .requireSuccess();
+      return _out.toList(outlen);
+    } finally {
+      free(_out);
+      free(_in);
+      if (_key != null) {
+        free(_key);
+      }
+    }
+  }
+
+  static Uint8List cryptoGenerichashKeygen() {
+    final _k = allocate<Uint8>(count: cryptoGenerichashKeybytes);
+    try {
+      crypto_generichash_keygen(_k);
+      return _k.toList(cryptoGenerichashKeybytes);
+    } finally {
+      free(_k);
+    }
+  }
 
   //
   // crypto_pwhash
@@ -43,6 +95,8 @@ class Sodium {
       crypto_pwhash_opslimit_sensitive();
   static int get cryptoPwhashMemlimitSensitive =>
       crypto_pwhash_memlimit_sensitive();
+  static String get cryptoPwhashPrimitive =>
+      Utf8.fromUtf8(crypto_pwhash_primitive());
 
   static Uint8List cryptoPwhash(int outlen, Uint8List passwd, Uint8List salt,
       int opslimit, int memlimit, int alg) {
@@ -65,18 +119,19 @@ class Sodium {
     RangeError.checkValueInInterval(
         alg, cryptoPwhashAlgArgon2i13, cryptoPwhashAlgArgon2id13, 'alg');
 
-    final out = allocate<Uint8>(count: outlen);
-    final p = passwd.toPointer();
-    final s = salt.toPointer();
+    final _out = allocate<Uint8>(count: outlen);
+    final _passwd = passwd.toPointer();
+    final _salt = salt.toPointer();
     try {
-      crypto_pwhash(out, outlen, p, passwd.length, s, opslimit, memlimit, alg)
+      crypto_pwhash(_out, outlen, _passwd, passwd.length, _salt, opslimit,
+              memlimit, alg)
           .requireSuccess();
 
-      return out.toList(outlen);
+      return _out.toList(outlen);
     } finally {
-      free(out);
-      free(p);
-      free(s);
+      free(_out);
+      free(_passwd);
+      free(_salt);
     }
   }
 
@@ -92,15 +147,15 @@ class Sodium {
     RangeError.checkValueInInterval(
         memlimit, cryptoPwhashMemlimitMin, cryptoPwhashMemlimitMax, 'memlimit');
 
-    final out = allocate<Uint8>(count: cryptoPwhashStrbytes);
-    final p = passwd.toPointer();
+    final _out = allocate<Uint8>(count: cryptoPwhashStrbytes);
+    final _passwd = passwd.toPointer();
     try {
-      crypto_pwhash_str(out, p, passwd.length, opslimit, memlimit)
+      crypto_pwhash_str(_out, _passwd, passwd.length, opslimit, memlimit)
           .requireSuccess();
-      return out.toList(cryptoPwhashStrbytes);
+      return _out.toList(cryptoPwhashStrbytes);
     } finally {
-      free(out);
-      free(p);
+      free(_out);
+      free(_passwd);
     }
   }
 
@@ -119,15 +174,16 @@ class Sodium {
     RangeError.checkValueInInterval(
         alg, cryptoPwhashAlgArgon2i13, cryptoPwhashAlgArgon2id13, 'alg');
 
-    final out = allocate<Uint8>(count: cryptoPwhashStrbytes);
-    final p = passwd.toPointer();
+    final _out = allocate<Uint8>(count: cryptoPwhashStrbytes);
+    final _passwd = passwd.toPointer();
     try {
-      crypto_pwhash_str_alg(out, p, passwd.length, opslimit, memlimit, alg)
+      crypto_pwhash_str_alg(
+              _out, _passwd, passwd.length, opslimit, memlimit, alg)
           .requireSuccess();
-      return out.toList(cryptoPwhashStrbytes);
+      return _out.toList(cryptoPwhashStrbytes);
     } finally {
-      free(out);
-      free(p);
+      free(_out);
+      free(_passwd);
     }
   }
 
@@ -138,13 +194,13 @@ class Sodium {
         cryptoPwhashStrbytes, 'str', 'Invalid length');
     RangeError.checkValueInInterval(passwd.length, cryptoPwhashPasswdMin,
         cryptoPwhashPasswdMax, 'passwd', 'Invalid length');
-    final s = str.toPointer();
-    final p = passwd.toPointer();
+    final _str = str.toPointer();
+    final _passwd = passwd.toPointer();
     try {
-      return crypto_pwhash_str_verify(s, p, passwd.length);
+      return crypto_pwhash_str_verify(_str, _passwd, passwd.length);
     } finally {
-      free(p);
-      free(s);
+      free(_passwd);
+      free(_str);
     }
   }
 
@@ -160,16 +216,13 @@ class Sodium {
     RangeError.checkValueInInterval(
         memlimit, cryptoPwhashMemlimitMin, cryptoPwhashMemlimitMax, 'memlimit');
 
-    final s = str.toPointer();
+    final _str = str.toPointer();
     try {
-      return crypto_pwhash_str_needs_rehash(s, opslimit, memlimit);
+      return crypto_pwhash_str_needs_rehash(_str, opslimit, memlimit);
     } finally {
-      free(s);
+      free(_str);
     }
   }
-
-  static String get cryptoPwhashPrimitive =>
-      Utf8.fromUtf8(crypto_pwhash_primitive());
 
   //
   // randombytes
@@ -180,12 +233,12 @@ class Sodium {
     assert(size != null);
     RangeError.checkNotNegative(size);
 
-    final buf = allocate<Uint8>(count: size);
-    randombytes_buf(buf, size);
+    final _buf = allocate<Uint8>(count: size);
     try {
-      return buf.toList(size);
+      randombytes_buf(_buf, size);
+      return _buf.toList(size);
     } finally {
-      free(buf);
+      free(_buf);
     }
   }
 
@@ -196,14 +249,14 @@ class Sodium {
     RangeError.checkValueInInterval(seed.length, randombytesSeedbytes,
         randombytesSeedbytes, 'seed', 'Invalid length');
 
-    final buf = allocate<Uint8>(count: size);
-    final s = seed.toPointer();
+    final _buf = allocate<Uint8>(count: size);
+    final _seed = seed.toPointer();
     try {
-      randombytes_buf_deterministic(buf, size, s);
-      return buf.toList(size);
+      randombytes_buf_deterministic(_buf, size, _seed);
+      return _buf.toList(size);
     } finally {
-      free(buf);
-      free(s);
+      free(_buf);
+      free(_seed);
     }
   }
 

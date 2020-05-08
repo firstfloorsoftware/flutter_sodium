@@ -135,7 +135,33 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         description:
             'Computes a fixed-length fingerprint for an arbitrary long message using the BLAKE2b algorithm.',
         url: 'https://libsodium.gitbook.io/doc/hashing/generic_hashing',
-        samples: <Sample>[]),
+        samples: <Sample>[
+          Sample('Usage',
+              description:
+                  'Computes a generic hash of predefined length and without a key for given string value.',
+              name: 'generic1', func: (PrintFunc print) {
+            // BEGIN generic1
+            final value = 'hello world';
+            final hash = GenericHash.hash(value);
+
+            print(hex.encode(hash));
+            // END generic1
+          }),
+          Sample('Key and outlen',
+              description:
+                  'Computes a generic hash of specified length for given string value and key.',
+              name: 'generic2', func: (PrintFunc print) {
+            // BEGIN generic2
+            final value = 'hello world';
+            final key = GenericHash.generateKey();
+            final outlen = 16;
+
+            final hash = GenericHash.hash(value, key: key, outlen: outlen);
+
+            print(hex.encode(hash));
+            // END generic2
+          })
+        ]),
     Topic('Short-input hashing',
         description: 'Computes short hashes using the SipHash-2-4 algorithm.',
         url: 'https://libsodium.gitbook.io/doc/hashing/short-input_hashing',
@@ -179,7 +205,7 @@ Future<List<Topic>> buildToc(BuildContext context) async {
             // time operation
             final watch = Stopwatch();
             watch.start();
-            
+
             // compute hash
             final pw = 'hello world';
             final str = await compute(PasswordHash.hashStorageModerate, pw);
