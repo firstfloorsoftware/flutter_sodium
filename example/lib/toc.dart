@@ -33,8 +33,44 @@ class Sample {
 }
 
 Future<List<Topic>> buildToc(BuildContext context) async {
+  final salt = PasswordHash.generateSalt();
   final toc = [
     Section('Common'),
+    Topic('APIs',
+        description:
+            'The flutter_sodium library contains two sets of APIs, a core API and a high-level API. The core API maps native libsodium function 1:1 to Dart equivalents. The high-level API provides Dart-friendly, opinionated access to libsodium.',
+        samples: <Sample>[
+          Sample('Core API',
+              description:
+                  'Compute a password hash using the Core API with predefined salt.',
+              name: 'api1', func: (PrintFunc print) {
+            // BEGIN api1
+            final pw = utf8.encode('hello world');
+            final hash = Sodium.cryptoPwhash(
+                Sodium.cryptoPwhashBytesMin,
+                pw,
+                salt,
+                Sodium.cryptoPwhashOpslimitInteractive,
+                Sodium.cryptoPwhashMemlimitInteractive,
+                Sodium.cryptoPwhashAlgDefault);
+
+            print('salt: ${hex.encode(salt)}');
+            print('hash: ${hex.encode(hash)}');
+            // END api1
+          }),
+          Sample('High-level API',
+              description:
+                  'Compute a password hash using the high-level API with predefined salt.',
+              name: 'api2', func: (PrintFunc print) {
+            // BEGIN api2
+            final pw = 'hello world';
+            final hash = PasswordHash.hash(pw, salt);
+
+            print('salt: ${hex.encode(salt)}');
+            print('hash: ${hex.encode(hash)}');
+            // END api2
+          })
+        ]),
     Topic('Random data',
         description:
             'Provides a set of functions to generate unpredictable data, suitable for creating secret keys.',
