@@ -1,12 +1,9 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sodium/flutter_sodium.dart';
-import 'package:convert/convert.dart';
+import 'samples.dart';
 
-typedef void PrintFunc(Object o);
-typedef void SampleFunc(PrintFunc print);
-typedef Future SampleFuncAsync(PrintFunc print);
+typedef void SampleFunc(Function(Object) print);
+typedef Future SampleFuncAsync(Function(Object) print);
 
 class Section extends Topic {
   Section(String title) : super(title);
@@ -22,105 +19,39 @@ class Topic {
 }
 
 class Sample {
-  final String title;
-  final String description;
   final String name;
   final SampleFunc func;
   final SampleFuncAsync funcAsync;
+  String title;
+  String description;
   String code;
 
-  Sample(this.title, {this.description, this.name, this.func, this.funcAsync});
+  Sample(this.name, {this.func, this.funcAsync});
 }
 
 Future<List<Topic>> buildToc(BuildContext context) async {
-  final salt = PasswordHash.generateSalt();
   final toc = [
     Section('Common'),
     Topic('APIs',
         description:
             'The flutter_sodium library contains two sets of APIs, a core API and a high-level API. The core API maps native libsodium function 1:1 to Dart equivalents. The high-level API provides Dart-friendly, opinionated access to libsodium.',
         samples: <Sample>[
-          Sample('Core API',
-              description:
-                  'Compute a password hash using the Core API with predefined salt.',
-              name: 'api1', func: (PrintFunc print) {
-            // BEGIN api1
-            final pw = utf8.encode('hello world');
-            final hash = Sodium.cryptoPwhash(
-                Sodium.cryptoPwhashBytesMin,
-                pw,
-                salt,
-                Sodium.cryptoPwhashOpslimitInteractive,
-                Sodium.cryptoPwhashMemlimitInteractive,
-                Sodium.cryptoPwhashAlgDefault);
-
-            print('salt: ${hex.encode(salt)}');
-            print('hash: ${hex.encode(hash)}');
-            // END api1
-          }),
-          Sample('High-level API',
-              description:
-                  'Compute a password hash using the high-level API with predefined salt.',
-              name: 'api2', func: (PrintFunc print) {
-            // BEGIN api2
-            final pw = 'hello world';
-            final hash = PasswordHash.hash(pw, salt);
-
-            print('salt: ${hex.encode(salt)}');
-            print('hash: ${hex.encode(hash)}');
-            // END api2
-          })
+          Sample('api1', func: api1),
+          Sample('api2', func: api2)
         ]),
     Topic('Random data',
         description:
             'Provides a set of functions to generate unpredictable data, suitable for creating secret keys.',
         url: 'https://libsodium.gitbook.io/doc/generating_random_data/',
         samples: <Sample>[
-          Sample('Random',
-              description:
-                  'Returns an unpredictable value between 0 and 0xffffffff (included).',
-              name: 'random1', func: (PrintFunc print) {
-            // BEGIN random1
-            final rnd = RandomBytes.random();
-            print(rnd.toRadixString(16));
-            // END random1
-          }),
-          Sample('Uniform',
-              description:
-                  'Generates an unpredictable value between 0 and upperBound (excluded).',
-              name: 'random2', func: (PrintFunc print) {
-            // BEGIN random2
-            final rnd = RandomBytes.uniform(16);
-            print(rnd);
-            // END random2
-          }),
-          Sample('Buffer',
-              description:
-                  'Generates an unpredictable sequence of bytes of specified size.',
-              name: 'random3', func: (PrintFunc print) {
-            // BEGIN random3
-            final buf = RandomBytes.buffer(16);
-            print(hex.encode(buf));
-            // END random3
-          })
+          Sample('random1', func: random1),
+          Sample('random2', func: random2),
+          Sample('random3', func: random3)
         ]),
     Topic('Version',
         description: 'Provides libsodium version info.',
         url: 'https://libsodium.gitbook.io/doc/',
-        samples: <Sample>[
-          Sample('Usage',
-              description:
-                  'Retrieves the version details of the loaded libsodium library.',
-              name: 'version1', func: (PrintFunc print) {
-            // BEGIN version1
-            final version = Sodium.sodiumVersionString;
-            final major = Sodium.sodiumLibraryVersionMajor;
-            final minor = Sodium.sodiumLibraryVersionMinor;
-
-            print('$version ($major.$minor)');
-            // END version1
-          })
-        ]),
+        samples: <Sample>[Sample('version1', func: version1)]),
     Section('Secret-key cryptography'),
     Topic('Authenticated encryption',
         description: 'Secret-key encryption and verification',
@@ -172,31 +103,8 @@ Future<List<Topic>> buildToc(BuildContext context) async {
             'Computes a fixed-length fingerprint for an arbitrary long message using the BLAKE2b algorithm.',
         url: 'https://libsodium.gitbook.io/doc/hashing/generic_hashing',
         samples: <Sample>[
-          Sample('Usage',
-              description:
-                  'Computes a generic hash of predefined length and without a key for given string value.',
-              name: 'generic1', func: (PrintFunc print) {
-            // BEGIN generic1
-            final value = 'hello world';
-            final hash = GenericHash.hash(value);
-
-            print(hex.encode(hash));
-            // END generic1
-          }),
-          Sample('Key and outlen',
-              description:
-                  'Computes a generic hash of specified length for given string value and key.',
-              name: 'generic2', func: (PrintFunc print) {
-            // BEGIN generic2
-            final value = 'hello world';
-            final key = GenericHash.generateKey();
-            final outlen = 16;
-
-            final hash = GenericHash.hash(value, key: key, outlen: outlen);
-
-            print(hex.encode(hash));
-            // END generic2
-          })
+          Sample('generic1', func: generic1),
+          Sample('generic2', func: generic2)
         ]),
     Topic('Short-input hashing',
         description: 'Computes short hashes using the SipHash-2-4 algorithm.',
@@ -208,49 +116,9 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         url:
             'https://libsodium.gitbook.io/doc/password_hashing/the_argon2i_function',
         samples: <Sample>[
-          Sample('Hash',
-              description: 'Derives a hash from given password and salt.',
-              name: 'pwhash1', func: (PrintFunc print) {
-            // BEGIN pwhash1
-            final pw = 'hello world';
-            final salt = PasswordHash.generateSalt();
-            final hash = PasswordHash.hash(pw, salt);
-
-            print(hex.encode(hash));
-            // END pwhash1
-          }),
-          Sample('Hash storage',
-              description:
-                  'Computes a password verification string for given password.',
-              name: 'pwhash2', func: (PrintFunc print) {
-            // BEGIN pwhash2
-            final pw = 'hello world';
-            final str = PasswordHash.hashStorage(pw);
-            print(str);
-
-            // verify storage string
-            final valid = PasswordHash.verifyStorage(str, pw);
-            print('Valid: $valid');
-            // END pwhash2
-          }),
-          Sample('Hash storage async',
-              description:
-                  'Execute long running hash operation in background using Flutter\'s compute.',
-              name: 'pwhash3', funcAsync: (PrintFunc print) async {
-            // BEGIN pwhash3
-            // time operation
-            final watch = Stopwatch();
-            watch.start();
-
-            // compute hash
-            final pw = 'hello world';
-            final str = await compute(PasswordHash.hashStorageModerate, pw);
-
-            print(str);
-            print('Compute took ${watch.elapsedMilliseconds}ms');
-            watch.stop();
-            // END pwhash3
-          }),
+          Sample('pwhash1', func: pwhash1),
+          Sample('pwhash2', func: pwhash2),
+          Sample('pwhash3', funcAsync: pwhash3),
         ]),
     Section('Key functions'),
     Topic('Key derivation',
@@ -277,22 +145,33 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         samples: <Sample>[])
   ];
 
-  // load asset toc.dart for code snippets
-  final src = await DefaultAssetBundle.of(context).loadString('lib/toc.dart');
+  // load asset samples.dart for code snippets
+  final src =
+      await DefaultAssetBundle.of(context).loadString('lib/samples.dart');
 
-  // iterate all samples in the toc, and lookup code snippet in source
+  // iterate all samples in the toc, and parse title, description and code snippet
   for (var topic in toc) {
     if (topic.samples != null) {
       for (var sample in topic.samples) {
-        final beginTag = '// BEGIN ${sample.name}';
+        final beginTag = '// BEGIN ${sample.name}:';
         final begin = src.indexOf(beginTag);
         assert(begin != -1);
-        final end =
-            src.indexOf('// END ${sample.name}', begin + beginTag.length);
+
+        // parse title
+        final beginTitle = begin + beginTag.length;
+        final endTitle = src.indexOf(':', beginTitle);
+        assert(endTitle != -1);
+        sample.title = src.substring(beginTitle, endTitle).trim();
+
+        // parse description
+        final endDescription = src.indexOf('\n', endTitle);
+        assert(endDescription != -1);
+        sample.description = src.substring(endTitle + 1, endDescription).trim();
+
+        final end = src.indexOf('// END ${sample.name}', endDescription);
         assert(end != -1);
 
-        // format and assign code sample
-        sample.code = _formatCode(src.substring(begin + beginTag.length, end));
+        sample.code = _formatCode(src.substring(endDescription, end));
       }
     }
   }

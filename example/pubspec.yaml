@@ -21,7 +21,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - lib/toc.dart
+    - lib/samples.dart
   fonts:
     - family: RobotoMono
       fonts:
