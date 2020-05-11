@@ -16,6 +16,8 @@ A new flutter plugin project.
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.vendored_libraries = 'Classes/libsodium-ios/lib/libsodium.a'
+
+  s.swift_versions = ['4.0', '4.2', '5.0', '5.1.2']
   s.ios.deployment_target = '8.0'
 end
 
