@@ -12,10 +12,11 @@ class SampleWidget extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 16.0),
           child:
               Text(sample.title, style: Theme.of(context).textTheme.headline5)),
-      Padding(
-        padding: EdgeInsets.only(bottom: 16.0),
-        child: Text(sample.description),
-      ),
+      if (sample.description != null && sample.description.length > 0)
+        Padding(
+          padding: EdgeInsets.only(bottom: 16.0),
+          child: Text(sample.description),
+        ),
       CodeBlock(sample.code),
       SampleRunner(sample)
     ]);
