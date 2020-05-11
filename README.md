@@ -35,7 +35,7 @@ assert(valid);
 
 This project includes an extensive example app with runnable code samples. Be sure to check it out!
 
-<img src="https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/develop/example/assets/screenshots/screenshot1.png" width="300">
+<img src="https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/master/example/assets/screenshots/screenshot1.png" width="300">
 
 ## API coverage
 The flutter_sodium plugin implements the following libsodium APIs *):
