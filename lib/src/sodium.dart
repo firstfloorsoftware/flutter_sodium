@@ -27,6 +27,7 @@ class Sodium {
   static int get cryptoGenerichashKeybytes => crypto_generichash_keybytes();
   static String get cryptoGenerichashPrimitive =>
       Utf8.fromUtf8(crypto_generichash_primitive());
+  static int get cryptoGenerichashStatebytes => crypto_generichash_statebytes();
 
   static Uint8List cryptoGenerichash(int outlen, Uint8List i, Uint8List key) {
     assert(outlen != null);
@@ -52,6 +53,68 @@ class Sodium {
       if (_key != null) {
         free(_key);
       }
+    }
+  }
+
+  static Uint8List cryptoGenerichashInit(Uint8List key, int outlen) {
+    assert(outlen != null);
+    if (key != null) {
+      RangeError.checkValueInInterval(key.length, cryptoGenerichashKeybytesMin,
+          cryptoGenerichashKeybytesMax, 'key', 'Invalid length');
+    }
+    RangeError.checkValueInInterval(
+        outlen, cryptoGenerichashBytesMin, cryptoGenerichashBytesMax);
+
+    final _state = allocate<Uint8>(count: cryptoGenerichashStatebytes);
+    final _key = key.toPointer();
+
+    try {
+      crypto_generichash_init(_state, _key, key?.length ?? 0, outlen)
+          .requireSuccess();
+      return _state.toList(cryptoGenerichashStatebytes);
+    } finally {
+      free(_state);
+      if (_key != null) {
+        free(_key);
+      }
+    }
+  }
+
+  static Uint8List cryptoGenerichashUpdate(Uint8List state, Uint8List i) {
+    assert(state != null);
+    assert(i != null);
+    RangeError.checkValueInInterval(state.length, cryptoGenerichashStatebytes,
+        cryptoGenerichashStatebytes, "state", "Invalid length");
+
+    final _state = state.toPointer();
+    final _in = i.toPointer();
+
+    try {
+      crypto_generichash_update(_state, _in, i.length).requireSuccess();
+      return _state.toList(cryptoGenerichashStatebytes);
+    } finally {
+      free(_state);
+      free(_in);
+    }
+  }
+
+  static Uint8List cryptoGenerichashFinal(Uint8List state, int outlen) {
+    assert(state != null);
+    assert(outlen != null);
+    RangeError.checkValueInInterval(state.length, cryptoGenerichashStatebytes,
+        cryptoGenerichashStatebytes, "state", "Invalid length");
+    RangeError.checkValueInInterval(
+        outlen, cryptoGenerichashBytesMin, cryptoGenerichashBytesMax);
+
+    final _state = state.toPointer();
+    final _out = allocate<Uint8>(count: outlen);
+
+    try {
+      crypto_generichash_final(_state, _out, outlen).requireSuccess();
+      return _out.toList(outlen);
+    } finally {
+      free(_state);
+      free(_out);
     }
   }
 

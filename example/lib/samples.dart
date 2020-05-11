@@ -63,8 +63,8 @@ void version1(Function(Object) print) {
 }
 
 void generic1(Function(Object) print) {
-  // BEGIN generic1: Usage: Computes a fixed-length fingerprint for an arbitrary long message using the BLAKE2b algorithm.
-  final value = 'hello world';
+  // BEGIN generic1: Single-part without a key:
+  final value = 'Arbitrary data to hash';
   final hash = GenericHash.hash(value);
 
   print(hex.encode(hash));
@@ -72,15 +72,36 @@ void generic1(Function(Object) print) {
 }
 
 void generic2(Function(Object) print) {
-  // BEGIN generic2: Key and outlen: Computes a generic hash of specified length for given string value and key.
-  final value = 'hello world';
+  // BEGIN generic2: Single-part with a key:
+  final value = 'Arbitrary data to hash';
   final key = GenericHash.generateKey();
-  final outlen = 16;
 
-  final hash = GenericHash.hash(value, key: key, outlen: outlen);
+  final hash = GenericHash.hash(value, key: key);
 
   print(hex.encode(hash));
   // END generic2
+}
+
+Future generic3(Function(Object) print) async {
+  // BEGIN generic3: Multi-part without a key: Should result in a hash equal to the single-part without a key sample.
+  final stream = Stream.fromIterable(['Arbitrary data ', 'to hash']);
+
+  final hash = await GenericHash.hashStream(stream);
+
+  print(hex.encode(hash));
+  // END generic3
+}
+
+Future generic4(Function(Object) print) async {
+  // BEGIN generic4: Multi-part with a key:
+  final stream = Stream.fromIterable(
+      ['Arbitrary data to hash', 'is longer than expected']);
+  final key = GenericHash.generateKey();
+
+  final hash = await GenericHash.hashStream(stream, key: key);
+
+  print(hex.encode(hash));
+  // END generic4
 }
 
 void pwhash1(Function(Object) print) {

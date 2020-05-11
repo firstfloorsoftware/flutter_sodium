@@ -104,7 +104,9 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         url: 'https://libsodium.gitbook.io/doc/hashing/generic_hashing',
         samples: <Sample>[
           Sample('generic1', func: generic1),
-          Sample('generic2', func: generic2)
+          Sample('generic2', func: generic2),
+          Sample('generic3', funcAsync: generic3),
+          Sample('generic4', funcAsync: generic4)
         ]),
     Topic('Short-input hashing',
         description: 'Computes short hashes using the SipHash-2-4 algorithm.',

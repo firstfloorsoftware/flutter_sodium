@@ -27,6 +27,9 @@ final Pointer<Utf8> Function() crypto_generichash_primitive = libsodium
         "crypto_generichash_primitive")
     .asFunction();
 
+final int Function() crypto_generichash_statebytes =
+    lookup_sizet("crypto_generichash_statebytes");
+
 final int Function(Pointer<Uint8> out, int outlen, Pointer<Uint8> i, int inlen,
         Pointer<Uint8> key, int keylen) crypto_generichash =
     libsodium
@@ -34,6 +37,37 @@ final int Function(Pointer<Uint8> out, int outlen, Pointer<Uint8> i, int inlen,
             NativeFunction<
                 Int32 Function(Pointer<Uint8>, IntPtr, Pointer<Uint8>, Int32,
                     Pointer<Uint8>, IntPtr keylen)>>("crypto_generichash")
+        .asFunction();
+
+final int Function(
+        Pointer<Uint8> state, Pointer<Uint8> key, int keylen, int outlen)
+    crypto_generichash_init = libsodium
+        .lookup<
+            NativeFunction<
+                Int32 Function(Pointer<Uint8>, Pointer<Uint8>, IntPtr,
+                    IntPtr)>>("crypto_generichash_init")
+        .asFunction();
+
+final int Function(Pointer<Uint8> state, Pointer<Uint8> i, int inlen)
+    crypto_generichash_update = libsodium
+        .lookup<
+            NativeFunction<
+                Int32 Function(
+          Pointer<Uint8>,
+          Pointer<Uint8>,
+          Uint64,
+        )>>("crypto_generichash_update")
+        .asFunction();
+
+final int Function(Pointer<Uint8> state, Pointer<Uint8> out, int outlen)
+    crypto_generichash_final = libsodium
+        .lookup<
+            NativeFunction<
+                Int32 Function(
+          Pointer<Uint8>,
+          Pointer<Uint8>,
+          IntPtr,
+        )>>("crypto_generichash_final")
         .asFunction();
 
 final void Function(Pointer<Uint8> k) crypto_generichash_keygen = libsodium
