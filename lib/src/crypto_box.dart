@@ -101,7 +101,7 @@ class CryptoBox {
   /// Encrypts a message with a key and a nonce, returning the encrypted message and authentication tag
   static DetachedCipher encryptDetachedAfternm(
       Uint8List value, Uint8List nonce, Uint8List k) {
-    var map = Sodium.cryptoBoxDetachedAfternm(value, nonce, k);
+    final map = Sodium.cryptoBoxDetachedAfternm(value, nonce, k);
     return DetachedCipher.fromMap(map);
   }
 
