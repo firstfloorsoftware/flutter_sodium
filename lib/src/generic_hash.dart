@@ -8,38 +8,36 @@ class GenericHash {
   static String get primitive => Sodium.cryptoGenerichashPrimitive;
 
   /// Generates a random key for use with generic hashing.
-  static Uint8List generateKey() => Sodium.cryptoGenerichashKeygen();
-
-  /// Computes a generic hash of specified length for given string value and optional key.
-  static Uint8List hash(String value, {Uint8List key, int outlen}) {
-    outlen ??= Sodium.cryptoGenerichashBytes;
-    return Sodium.cryptoGenerichash(outlen, utf8.encode(value), key);
-  }
+  static Uint8List randomKey() => Sodium.cryptoGenerichashKeygen();
 
   /// Computes a generic hash of specified length for given value and optional key.
-  static Uint8List hashBytes(Uint8List value, {Uint8List key, int outlen}) {
+  static Uint8List hash(Uint8List value, {Uint8List key, int outlen}) {
     outlen ??= Sodium.cryptoGenerichashBytes;
     return Sodium.cryptoGenerichash(outlen, value, key);
   }
 
-  /// Computes a generic hash of specified length for given stream of string values and optional key.
-  static Future<Uint8List> hashStream(Stream<String> stream,
-      {Uint8List key, int outlen}) async {
-    outlen ??= Sodium.cryptoGenerichashBytes;
-    var state = Sodium.cryptoGenerichashInit(key, outlen);
-    await for (var value in stream) {
-      state = Sodium.cryptoGenerichashUpdate(state, utf8.encode(value));
-    }
-    return Sodium.cryptoGenerichashFinal(state, outlen);
-  }
+  /// Computes a generic hash of specified length for given string value and optional key.
+  static Uint8List hashString(String value, {Uint8List key, int outlen}) =>
+      hash(utf8.encode(value), key: key, outlen: outlen);
 
   /// Computes a generic hash of specified length for given stream of byte values and optional key.
-  static Future<Uint8List> hashByteStream(Stream<Uint8List> stream,
+  static Future<Uint8List> hashStream(Stream<Uint8List> stream,
       {Uint8List key, int outlen}) async {
     outlen ??= Sodium.cryptoGenerichashBytes;
     var state = Sodium.cryptoGenerichashInit(key, outlen);
     await for (var value in stream) {
       state = Sodium.cryptoGenerichashUpdate(state, value);
+    }
+    return Sodium.cryptoGenerichashFinal(state, outlen);
+  }
+
+  /// Computes a generic hash of specified length for given stream of string values and optional key.
+  static Future<Uint8List> hashStrings(Stream<String> stream,
+      {Uint8List key, int outlen}) async {
+    outlen ??= Sodium.cryptoGenerichashBytes;
+    var state = Sodium.cryptoGenerichashInit(key, outlen);
+    await for (var value in stream) {
+      state = Sodium.cryptoGenerichashUpdate(state, utf8.encode(value));
     }
     return Sodium.cryptoGenerichashFinal(state, outlen);
   }

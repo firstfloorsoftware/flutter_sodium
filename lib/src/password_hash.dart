@@ -31,11 +31,11 @@ class PasswordHash {
   static String get primitive => Sodium.cryptoPwhashPrimitive;
 
   /// Generates a random salt for use in password hashing.
-  static Uint8List generateSalt() =>
+  static Uint8List randomSalt() =>
       Sodium.randombytesBuf(Sodium.cryptoPwhashSaltbytes);
 
   /// Derives a hash from given password and salt.
-  static Uint8List hash(String password, Uint8List salt,
+  static Uint8List hash(Uint8List password, Uint8List salt,
       {int outlen,
       int opslimit,
       int memlimit,
@@ -44,36 +44,50 @@ class PasswordHash {
     opslimit ??= Sodium.cryptoPwhashOpslimitInteractive;
     memlimit ??= Sodium.cryptoPwhashMemlimitInteractive;
 
-    var passwd = utf8.encode(password);
-
     return Sodium.cryptoPwhash(
-        outlen, passwd, salt, opslimit, memlimit, _alg(alg));
+        outlen, password, salt, opslimit, memlimit, _alg(alg));
   }
 
+  /// Derives a hash from given string password and salt.
+  static Uint8List hashString(String password, Uint8List salt,
+          {int outlen,
+          int opslimit,
+          int memlimit,
+          PasswordHashAlgorithm alg = PasswordHashAlgorithm.Default}) =>
+      hash(utf8.encode(password), salt,
+          outlen: outlen, opslimit: opslimit, memlimit: memlimit);
+
   /// Computes a password verification string for given password.
-  static String hashStorage(String password, {int opslimit, int memlimit}) {
+  static String hashStorage(Uint8List password, {int opslimit, int memlimit}) {
     opslimit ??= Sodium.cryptoPwhashOpslimitInteractive;
     memlimit ??= Sodium.cryptoPwhashMemlimitInteractive;
 
-    var passwd = utf8.encode(password);
-    var hash = Sodium.cryptoPwhashStr(passwd, opslimit, memlimit);
+    final hash = Sodium.cryptoPwhashStr(password, opslimit, memlimit);
     return ascii.decode(hash);
   }
 
+  /// Computes a password verification string for given string password.
+  static String hashStringStorage(String password,
+          {int opslimit, int memlimit}) =>
+      hashStorage(utf8.encode(password),
+          opslimit: opslimit, memlimit: memlimit);
+
   /// Computes a password verification string for given password in moderate mode.
-  static String hashStorageModerate(String password) => hashStorage(password,
-      opslimit: Sodium.cryptoPwhashOpslimitModerate,
-      memlimit: Sodium.cryptoPwhashMemlimitModerate);
+  static String hashStringStorageModerate(String password) =>
+      hashStringStorage(password,
+          opslimit: Sodium.cryptoPwhashOpslimitModerate,
+          memlimit: Sodium.cryptoPwhashMemlimitModerate);
 
   /// Computes a password verification string for given password in sensitive mode.
-  static String hashStorageSensitive(String password) => hashStorage(password,
-      opslimit: Sodium.cryptoPwhashOpslimitSensitive,
-      memlimit: Sodium.cryptoPwhashMemlimitSensitive);
+  static String hashStringStorageSensitive(String password) =>
+      hashStringStorage(password,
+          opslimit: Sodium.cryptoPwhashOpslimitSensitive,
+          memlimit: Sodium.cryptoPwhashMemlimitSensitive);
 
   /// Verifies that the storage is a valid password verification string for given password.
   static bool verifyStorage(String storage, String password) {
-    var str = ascii.encode(storage);
-    var passwd = utf8.encode(password);
+    final str = ascii.encode(storage);
+    final passwd = utf8.encode(password);
 
     return Sodium.cryptoPwhashStrVerify(str, passwd) == 0;
   }
