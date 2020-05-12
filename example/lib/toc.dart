@@ -34,7 +34,7 @@ Future<List<Topic>> buildToc(BuildContext context) async {
     Section('Common'),
     Topic('APIs',
         description:
-            'The flutter_sodium library contains two sets of APIs, a core API and a high-level API. The core API maps native libsodium function 1:1 to Dart equivalents. The high-level API provides Dart-friendly, opinionated access to libsodium.',
+            'The flutter_sodium library contains two sets of APIs, a core API and a high-level API. The core API maps native libsodium functions 1:1 to Dart equivalents. The high-level API provides Dart-friendly, opinionated access to libsodium.',
         samples: <Sample>[
           Sample('api1', func: api1),
           Sample('api2', func: api2)
@@ -84,7 +84,12 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         description: 'Public-key authenticated encryption',
         url:
             'https://libsodium.gitbook.io/doc/public-key_cryptography/authenticated_encryption',
-        samples: <Sample>[]),
+        samples: <Sample>[
+          Sample('box1', func: box1),
+          Sample('box2', func: box2),
+          Sample('box3', func: box3),
+          Sample('box4', func: box4)
+        ]),
     Topic('Public-key signatures',
         description:
             'Computes a signature for a message using a secret key, and provides verification using a public key.',
@@ -94,9 +99,8 @@ Future<List<Topic>> buildToc(BuildContext context) async {
     Topic('Sealed boxes',
         description:
             'Anonymously send encrypted messages to a recipient given its public key.',
-        url:
-            'https://libsodium.gitbook.io/doc/public-key_cryptography/sealed_boxes',
-        samples: <Sample>[]),
+        url: 'https://libsodium.gitbook.io/doc/public-key_cryptography/sealed_boxes',
+        samples: <Sample>[Sample('box5', func: box5)]),
     Section('Hashing'),
     Topic('Generic hashing',
         description:

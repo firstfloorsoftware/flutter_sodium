@@ -62,6 +62,119 @@ void version1(Function(Object) print) {
   // END version1
 }
 
+void box1(Function(Object) print) {
+  // BEGIN box1: Combined mode: The authentication tag and the encrypted message are stored together.
+  // Generate key pairs
+  final alice = CryptoBox.generateKeyPair();
+  final bob = CryptoBox.generateKeyPair();
+  final nonce = CryptoBox.generateNonce();
+
+  // Alice encrypts message for Bob
+  final msg = 'hello world';
+  final encrypted =
+      CryptoBox.encrypt(msg, nonce, bob.publicKey, alice.secretKey);
+
+  print(hex.encode(encrypted));
+
+  // Bob decrypts message from Alice
+  final decrypted =
+      CryptoBox.decrypt(encrypted, nonce, alice.publicKey, bob.secretKey);
+
+  assert(msg == decrypted);
+  print('decrypted: $decrypted');
+  // END box1
+}
+
+void box2(Function(Object) print) {
+  // BEGIN box2: Detached mode: The authentication tag and the encrypted message are detached so they can be stored at different locations.
+  // Generate key pairs
+  final alice = CryptoBox.generateKeyPair();
+  final bob = CryptoBox.generateKeyPair();
+  final nonce = CryptoBox.generateNonce();
+
+  // Alice encrypts message for Bob
+  final msg = 'hello world';
+  final encrypted =
+      CryptoBox.encryptDetached(msg, nonce, bob.publicKey, alice.secretKey);
+
+  print('cipher: ${hex.encode(encrypted.cipher)}');
+  print('mac: ${hex.encode(encrypted.mac)}');
+
+  // Bob decrypts message from Alice
+  final decrypted = CryptoBox.decryptDetached(
+      encrypted, nonce, alice.publicKey, bob.secretKey);
+
+  assert(msg == decrypted);
+  print('decrypted: $decrypted');
+  // END box2
+}
+
+void box3(Function(Object) print) {
+  // BEGIN box3: Precalculated combined mode: The authentication tag and the encrypted message are stored together.
+  // Generate key pairs
+  final alice = CryptoBox.generateKeyPair();
+  final bob = CryptoBox.generateKeyPair();
+  final nonce = CryptoBox.generateNonce();
+
+  // Alice encrypts message for Bob
+  final msg = 'hello world';
+  final encrypted =
+      CryptoBox.encrypt(msg, nonce, bob.publicKey, alice.secretKey);
+
+  print(hex.encode(encrypted));
+
+  // Bob decrypts message from Alice (precalculated)
+  final key = CryptoBox.computeSharedKey(alice.publicKey, bob.secretKey);
+  final decrypted = CryptoBox.decryptAfternm(encrypted, nonce, key);
+
+  assert(msg == decrypted);
+  print('decrypted: $decrypted');
+  // END box3
+}
+
+void box4(Function(Object) print) {
+  // BEGIN box4: Precalculated detached mode: The authentication tag and the encrypted message are detached so they can be stored at different locations.
+  // Generate key pairs
+  final alice = CryptoBox.generateKeyPair();
+  final bob = CryptoBox.generateKeyPair();
+  final nonce = CryptoBox.generateNonce();
+
+  // Alice encrypts message for Bob (precalculated)
+  final key = CryptoBox.computeSharedKey(bob.publicKey, alice.secretKey);
+  final msg = 'hello world';
+  final encrypted = CryptoBox.encryptDetachedAfternm(msg, nonce, key);
+
+  print('cipher: ${hex.encode(encrypted.cipher)}');
+  print('mac: ${hex.encode(encrypted.mac)}');
+
+  // Bob decrypts message from Alice
+  final decrypted = CryptoBox.decryptDetached(
+      encrypted, nonce, alice.publicKey, bob.secretKey);
+
+  assert(msg == decrypted);
+  print('decrypted: $decrypted');
+  // END box4
+}
+
+void box5(Function(Object) print) {
+  // BEGIN box5: Usage: Anonymous sender encrypts a message intended for recipient only.
+  // Recipient creates a long-term key pair
+  final keys = SealedBox.generateKeyPair();
+
+  // Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
+  final msg = 'hello world';
+  final cipher = SealedBox.seal(msg, keys.publicKey);
+
+  print('cipher: ${hex.encode(cipher)}');
+
+  // Recipient decrypts the ciphertext
+  final decrypted = SealedBox.sealOpen(cipher, keys);
+
+  assert(msg == decrypted);
+  print('decrypted: $decrypted');
+  // END box5
+}
+
 void generic1(Function(Object) print) {
   // BEGIN generic1: Single-part without a key:
   final value = 'Arbitrary data to hash';
