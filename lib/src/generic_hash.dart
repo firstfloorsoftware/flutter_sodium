@@ -4,6 +4,9 @@ import 'sodium.dart';
 
 /// Computes a fixed-length fingerprint for an arbitrary long message using the BLAKE2b algorithm.
 class GenericHash {
+  /// The primitive name.
+  static String get primitive => Sodium.cryptoGenerichashPrimitive;
+
   /// Generates a random key for use with generic hashing.
   static Uint8List generateKey() => Sodium.cryptoGenerichashKeygen();
 
