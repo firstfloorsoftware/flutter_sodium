@@ -19,7 +19,7 @@ extension Uint8ListExtensions on Uint8List {
     if (this == null) {
       return Pointer<Uint8>.fromAddress(0);
     }
-    var p = allocate<Uint8>(count: this.length);
+    final p = allocate<Uint8>(count: this.length);
     p.asTypedList(this.length).setAll(0, this);
     return p;
   }

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:ffi/ffi.dart';
 import 'sodium.dart';
 
 /// Computes a fixed-length fingerprint for an arbitrary long message using the BLAKE2b algorithm.
@@ -24,21 +25,29 @@ class GenericHash {
   static Future<Uint8List> hashStream(Stream<Uint8List> stream,
       {Uint8List key, int outlen}) async {
     outlen ??= Sodium.cryptoGenerichashBytes;
-    var state = Sodium.cryptoGenerichashInit(key, outlen);
-    await for (var value in stream) {
-      state = Sodium.cryptoGenerichashUpdate(state, value);
+    final state = Sodium.cryptoGenerichashInit(key, outlen);
+    try {
+      await for (var value in stream) {
+        Sodium.cryptoGenerichashUpdate(state, value);
+      }
+      return Sodium.cryptoGenerichashFinal(state, outlen);
+    } finally {
+      free(state);
     }
-    return Sodium.cryptoGenerichashFinal(state, outlen);
   }
 
   /// Computes a generic hash of specified length for given stream of string values and optional key.
   static Future<Uint8List> hashStrings(Stream<String> stream,
       {Uint8List key, int outlen}) async {
     outlen ??= Sodium.cryptoGenerichashBytes;
-    var state = Sodium.cryptoGenerichashInit(key, outlen);
-    await for (var value in stream) {
-      state = Sodium.cryptoGenerichashUpdate(state, utf8.encode(value));
+    final state = Sodium.cryptoGenerichashInit(key, outlen);
+    try {
+      await for (var value in stream) {
+        Sodium.cryptoGenerichashUpdate(state, utf8.encode(value));
+      }
+      return Sodium.cryptoGenerichashFinal(state, outlen);
+    } finally {
+      free(state);
     }
-    return Sodium.cryptoGenerichashFinal(state, outlen);
   }
 }

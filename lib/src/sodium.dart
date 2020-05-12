@@ -436,7 +436,7 @@ class Sodium {
     }
   }
 
-  static Uint8List cryptoGenerichashInit(Uint8List key, int outlen) {
+  static Pointer<Uint8> cryptoGenerichashInit(Uint8List key, int outlen) {
     assert(outlen != null);
     if (key != null) {
       RangeError.checkValueInInterval(key.length, cryptoGenerichashKeybytesMin,
@@ -451,49 +451,40 @@ class Sodium {
     try {
       crypto_generichash_init(_state, _key, key?.length ?? 0, outlen)
           .requireSuccess();
-      return _state.toList(cryptoGenerichashStatebytes);
+      return _state;
     } finally {
-      free(_state);
       if (_key != null) {
         free(_key);
       }
     }
   }
 
-  static Uint8List cryptoGenerichashUpdate(Uint8List state, Uint8List i) {
+  static void cryptoGenerichashUpdate(Pointer<Uint8> state, Uint8List i) {
     assert(state != null);
     assert(i != null);
-    RangeError.checkValueInInterval(state.length, cryptoGenerichashStatebytes,
-        cryptoGenerichashStatebytes, "state", "Invalid length");
 
-    final _state = state.toPointer();
     final _in = i.toPointer();
 
     try {
-      crypto_generichash_update(_state, _in, i.length).requireSuccess();
-      return _state.toList(cryptoGenerichashStatebytes);
+      crypto_generichash_update(state, _in, i.length).requireSuccess();
     } finally {
-      free(_state);
       free(_in);
     }
   }
 
-  static Uint8List cryptoGenerichashFinal(Uint8List state, int outlen) {
+  static Uint8List cryptoGenerichashFinal(Pointer<Uint8> state, int outlen) {
     assert(state != null);
     assert(outlen != null);
-    RangeError.checkValueInInterval(state.length, cryptoGenerichashStatebytes,
-        cryptoGenerichashStatebytes, "state", "Invalid length");
     RangeError.checkValueInInterval(
         outlen, cryptoGenerichashBytesMin, cryptoGenerichashBytesMax);
 
-    final _state = state.toPointer();
     final _out = allocate<Uint8>(count: outlen);
 
     try {
-      crypto_generichash_final(_state, _out, outlen).requireSuccess();
+      crypto_generichash_final(state, _out, outlen).requireSuccess();
       return _out.toList(outlen);
     } finally {
-      free(_state);
+      // note: caller is responsible for freeing state
       free(_out);
     }
   }
