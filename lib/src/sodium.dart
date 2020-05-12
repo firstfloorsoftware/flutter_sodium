@@ -5,6 +5,7 @@ import 'bindings/core.dart';
 import 'bindings/crypto_box.dart';
 import 'bindings/crypto_generichash.dart';
 import 'bindings/crypto_pwhash.dart';
+import 'bindings/crypto_sign.dart';
 import 'bindings/random_bytes.dart';
 import 'bindings/version.dart';
 import 'extensions.dart';
@@ -655,6 +656,203 @@ class Sodium {
       return crypto_pwhash_str_needs_rehash(_str, opslimit, memlimit);
     } finally {
       free(_str);
+    }
+  }
+
+  //
+  // crypto_sign
+  //
+  static int get cryptoSignStatebytes => crypto_sign_statebytes();
+  static int get cryptoSignBytes => crypto_sign_bytes();
+  static int get cryptoSignSeedbytes => crypto_sign_seedbytes();
+  static int get cryptoSignPublickeybytes => crypto_sign_publickeybytes();
+  static int get cryptoSignSecretkeybytes => crypto_sign_secretkeybytes();
+  static int get cryptoSignMessagebytesMax => crypto_sign_messagebytes_max();
+  static String get cryptoSignPrimitive =>
+      Utf8.fromUtf8(crypto_sign_primitive());
+
+  static Map<String, Uint8List> cryptoSignSeedKeypair(Uint8List seed) {
+    assert(seed != null);
+    RangeError.checkValueInInterval(seed.length, cryptoSignSeedbytes,
+        cryptoSignSeedbytes, 'seed', 'Invalid length');
+    final _pk = allocate<Uint8>(count: cryptoSignPublickeybytes);
+    final _sk = allocate<Uint8>(count: cryptoSignSecretkeybytes);
+    final _seed = seed.toPointer();
+
+    try {
+      crypto_sign_seed_keypair(_pk, _sk, _seed).requireSuccess();
+      return {
+        Names.pk: _pk.toList(cryptoSignPublickeybytes),
+        Names.sk: _sk.toList(cryptoSignSecretkeybytes)
+      };
+    } finally {
+      free(_pk);
+      free(_sk);
+      free(_seed);
+    }
+  }
+
+  static Map<String, Uint8List> cryptoSignKeypair() {
+    final _pk = allocate<Uint8>(count: cryptoSignPublickeybytes);
+    final _sk = allocate<Uint8>(count: cryptoSignSecretkeybytes);
+
+    try {
+      crypto_sign_keypair(_pk, _sk).requireSuccess();
+      return {
+        Names.pk: _pk.toList(cryptoSignPublickeybytes),
+        Names.sk: _sk.toList(cryptoSignSecretkeybytes)
+      };
+    } finally {
+      free(_pk);
+      free(_sk);
+    }
+  }
+
+  static Uint8List cryptoSign(Uint8List m, Uint8List sk) {
+    assert(m != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
+        cryptoSignSecretkeybytes, 'sk', 'Invalid length');
+
+    final _sm = allocate<Uint8>(count: m.length + cryptoSignBytes);
+    final _smlenP = allocate<Uint64>(count: 1);
+    final _m = m.toPointer();
+    final _sk = sk.toPointer();
+
+    try {
+      crypto_sign(_sm, _smlenP, _m, m.length, _sk).requireSuccess();
+      return _sm.toList(_smlenP[0]);
+    } finally {
+      free(_sm);
+      free(_smlenP);
+      free(_m);
+      free(_sk);
+    }
+  }
+
+  static Uint8List cryptoSignOpen(Uint8List sm, Uint8List pk) {
+    assert(sm != null);
+    assert(pk != null);
+    RangeError.checkValueInInterval(pk.length, cryptoSignPublickeybytes,
+        cryptoSignPublickeybytes, 'pk', 'Invalid length');
+
+    final _m = allocate<Uint8>(count: sm.length - cryptoSignBytes);
+    final _mlenP = allocate<Uint64>(count: 1);
+    final _sm = sm.toPointer();
+    final _pk = pk.toPointer();
+
+    try {
+      crypto_sign_open(_m, _mlenP, _sm, sm.length, _pk).requireSuccess();
+      return _m.toList(_mlenP[0]);
+    } finally {
+      free(_m);
+      free(_mlenP);
+      free(_sm);
+      free(_pk);
+    }
+  }
+
+  static Uint8List cryptoSignDetached(Uint8List m, Uint8List sk) {
+    assert(m != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
+        cryptoSignSecretkeybytes, 'sk', 'Invalid length');
+
+    final _sig = allocate<Uint8>(count: cryptoSignBytes);
+    final _siglenP = allocate<Uint64>(count: 1);
+    final _m = m.toPointer();
+    final _sk = sk.toPointer();
+
+    try {
+      crypto_sign_detached(_sig, _siglenP, _m, m.length, _sk).requireSuccess();
+      return _sig.toList(_siglenP[0]);
+    } finally {
+      free(_sig);
+      free(_siglenP);
+      free(_m);
+      free(_sk);
+    }
+  }
+
+  static int cryptoSignVerifyDetached(
+      Uint8List sig, Uint8List m, Uint8List pk) {
+    assert(sig != null);
+    assert(m != null);
+    assert(pk != null);
+    RangeError.checkValueInInterval(
+        sig.length, cryptoSignBytes, cryptoSignBytes, 'sig', 'Invalid length');
+    RangeError.checkValueInInterval(pk.length, cryptoSignPublickeybytes,
+        cryptoSignPublickeybytes, 'pk', 'Invalid length');
+
+    final _sig = sig.toPointer();
+    final _m = m.toPointer();
+    final _pk = pk.toPointer();
+
+    try {
+      return crypto_sign_verify_detached(_sig, _m, m.length, _pk);
+    } finally {
+      free(_sig);
+      free(_m);
+      free(_pk);
+    }
+  }
+
+  static Pointer<Uint8> cryptoSignInit() {
+    final _state = allocate<Uint8>(count: cryptoSignStatebytes);
+    crypto_sign_init(_state).requireSuccess();
+    return _state;
+  }
+
+  static void cryptoSignUpdate(Pointer<Uint8> state, Uint8List m) {
+    assert(state != null);
+    assert(m != null);
+
+    final _m = m.toPointer();
+    try {
+      crypto_sign_update(state, _m, m.length).requireSuccess();
+    } finally {
+      free(_m);
+    }
+  }
+
+  static Uint8List cryptoSignFinalCreate(Pointer<Uint8> state, Uint8List sk) {
+    assert(state != null);
+    assert(sk != null);
+    RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
+        cryptoSignSecretkeybytes, 'sk', 'Invalid length');
+
+    final _sig = allocate<Uint8>(count: cryptoSignBytes);
+    final _siglenP = allocate<Uint64>(count: 1);
+    final _sk = sk.toPointer();
+    try {
+      crypto_sign_final_create(state, _sig, _siglenP, _sk).requireSuccess();
+      return _sig.toList(_siglenP[0]);
+    } finally {
+      // note: caller is responsible for freeing state
+      free(_sig);
+      free(_siglenP);
+      free(_sk);
+    }
+  }
+
+  static int cryptoSignFinalVerify(
+      Pointer<Uint8> state, Uint8List sig, Uint8List pk) {
+    assert(state != null);
+    assert(sig != null);
+    assert(pk != null);
+    RangeError.checkValueInInterval(
+        sig.length, cryptoSignBytes, cryptoSignBytes, 'sig', 'Invalid length');
+    RangeError.checkValueInInterval(pk.length, cryptoSignPublickeybytes,
+        cryptoSignPublickeybytes, 'pk', 'Invalid length');
+
+    final _sig = sig.toPointer();
+    final _pk = pk.toPointer();
+    try {
+      return crypto_sign_final_verify(state, _sig, _pk);
+    } finally {
+      // note: caller is responsible for freeing state
+      free(_sig);
+      free(_pk);
     }
   }
 

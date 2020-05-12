@@ -175,6 +175,59 @@ void box5(Function(Object) print) {
   // END box5
 }
 
+void sign1(Function(Object) print) {
+  // BEGIN sign1: Combined mode: Compute a signed message
+  final msg = 'hello world';
+  final keys = CryptoSign.randomKeys();
+
+  // sign with secret key
+  final signed = CryptoSign.signString(msg, keys.secretKey);
+  print('signed: ${hex.encode(signed)}');
+
+  // verify with public key
+  final unsigned = CryptoSign.openString(signed, keys.publicKey);
+  print('unsigned: $unsigned');
+
+  assert(msg == unsigned);
+  // END sign1
+}
+
+void sign2(Function(Object) print) {
+  // BEGIN sign2: Detached mode: Compute a signature
+  // Author generates keypair
+  final keys = CryptoSign.randomKeys();
+
+  // Author computes signature using secret key
+  final msg = 'hello world';
+  final sig = CryptoSign.signStringDetached(msg, keys.secretKey);
+  print(hex.encode(sig));
+
+  // Recipient verifies message was issued by author using public key
+  final valid = CryptoSign.verifyString(sig, msg, keys.publicKey);
+
+  assert(valid);
+  // END sign2
+}
+
+Future sign3(Function(Object) print) async {
+  // BEGIN sign3: Multi-part message: Compute a signature for multiple messages.
+  // Author generates keypair
+  final keys = CryptoSign.randomKeys();
+
+  // Author computes signature using secret key
+  final parts = ['Arbitrary data to hash', 'is longer than expected'];
+  final sig =
+      await CryptoSign.signStrings(Stream.fromIterable(parts), keys.secretKey);
+  print(hex.encode(sig));
+
+  // Recipient verifies message was issued by author using public key
+  final valid = await CryptoSign.verifyStrings(
+      sig, Stream.fromIterable(parts), keys.publicKey);
+
+  assert(valid);
+  // END sign3
+}
+
 void generic1(Function(Object) print) {
   // BEGIN generic1: Single-part without a key:
   final value = 'Arbitrary data to hash';

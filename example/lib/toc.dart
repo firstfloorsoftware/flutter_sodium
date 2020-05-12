@@ -95,7 +95,11 @@ Future<List<Topic>> buildToc(BuildContext context) async {
             'Computes a signature for a message using a secret key, and provides verification using a public key.',
         url:
             'https://libsodium.gitbook.io/doc/public-key_cryptography/public-key_signatures',
-        samples: <Sample>[]),
+        samples: <Sample>[
+          Sample('sign1', func: sign1),
+          Sample('sign2', func: sign2),
+          Sample('sign3', funcAsync: sign3)
+        ]),
     Topic('Sealed boxes',
         description:
             'Anonymously send encrypted messages to a recipient given its public key.',
