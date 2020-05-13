@@ -1,5 +1,6 @@
 library flutter_sodium;
 
+export 'src/crypto_auth.dart';
 export 'src/crypto_box.dart';
 export 'src/crypto_sign.dart';
 export 'src/generic_hash.dart';

@@ -36,6 +36,7 @@ This project includes an extensive example app with runnable code samples. Be su
 
 ## API coverage
 The flutter_sodium plugin implements the following libsodium APIs:
+- crypto_auth
 - crypto_box
 - crypto_generichash
 - crypto_pwhash

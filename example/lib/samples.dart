@@ -66,6 +66,7 @@ class Samples {
 
   void version2(Function(Object) print) {
     // BEGIN version2: Primitives: Retrieves the names of the algorithms used in the various libsodium APIs.
+    print('crypto_auth: ${Sodium.cryptoAuthPrimitive}');
     print('crypto_box: ${Sodium.cryptoBoxPrimitive}');
     print('crypto_generichash: ${Sodium.cryptoGenerichashPrimitive}');
     print('crypto_pwhash: ${Sodium.cryptoPwhashPrimitive}');
@@ -74,6 +75,22 @@ class Samples {
     print('crypto_sign: ${Sodium.cryptoSignPrimitive}');
     print('randombytes: ${Sodium.randombytesImplementationName}');
     // END version2
+  }
+
+  void auth1(Function(Object) print) {
+    // BEGIN auth1: Usage: Secret key authentication
+    // generate secret
+    final key = CryptoAuth.randomKey();
+
+    // compute tag
+    final msg = 'hello world';
+    final tag = CryptoAuth.computeString(msg, key);
+    print(hex.encode(tag));
+
+    // verify tag
+    var valid = CryptoAuth.verifyString(tag, msg, key);
+    assert(valid);
+    // END auth1
   }
 
   void box1(Function(Object) print) {

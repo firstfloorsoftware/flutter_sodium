@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'bindings/core.dart';
+import 'bindings/crypto_auth.dart';
 import 'bindings/crypto_box.dart';
 import 'bindings/crypto_generichash.dart';
 import 'bindings/crypto_pwhash.dart';
@@ -18,6 +19,67 @@ class Sodium {
   // init
   //
   static void sodiumInit() => sodium_init();
+
+  //
+  // crypto_box
+  //
+  static int get cryptoAuthBytes => crypto_auth_bytes();
+  static int get cryptoAuthKeybytes => crypto_auth_keybytes();
+  static String get cryptoAuthPrimitive =>
+      Utf8.fromUtf8(crypto_auth_primitive());
+
+  static Uint8List cryptoAuth(Uint8List i, Uint8List k) {
+    assert(i != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(k.length, cryptoAuthKeybytes,
+        cryptoAuthKeybytes, 'k', 'Invalid length');
+
+    final _out = allocate<Uint8>(count: cryptoAuthBytes);
+    final _in = i.toPointer();
+    final _k = k.toPointer();
+
+    try {
+      crypto_auth(_out, _in, i.length, _k).mustSucceed('crypto_auth');
+
+      return _out.toList(cryptoAuthBytes);
+    } finally {
+      free(_out);
+      free(_in);
+      free(_k);
+    }
+  }
+
+  static bool cryptoAuthVerify(Uint8List h, Uint8List i, Uint8List k) {
+    assert(h != null);
+    assert(i != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        h.length, cryptoAuthBytes, cryptoAuthBytes, 'h', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, cryptoAuthKeybytes,
+        cryptoAuthKeybytes, 'k', 'Invalid length');
+
+    final _h = h.toPointer();
+    final _in = i.toPointer();
+    final _k = k.toPointer();
+
+    try {
+      return crypto_auth_verify(_h, _in, i.length, _k) == 0;
+    } finally {
+      free(_h);
+      free(_in);
+      free(_k);
+    }
+  }
+
+  static Uint8List cryptoAuthKeygen() {
+    final _k = allocate<Uint8>(count: cryptoAuthKeybytes);
+    try {
+      crypto_auth_keygen(_k);
+      return _k.toList(cryptoAuthKeybytes);
+    } finally {
+      free(_k);
+    }
+  }
 
   //
   // crypto_box

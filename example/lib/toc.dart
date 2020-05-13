@@ -71,7 +71,9 @@ Future<List<Topic>> buildToc(BuildContext context) async {
             'Computes an authentication tag for a message and a secret key, and provides a way to verify that a given tag is valid for a given message and a key.',
         url:
             'https://libsodium.gitbook.io/doc/secret-key_cryptography/secret-key_authentication',
-        samples: <Sample>[]),
+        samples: <Sample>[
+          Sample('auth1', func: samples.auth1),
+        ]),
     Topic('Original ChaCha20-Poly1305',
         description: 'Authenticated Encryption with Additional Data.',
         url:
