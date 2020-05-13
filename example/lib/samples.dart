@@ -70,6 +70,7 @@ class Samples {
     print('crypto_box: ${Sodium.cryptoBoxPrimitive}');
     print('crypto_generichash: ${Sodium.cryptoGenerichashPrimitive}');
     print('crypto_kdf: ${Sodium.cryptoKdfPrimitive}');
+    print('crypto_kx: ${Sodium.cryptoKxPrimitive}');
     print('crypto_pwhash: ${Sodium.cryptoPwhashPrimitive}');
     print('crypto_secretbox: ${Sodium.cryptoSecretboxPrimitive}');
     print('crypto_shorthash: ${Sodium.cryptoShorthashPrimitive}');
@@ -398,16 +399,16 @@ class Samples {
 
   void shorthash1(Function(Object) print) {
     // BEGIN shorthash1: Usage: Computes a fixed-size fingerprint for given string value and key.
-    final value = 'hello world';
-    final key = ShortHash.randomKey();
-    final hash = ShortHash.hashString(value, key);
+    final m = 'hello world';
+    final k = ShortHash.randomKey();
+    final h = ShortHash.hashString(m, k);
 
-    print(hex.encode(hash));
+    print(hex.encode(h));
     // END shorthash1
   }
 
-  void derive1(Function(Object) print) {
-    // BEGIN derive1: Usage: Compute a set of shared keys
+  void kdf1(Function(Object) print) {
+    // BEGIN kdf1: Usage: Derive subkeys
     // random master key
     final k = KeyDerivation.randomKey();
 
@@ -419,6 +420,26 @@ class Samples {
     print('subkey1: ${hex.encode(k1)}');
     print('subkey2: ${hex.encode(k2)}');
     print('subkey3: ${hex.encode(k3)}');
-    // END derive1
+    // END kdf1
+  }
+
+  void kx1(Function(Object) print) {
+    // BEGIN kx1: Usage: Compute a set of shared keys
+    // generate key pairs
+    final c = KeyExchange.randomKeys();
+    final s = KeyExchange.randomKeys();
+
+    // compute session keys
+    final ck = KeyExchange.computeClientSessionKeys(c, s.publicKey);
+    final sk = KeyExchange.computeServerSessionKeys(s, c.publicKey);
+
+    // assert keys do match
+    final eq = ListEquality().equals;
+    assert(eq(ck.rx, sk.tx));
+    assert(eq(ck.tx, sk.rx));
+
+    print('client rx: ${hex.encode(ck.rx)}');
+    print('client tx: ${hex.encode(ck.tx)}');
+    // END kx1
   }
 }

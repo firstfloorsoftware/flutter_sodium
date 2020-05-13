@@ -1,11 +1,13 @@
 import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
+import 'package:flutter_sodium/flutter_sodium.dart';
 import 'bindings/core.dart';
 import 'bindings/crypto_auth.dart';
 import 'bindings/crypto_box.dart';
 import 'bindings/crypto_generichash.dart';
 import 'bindings/crypto_kdf.dart';
+import 'bindings/crypto_kx.dart';
 import 'bindings/crypto_pwhash.dart';
 import 'bindings/crypto_secretbox.dart';
 import 'bindings/crypto_shorthash.dart';
@@ -618,6 +620,123 @@ class Sodium {
       return _k.toList(cryptoKdfKeybytes);
     } finally {
       free(_k);
+    }
+  }
+
+  //
+  // crypto_kx
+  //
+  static int get cryptoKxPublickeybytes => crypto_kx_publickeybytes();
+  static int get cryptoKxSecretkeybytes => crypto_kx_secretkeybytes();
+  static int get cryptoKxSeedbytes => crypto_kx_seedbytes();
+  static int get cryptoKxSessionkeybytes => crypto_kx_sessionkeybytes();
+  static String get cryptoKxPrimitive => Utf8.fromUtf8(crypto_kx_primitive());
+
+  static Map<String, Uint8List> cryptoKxSeedKeypair(Uint8List seed) {
+    assert(seed != null);
+    RangeError.checkValueInInterval(seed.length, cryptoKxSeedbytes,
+        cryptoKxSeedbytes, 'seed', 'Invalid length');
+    final _pk = allocate<Uint8>(count: cryptoKxPublickeybytes);
+    final _sk = allocate<Uint8>(count: cryptoKxSecretkeybytes);
+    final _seed = seed.toPointer();
+
+    try {
+      crypto_kx_seed_keypair(_pk, _sk, _seed)
+          .mustSucceed('crypto_kx_seed_keypair');
+      return {
+        Names.pk: _pk.toList(cryptoKxPublickeybytes),
+        Names.sk: _sk.toList(cryptoKxSecretkeybytes)
+      };
+    } finally {
+      free(_pk);
+      free(_sk);
+      free(_seed);
+    }
+  }
+
+  static Map<String, Uint8List> cryptoKxKeypair() {
+    final _pk = allocate<Uint8>(count: cryptoKxPublickeybytes);
+    final _sk = allocate<Uint8>(count: cryptoKxSecretkeybytes);
+
+    try {
+      crypto_kx_keypair(_pk, _sk).mustSucceed('crypto_kx_keypair');
+      return {
+        Names.pk: _pk.toList(cryptoKxPublickeybytes),
+        Names.sk: _sk.toList(cryptoKxSecretkeybytes)
+      };
+    } finally {
+      free(_pk);
+      free(_sk);
+    }
+  }
+
+  static Map<String, Uint8List> cryptoKxClientSessionKeys(
+      Uint8List clientPk, Uint8List clientSk, Uint8List serverPk) {
+    assert(clientPk != null);
+    assert(clientSk != null);
+    assert(serverPk != null);
+    RangeError.checkValueInInterval(clientPk.length, cryptoKxPublickeybytes,
+        cryptoKxPublickeybytes, 'clientPk', 'Invalid length');
+    RangeError.checkValueInInterval(clientSk.length, cryptoKxSecretkeybytes,
+        cryptoKxSecretkeybytes, 'clientSk', 'Invalid length');
+    RangeError.checkValueInInterval(serverPk.length, cryptoKxPublickeybytes,
+        cryptoKxPublickeybytes, 'serverPk', 'Invalid length');
+
+    final _rx = allocate<Uint8>(count: cryptoKxSessionkeybytes);
+    final _tx = allocate<Uint8>(count: cryptoKxSessionkeybytes);
+    final _clientPk = clientPk.toPointer();
+    final _clientSk = clientSk.toPointer();
+    final _serverPk = serverPk.toPointer();
+
+    try {
+      crypto_kx_client_session_keys(_rx, _tx, _clientPk, _clientSk, _serverPk)
+          .mustSucceed('crypto_kx_client_session_keys');
+
+      return {
+        Names.rx: _rx.toList(cryptoKxSessionkeybytes),
+        Names.tx: _tx.toList(cryptoKxSessionkeybytes)
+      };
+    } finally {
+      free(_rx);
+      free(_tx);
+      free(_clientPk);
+      free(_clientSk);
+      free(_serverPk);
+    }
+  }
+
+  static Map<String, Uint8List> cryptoKxServerSessionKeys(
+      Uint8List serverPk, Uint8List serverSk, Uint8List clientPk) {
+    assert(serverPk != null);
+    assert(serverSk != null);
+    assert(clientPk != null);
+    RangeError.checkValueInInterval(serverPk.length, cryptoKxPublickeybytes,
+        cryptoKxPublickeybytes, 'serverPk', 'Invalid length');
+    RangeError.checkValueInInterval(serverSk.length, cryptoKxSecretkeybytes,
+        cryptoKxSecretkeybytes, 'serverSk', 'Invalid length');
+    RangeError.checkValueInInterval(clientPk.length, cryptoKxPublickeybytes,
+        cryptoKxPublickeybytes, 'clientPk', 'Invalid length');
+
+    final _rx = allocate<Uint8>(count: cryptoKxSessionkeybytes);
+    final _tx = allocate<Uint8>(count: cryptoKxSessionkeybytes);
+    final _serverPk = serverPk.toPointer();
+    final _serverSk = serverSk.toPointer();
+    final _clientPk = clientPk.toPointer();
+
+    try {
+      crypto_kx_server_session_keys(_rx, _tx, _serverPk, _serverSk, _clientPk)
+          .mustSucceed('crypto_kx_server_session_keys');
+
+      return {
+        Names.rx: _rx.toList(cryptoKxSessionkeybytes),
+        Names.tx: _tx.toList(cryptoKxSessionkeybytes)
+      };
+    } finally {
+      free(_rx);
+      free(_tx);
+      free(_serverPk);
+      free(_serverSk);
+      free(_clientPk);
     }
   }
 
