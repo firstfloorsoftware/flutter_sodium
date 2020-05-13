@@ -26,9 +26,9 @@ extension Uint8ListExtensions on Uint8List {
 }
 
 extension Result on int {
-  void requireSuccess() {
+  void mustSucceed(String funcName) {
     if (this != 0) {
-      throw SodiumException('Failed ($this)');
+      throw SodiumException('$funcName failed with $this');
     }
   }
 }

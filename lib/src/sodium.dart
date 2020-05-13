@@ -40,7 +40,8 @@ class Sodium {
     final _seed = seed.toPointer();
 
     try {
-      crypto_box_seed_keypair(_pk, _sk, _seed).requireSuccess();
+      crypto_box_seed_keypair(_pk, _sk, _seed)
+          .mustSucceed('crypto_box_seed_keypair');
       return {
         Names.pk: _pk.toList(cryptoBoxPublickeybytes),
         Names.sk: _sk.toList(cryptoBoxSecretkeybytes)
@@ -57,7 +58,7 @@ class Sodium {
     final _sk = allocate<Uint8>(count: cryptoBoxSecretkeybytes);
 
     try {
-      crypto_box_keypair(_pk, _sk).requireSuccess();
+      crypto_box_keypair(_pk, _sk).mustSucceed('crypto_box_keypair');
       return {
         Names.pk: _pk.toList(cryptoBoxPublickeybytes),
         Names.sk: _sk.toList(cryptoBoxSecretkeybytes)
@@ -88,7 +89,8 @@ class Sodium {
     final _sk = sk.toPointer();
 
     try {
-      crypto_box_easy(_c, _m, m.length, _n, _pk, _sk).requireSuccess();
+      crypto_box_easy(_c, _m, m.length, _n, _pk, _sk)
+          .mustSucceed('crypto_box_easy');
 
       return _c.toList(m.length + cryptoBoxMacbytes);
     } finally {
@@ -120,7 +122,8 @@ class Sodium {
     final _sk = sk.toPointer();
 
     try {
-      crypto_box_open_easy(_m, _c, c.length, _n, _pk, _sk).requireSuccess();
+      crypto_box_open_easy(_m, _c, c.length, _n, _pk, _sk)
+          .mustSucceed('crypto_box_open_easy');
 
       return _m.toList(c.length - cryptoBoxMacbytes);
     } finally {
@@ -154,7 +157,7 @@ class Sodium {
 
     try {
       crypto_box_detached(_c, _mac, _m, m.length, _n, _pk, _sk)
-          .requireSuccess();
+          .mustSucceed('crypto_box_detached');
 
       return {
         Names.c: _c.toList(m.length),
@@ -195,7 +198,7 @@ class Sodium {
 
     try {
       crypto_box_open_detached(_m, _c, _mac, c.length, _n, _pk, _sk)
-          .requireSuccess();
+          .mustSucceed('crypto_box_open_detached');
 
       return _m.toList(c.length);
     } finally {
@@ -220,7 +223,7 @@ class Sodium {
     final _pk = pk.toPointer();
     final _sk = sk.toPointer();
     try {
-      crypto_box_beforenm(_k, _pk, _sk).requireSuccess();
+      crypto_box_beforenm(_k, _pk, _sk).mustSucceed('crypto_box_beforenm');
 
       return _k.toList(cryptoBoxBeforenmbytes);
     } finally {
@@ -245,7 +248,8 @@ class Sodium {
     final _k = k.toPointer();
 
     try {
-      crypto_box_easy_afternm(_c, _m, m.length, _n, _k).requireSuccess();
+      crypto_box_easy_afternm(_c, _m, m.length, _n, _k)
+          .mustSucceed('crypto_box_easy_afternm');
 
       return _c.toList(m.length + cryptoBoxMacbytes);
     } finally {
@@ -272,7 +276,8 @@ class Sodium {
     final _k = k.toPointer();
 
     try {
-      crypto_box_open_easy_afternm(_m, _c, c.length, _n, _k).requireSuccess();
+      crypto_box_open_easy_afternm(_m, _c, c.length, _n, _k)
+          .mustSucceed('crypto_box_open_easy_afternm');
 
       return _m.toList(c.length - cryptoBoxMacbytes);
     } finally {
@@ -301,7 +306,7 @@ class Sodium {
 
     try {
       crypto_box_detached_afternm(_c, _mac, _m, m.length, _n, _k)
-          .requireSuccess();
+          .mustSucceed('crypto_box_detached_afternm');
 
       return {
         Names.c: _c.toList(m.length),
@@ -337,7 +342,7 @@ class Sodium {
 
     try {
       crypto_box_open_detached_afternm(_m, _c, _mac, c.length, _n, _k)
-          .requireSuccess();
+          .mustSucceed('crypto_box_open_detached_afternm');
 
       return _m.toList(c.length);
     } finally {
@@ -360,7 +365,7 @@ class Sodium {
     final _pk = pk.toPointer();
 
     try {
-      crypto_box_seal(_c, _m, m.length, _pk).requireSuccess();
+      crypto_box_seal(_c, _m, m.length, _pk).mustSucceed('crypto_box_seal');
 
       return _c.toList(m.length + cryptoBoxSealbytes);
     } finally {
@@ -385,7 +390,8 @@ class Sodium {
     final _sk = sk.toPointer();
 
     try {
-      crypto_box_seal_open(_m, _c, c.length, _pk, _sk).requireSuccess();
+      crypto_box_seal_open(_m, _c, c.length, _pk, _sk)
+          .mustSucceed('crypto_box_seal_open');
 
       return _m.toList(c.length - cryptoBoxSealbytes);
     } finally {
@@ -427,7 +433,7 @@ class Sodium {
 
     try {
       crypto_generichash(_out, outlen, _in, i.length, _key, key?.length ?? 0)
-          .requireSuccess();
+          .mustSucceed('crypto_generichash');
       return _out.toList(outlen);
     } finally {
       free(_out);
@@ -452,7 +458,7 @@ class Sodium {
 
     try {
       crypto_generichash_init(_state, _key, key?.length ?? 0, outlen)
-          .requireSuccess();
+          .mustSucceed('crypto_generichash_init');
       return _state;
     } finally {
       if (_key != null) {
@@ -468,7 +474,8 @@ class Sodium {
     final _in = i.toPointer();
 
     try {
-      crypto_generichash_update(state, _in, i.length).requireSuccess();
+      crypto_generichash_update(state, _in, i.length)
+          .mustSucceed('crypto_generichash_update');
     } finally {
       free(_in);
     }
@@ -483,7 +490,8 @@ class Sodium {
     final _out = allocate<Uint8>(count: outlen);
 
     try {
-      crypto_generichash_final(state, _out, outlen).requireSuccess();
+      crypto_generichash_final(state, _out, outlen)
+          .mustSucceed('crypto_generichash_final');
       return _out.toList(outlen);
     } finally {
       // note: caller is responsible for freeing state
@@ -561,7 +569,7 @@ class Sodium {
     try {
       crypto_pwhash(_out, outlen, _passwd, passwd.length, _salt, opslimit,
               memlimit, alg)
-          .requireSuccess();
+          .mustSucceed('crypto_pwhash');
 
       return _out.toList(outlen);
     } finally {
@@ -587,7 +595,7 @@ class Sodium {
     final _passwd = passwd.toPointer();
     try {
       crypto_pwhash_str(_out, _passwd, passwd.length, opslimit, memlimit)
-          .requireSuccess();
+          .mustSucceed('crypto_pwhash_str');
       return _out.toList(cryptoPwhashStrbytes);
     } finally {
       free(_out);
@@ -615,7 +623,7 @@ class Sodium {
     try {
       crypto_pwhash_str_alg(
               _out, _passwd, passwd.length, opslimit, memlimit, alg)
-          .requireSuccess();
+          .mustSucceed('crypto_pwhash_str_alg');
       return _out.toList(cryptoPwhashStrbytes);
     } finally {
       free(_out);
@@ -678,7 +686,7 @@ class Sodium {
     final _in = i.toPointer();
     final _k = k.toPointer();
     try {
-      crypto_shorthash(_out, _in, i.length, _k).requireSuccess();
+      crypto_shorthash(_out, _in, i.length, _k).mustSucceed('crypto_shorthash');
       return _out.toList(cryptoShorthashBytes);
     } finally {
       free(_out);
@@ -717,7 +725,8 @@ class Sodium {
     final _seed = seed.toPointer();
 
     try {
-      crypto_sign_seed_keypair(_pk, _sk, _seed).requireSuccess();
+      crypto_sign_seed_keypair(_pk, _sk, _seed)
+          .mustSucceed('crypto_sign_seed_keypair');
       return {
         Names.pk: _pk.toList(cryptoSignPublickeybytes),
         Names.sk: _sk.toList(cryptoSignSecretkeybytes)
@@ -734,7 +743,7 @@ class Sodium {
     final _sk = allocate<Uint8>(count: cryptoSignSecretkeybytes);
 
     try {
-      crypto_sign_keypair(_pk, _sk).requireSuccess();
+      crypto_sign_keypair(_pk, _sk).mustSucceed('crypto_sign_keypair');
       return {
         Names.pk: _pk.toList(cryptoSignPublickeybytes),
         Names.sk: _sk.toList(cryptoSignSecretkeybytes)
@@ -757,7 +766,7 @@ class Sodium {
     final _sk = sk.toPointer();
 
     try {
-      crypto_sign(_sm, _smlenP, _m, m.length, _sk).requireSuccess();
+      crypto_sign(_sm, _smlenP, _m, m.length, _sk).mustSucceed('crypto_sign');
       return _sm.toList(_smlenP[0]);
     } finally {
       free(_sm);
@@ -779,7 +788,8 @@ class Sodium {
     final _pk = pk.toPointer();
 
     try {
-      crypto_sign_open(_m, _mlenP, _sm, sm.length, _pk).requireSuccess();
+      crypto_sign_open(_m, _mlenP, _sm, sm.length, _pk)
+          .mustSucceed('crypto_sign_open');
       return _m.toList(_mlenP[0]);
     } finally {
       free(_m);
@@ -801,7 +811,8 @@ class Sodium {
     final _sk = sk.toPointer();
 
     try {
-      crypto_sign_detached(_sig, _siglenP, _m, m.length, _sk).requireSuccess();
+      crypto_sign_detached(_sig, _siglenP, _m, m.length, _sk)
+          .mustSucceed('crypto_sign_detached');
       return _sig.toList(_siglenP[0]);
     } finally {
       free(_sig);
@@ -836,7 +847,7 @@ class Sodium {
 
   static Pointer<Uint8> cryptoSignInit() {
     final _state = allocate<Uint8>(count: cryptoSignStatebytes);
-    crypto_sign_init(_state).requireSuccess();
+    crypto_sign_init(_state).mustSucceed('crypto_sign_init');
     return _state;
   }
 
@@ -846,7 +857,7 @@ class Sodium {
 
     final _m = m.toPointer();
     try {
-      crypto_sign_update(state, _m, m.length).requireSuccess();
+      crypto_sign_update(state, _m, m.length).mustSucceed('crypto_sign_update');
     } finally {
       free(_m);
     }
@@ -862,7 +873,8 @@ class Sodium {
     final _siglenP = allocate<Uint64>(count: 1);
     final _sk = sk.toPointer();
     try {
-      crypto_sign_final_create(state, _sig, _siglenP, _sk).requireSuccess();
+      crypto_sign_final_create(state, _sig, _siglenP, _sk)
+          .mustSucceed('crypto_sign_final_create');
       return _sig.toList(_siglenP[0]);
     } finally {
       // note: caller is responsible for freeing state
@@ -901,7 +913,8 @@ class Sodium {
     final _seed = allocate<Uint8>(count: cryptoSignSeedbytes);
     final _sk = sk.toPointer();
     try {
-      crypto_sign_ed25519_sk_to_seed(_seed, _sk).requireSuccess();
+      crypto_sign_ed25519_sk_to_seed(_seed, _sk)
+          .mustSucceed('crypto_sign_ed25519_sk_to_seed');
       return _seed.toList(cryptoSignSeedbytes);
     } finally {
       free(_seed);
@@ -917,7 +930,8 @@ class Sodium {
     final _pk = allocate<Uint8>(count: cryptoSignPublickeybytes);
     final _sk = sk.toPointer();
     try {
-      crypto_sign_ed25519_sk_to_pk(_pk, _sk).requireSuccess();
+      crypto_sign_ed25519_sk_to_pk(_pk, _sk)
+          .mustSucceed('crypto_sign_ed25519_sk_to_pk');
       return _pk.toList(cryptoSignPublickeybytes);
     } finally {
       free(_pk);
