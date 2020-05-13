@@ -20,7 +20,7 @@ import 'package:flutter_sodium/flutter_sodium.dart';
 
 // Password hashing (using Argon)
 final password = 'my password';
-final str = PasswordHash.hashStorage(password);
+final str = PasswordHash.hashStringStorage(password);
 
 print(str);
 
@@ -36,8 +36,10 @@ This project includes an extensive example app with runnable code samples. Be su
 
 ## API coverage
 The flutter_sodium plugin implements the following libsodium APIs:
+- crypto_box
 - crypto_generichash
 - crypto_pwhash
+- crypto_sign
 - randombytes
 - sodium_version
 

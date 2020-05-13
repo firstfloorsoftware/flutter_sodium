@@ -30,28 +30,33 @@ class Sample {
 }
 
 Future<List<Topic>> buildToc(BuildContext context) async {
+  final samples = Samples();
+
   final toc = [
     Section('Common'),
     Topic('APIs',
         description:
             'The flutter_sodium library contains two sets of APIs, a core API and a high-level API. The core API maps native libsodium functions 1:1 to Dart equivalents. The high-level API provides Dart-friendly, opinionated access to libsodium.',
         samples: <Sample>[
-          Sample('api1', func: api1),
-          Sample('api2', func: api2)
+          Sample('api1', func: samples.api1),
+          Sample('api2', func: samples.api2)
         ]),
     Topic('Random data',
         description:
             'Provides a set of functions to generate unpredictable data, suitable for creating secret keys.',
         url: 'https://libsodium.gitbook.io/doc/generating_random_data/',
         samples: <Sample>[
-          Sample('random1', func: random1),
-          Sample('random2', func: random2),
-          Sample('random3', func: random3)
+          Sample('random1', func: samples.random1),
+          Sample('random2', func: samples.random2),
+          Sample('random3', func: samples.random3)
         ]),
-    Topic('Version',
-        description: 'Provides libsodium version info.',
+    Topic('Version and primitives',
+        description: 'Provides libsodium version and algorithm info.',
         url: 'https://libsodium.gitbook.io/doc/',
-        samples: <Sample>[Sample('version1', func: version1)]),
+        samples: <Sample>[
+          Sample('version1', func: samples.version1),
+          Sample('version2', func: samples.version2)
+        ]),
     Section('Secret-key cryptography'),
     Topic('Authenticated encryption',
         description: 'Secret-key encryption and verification',
@@ -85,10 +90,10 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         url:
             'https://libsodium.gitbook.io/doc/public-key_cryptography/authenticated_encryption',
         samples: <Sample>[
-          Sample('box1', func: box1),
-          Sample('box2', func: box2),
-          Sample('box3', func: box3),
-          Sample('box4', func: box4)
+          Sample('box1', func: samples.box1),
+          Sample('box2', func: samples.box2),
+          Sample('box3', func: samples.box3),
+          Sample('box4', func: samples.box4)
         ]),
     Topic('Public-key signatures',
         description:
@@ -96,25 +101,26 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         url:
             'https://libsodium.gitbook.io/doc/public-key_cryptography/public-key_signatures',
         samples: <Sample>[
-          Sample('sign1', func: sign1),
-          Sample('sign2', func: sign2),
-          Sample('sign3', funcAsync: sign3)
+          Sample('sign1', func: samples.sign1),
+          Sample('sign2', func: samples.sign2),
+          Sample('sign3', funcAsync: samples.sign3),
+          Sample('sign4', func: samples.sign4)
         ]),
     Topic('Sealed boxes',
         description:
             'Anonymously send encrypted messages to a recipient given its public key.',
         url: 'https://libsodium.gitbook.io/doc/public-key_cryptography/sealed_boxes',
-        samples: <Sample>[Sample('box5', func: box5)]),
+        samples: <Sample>[Sample('box5', func: samples.box5)]),
     Section('Hashing'),
     Topic('Generic hashing',
         description:
             'Computes a fixed-length fingerprint for an arbitrary long message using the BLAKE2b algorithm.',
         url: 'https://libsodium.gitbook.io/doc/hashing/generic_hashing',
         samples: <Sample>[
-          Sample('generic1', func: generic1),
-          Sample('generic2', func: generic2),
-          Sample('generic3', funcAsync: generic3),
-          Sample('generic4', funcAsync: generic4)
+          Sample('generic1', func: samples.generic1),
+          Sample('generic2', func: samples.generic2),
+          Sample('generic3', funcAsync: samples.generic3),
+          Sample('generic4', funcAsync: samples.generic4)
         ]),
     Topic('Short-input hashing',
         description: 'Computes short hashes using the SipHash-2-4 algorithm.',
@@ -126,9 +132,9 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         url:
             'https://libsodium.gitbook.io/doc/password_hashing/the_argon2i_function',
         samples: <Sample>[
-          Sample('pwhash1', func: pwhash1),
-          Sample('pwhash2', func: pwhash2),
-          Sample('pwhash3', funcAsync: pwhash3),
+          Sample('pwhash1', func: samples.pwhash1),
+          Sample('pwhash2', func: samples.pwhash2),
+          Sample('pwhash3', funcAsync: samples.pwhash3),
         ]),
     Section('Key functions'),
     Topic('Key derivation',
