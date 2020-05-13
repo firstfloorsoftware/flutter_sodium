@@ -88,7 +88,7 @@ class Samples {
     print(hex.encode(tag));
 
     // verify tag
-    var valid = CryptoAuth.verifyString(tag, msg, key);
+    final valid = CryptoAuth.verifyString(tag, msg, key);
     assert(valid);
     // END auth1
   }
@@ -209,16 +209,16 @@ class Samples {
   void secret1(Function(Object) print) {
     // BEGIN secret1: Combined mode: The authentication tag and the encrypted message are stored together.
     // Generate random secret and nonce
-    var key = SecretBox.randomKey();
-    var nonce = SecretBox.randomNonce();
+    final key = SecretBox.randomKey();
+    final nonce = SecretBox.randomNonce();
 
     // encrypt
-    var msg = 'hello world';
-    var encrypted = SecretBox.encryptString(msg, nonce, key);
+    final msg = 'hello world';
+    final encrypted = SecretBox.encryptString(msg, nonce, key);
     print(hex.encode(encrypted));
 
     // decrypt
-    var decrypted = SecretBox.decryptString(encrypted, nonce, key);
+    final decrypted = SecretBox.decryptString(encrypted, nonce, key);
     assert(msg == decrypted);
     // END secret1
   }
@@ -226,17 +226,17 @@ class Samples {
   void secret2(Function(Object) print) {
     // BEGIN secret2: Detached mode: The authentication tag and the encrypted message are detached so they can be stored at different locations.
     // Generate random secret and nonce
-    var key = SecretBox.randomKey();
-    var nonce = SecretBox.randomNonce();
+    final key = SecretBox.randomKey();
+    final nonce = SecretBox.randomNonce();
 
     // encrypt
-    var msg = 'hello world';
-    var c = SecretBox.encryptStringDetached(msg, nonce, key);
+    final msg = 'hello world';
+    final c = SecretBox.encryptStringDetached(msg, nonce, key);
     print('cipher: ${hex.encode(c.cipher)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // decrypt
-    var decrypted =
+    final decrypted =
         SecretBox.decryptStringDetached(c.cipher, c.mac, nonce, key);
 
     assert(msg == decrypted);
