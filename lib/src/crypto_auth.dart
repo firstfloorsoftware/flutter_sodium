@@ -4,9 +4,6 @@ import 'sodium.dart';
 
 /// Computes an authentication tag for a message and a secret key, and provides a way to verify that a given tag is valid for a given message and a key.
 class CryptoAuth {
-  /// The primitive name.
-  static String get primitive => Sodium.cryptoAuthPrimitive;
-
   /// Generates a random key for use with authentication.
   static Uint8List randomKey() => Sodium.cryptoAuthKeygen();
 

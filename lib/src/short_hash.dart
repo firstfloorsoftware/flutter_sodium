@@ -4,9 +4,6 @@ import 'sodium.dart';
 
 /// Computes short hashes using the SipHash-2-4 algorithm.
 class ShortHash {
-  /// The primitive name.
-  static String get primitive => Sodium.cryptoShorthashPrimitive;
-
   /// Generates a random key for use with short hashing.
   static Uint8List randomKey() => Sodium.cryptoShorthashKeygen();
 

@@ -27,9 +27,6 @@ class PasswordHash {
     }
   }
 
-  /// The primitive name.
-  static String get primitive => Sodium.cryptoPwhashPrimitive;
-
   /// Generates a random salt for use in password hashing.
   static Uint8List randomSalt() =>
       Sodium.randombytesBuf(Sodium.cryptoPwhashSaltbytes);

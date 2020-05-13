@@ -5,9 +5,6 @@ import 'sodium.dart';
 
 /// Encrypts a message with a key and a nonce and computes an authentication tag.
 class SecretBox {
-  /// The primitive name.
-  static String get primitive => Sodium.cryptoSecretboxPrimitive;
-
   /// Generates a random key for use with secret key encryption.
   static Uint8List randomKey() => Sodium.cryptoSecretboxKeygen();
 

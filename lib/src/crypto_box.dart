@@ -6,9 +6,6 @@ import 'sodium.dart';
 
 /// Public-key authenticated encryption
 class CryptoBox {
-  /// The primitive name.
-  static String get primitive => Sodium.cryptoBoxPrimitive;
-
   /// Generates a random secret key and a corresponding public key.
   static KeyPair randomKeys() {
     final map = Sodium.cryptoBoxKeypair();

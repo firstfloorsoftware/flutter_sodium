@@ -6,9 +6,6 @@ import 'sodium.dart';
 
 /// Computes a signature for a message using a secret key, and provides verification using a public key.
 class CryptoSign {
-  /// The primitive name.
-  static String get primitive => Sodium.cryptoSignPrimitive;
-
   /// Generates a random key for use with public-key signatures.
   static KeyPair randomKeys() {
     final map = Sodium.cryptoSignKeypair();
