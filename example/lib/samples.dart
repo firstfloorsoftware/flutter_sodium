@@ -342,4 +342,14 @@ class Samples {
     watch.stop();
     // END pwhash3
   }
+
+  void shorthash1(Function(Object) print) {
+    // BEGIN shorthash1: Usage: Computes a fixed-size fingerprint for given string value and key.
+    final value = 'hello world';
+    final key = ShortHash.randomKey();
+    final hash = ShortHash.hashString(value, key);
+
+    print(hex.encode(hash));
+    // END shorthash1
+  }
 }

@@ -125,7 +125,7 @@ Future<List<Topic>> buildToc(BuildContext context) async {
     Topic('Short-input hashing',
         description: 'Computes short hashes using the SipHash-2-4 algorithm.',
         url: 'https://libsodium.gitbook.io/doc/hashing/short-input_hashing',
-        samples: <Sample>[]),
+        samples: <Sample>[Sample('shorthash1', func: samples.shorthash1)]),
     Topic('Password hashing',
         description:
             'Provides an Argon2 password hashing scheme implementation.',

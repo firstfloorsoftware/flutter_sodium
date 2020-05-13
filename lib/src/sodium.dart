@@ -5,6 +5,7 @@ import 'bindings/core.dart';
 import 'bindings/crypto_box.dart';
 import 'bindings/crypto_generichash.dart';
 import 'bindings/crypto_pwhash.dart';
+import 'bindings/crypto_shorthash.dart';
 import 'bindings/crypto_sign.dart';
 import 'bindings/random_bytes.dart';
 import 'bindings/version.dart';
@@ -656,6 +657,42 @@ class Sodium {
       return crypto_pwhash_str_needs_rehash(_str, opslimit, memlimit);
     } finally {
       free(_str);
+    }
+  }
+
+  //
+  // crypto_shorthash
+  //
+  static int get cryptoShorthashBytes => crypto_shorthash_bytes();
+  static int get cryptoShorthashKeybytes => crypto_shorthash_keybytes();
+  static String get cryptoShorthashPrimitive =>
+      Utf8.fromUtf8(crypto_shorthash_primitive());
+
+  static Uint8List cryptoShorthash(Uint8List i, Uint8List k) {
+    assert(i != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(k.length, cryptoShorthashKeybytes,
+        cryptoShorthashKeybytes, 'k', 'Invalid length');
+
+    final _out = allocate<Uint8>(count: cryptoShorthashBytes);
+    final _in = i.toPointer();
+    final _k = k.toPointer();
+    try {
+      crypto_shorthash(_out, _in, i.length, _k).requireSuccess();
+      return _out.toList(cryptoShorthashBytes);
+    } finally {
+      free(_out);
+      free(_k);
+    }
+  }
+
+  static Uint8List cryptoShorthashKeygen() {
+    final _k = allocate<Uint8>(count: cryptoShorthashKeybytes);
+    try {
+      crypto_shorthash_keygen(_k);
+      return _k.toList(cryptoShorthashKeybytes);
+    } finally {
+      free(_k);
     }
   }
 
