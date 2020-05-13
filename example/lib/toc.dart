@@ -145,7 +145,7 @@ Future<List<Topic>> buildToc(BuildContext context) async {
     Topic('Key derivation',
         description: 'Derive secret subkeys from a single master key.',
         url: 'https://libsodium.gitbook.io/doc/key_derivation/',
-        samples: <Sample>[]),
+        samples: <Sample>[Sample('derive1', func: samples.derive1)]),
     Topic('Key exchange',
         description: 'Securely compute a set of shared keys.',
         url: 'https://libsodium.gitbook.io/doc/key_exchange/',

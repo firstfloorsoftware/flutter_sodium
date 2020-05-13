@@ -39,6 +39,7 @@ The flutter_sodium plugin implements the following libsodium APIs:
 - crypto_auth
 - crypto_box
 - crypto_generichash
+- crypto_kdf
 - crypto_pwhash
 - crypto_secretbox
 - crypto_shorthash
@@ -46,7 +47,7 @@ The flutter_sodium plugin implements the following libsodium APIs:
 - randombytes
 - sodium_version
 
-API coverage is limited and currently extended. Progress is tracked in issue #35.
+API coverage is not 100% complete, track the progress in issue #35.
 
 ## Dart APIs
 The plugin includes a core API that maps native libsodium functions 1:1 to Dart equivalents. The core API is available in the class [`Sodium`](https://github.com/firstfloorsoftware/flutter_sodium/blob/master/lib/flutter_sodium.dart). Dart naming conventions are used for core API function names. A native libsodium function such as `crypto_pwhash_str`, is available in flutter as `Sodium.cryptoPwhashStr`.

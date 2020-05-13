@@ -5,6 +5,7 @@ import 'bindings/core.dart';
 import 'bindings/crypto_auth.dart';
 import 'bindings/crypto_box.dart';
 import 'bindings/crypto_generichash.dart';
+import 'bindings/crypto_kdf.dart';
 import 'bindings/crypto_pwhash.dart';
 import 'bindings/crypto_secretbox.dart';
 import 'bindings/crypto_shorthash.dart';
@@ -567,6 +568,54 @@ class Sodium {
     try {
       crypto_generichash_keygen(_k);
       return _k.toList(cryptoGenerichashKeybytes);
+    } finally {
+      free(_k);
+    }
+  }
+
+  //
+  // crypto_kdf
+  //
+  static int get cryptoKdfBytesMin => crypto_kdf_bytes_min();
+  static int get cryptoKdfBytesMax => crypto_kdf_bytes_max();
+  static int get cryptoKdfContextbytes => crypto_kdf_contextbytes();
+  static int get cryptoKdfKeybytes => crypto_kdf_keybytes();
+  static String get cryptoKdfPrimitive => Utf8.fromUtf8(crypto_kdf_primitive());
+
+  static Uint8List cryptoKdfDeriveFromKey(
+      int subkeyLen, int subkeyId, Uint8List ctx, Uint8List key) {
+    assert(subkeyLen != null);
+    assert(subkeyId != null);
+    assert(ctx != null);
+    assert(key != null);
+    RangeError.checkValueInInterval(
+        subkeyLen, cryptoKdfBytesMin, cryptoKdfBytesMax, 'subkeyLen');
+    RangeError.checkValueInInterval(subkeyId, 0, (2 ^ 64) - 1, 'subkeyId');
+    RangeError.checkValueInInterval(ctx.length, cryptoKdfContextbytes,
+        cryptoKdfContextbytes, 'ctx', 'Invalid length');
+    RangeError.checkValueInInterval(key.length, cryptoKdfKeybytes,
+        cryptoKdfKeybytes, 'key', 'Invalid length');
+
+    final _subkey = allocate<Uint8>(count: subkeyLen);
+    final _ctx = ctx.toPointer();
+    final _key = key.toPointer();
+
+    try {
+      crypto_kdf_derive_from_key(_subkey, subkeyLen, subkeyId, _ctx, _key)
+          .mustSucceed('crypto_kdf_derive_from_key');
+      return _subkey.toList(subkeyLen);
+    } finally {
+      free(_subkey);
+      free(_ctx);
+      free(_key);
+    }
+  }
+
+  static Uint8List cryptoKdfKeygen() {
+    final _k = allocate<Uint8>(count: cryptoKdfKeybytes);
+    try {
+      crypto_kdf_keygen(_k);
+      return _k.toList(cryptoKdfKeybytes);
     } finally {
       free(_k);
     }

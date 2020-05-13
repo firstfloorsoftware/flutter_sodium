@@ -69,6 +69,7 @@ class Samples {
     print('crypto_auth: ${Sodium.cryptoAuthPrimitive}');
     print('crypto_box: ${Sodium.cryptoBoxPrimitive}');
     print('crypto_generichash: ${Sodium.cryptoGenerichashPrimitive}');
+    print('crypto_kdf: ${Sodium.cryptoKdfPrimitive}');
     print('crypto_pwhash: ${Sodium.cryptoPwhashPrimitive}');
     print('crypto_secretbox: ${Sodium.cryptoSecretboxPrimitive}');
     print('crypto_shorthash: ${Sodium.cryptoShorthashPrimitive}');
@@ -403,5 +404,21 @@ class Samples {
 
     print(hex.encode(hash));
     // END shorthash1
+  }
+
+  void derive1(Function(Object) print) {
+    // BEGIN derive1: Usage: Compute a set of shared keys
+    // random master key
+    final k = KeyDerivation.randomKey();
+
+    // derives subkeys of various lengths
+    final k1 = KeyDerivation.derive(k, 1, subKeyLength: 32);
+    final k2 = KeyDerivation.derive(k, 2, subKeyLength: 32);
+    final k3 = KeyDerivation.derive(k, 3, subKeyLength: 64);
+
+    print('subkey1: ${hex.encode(k1)}');
+    print('subkey2: ${hex.encode(k2)}');
+    print('subkey3: ${hex.encode(k3)}');
+    // END derive1
   }
 }
