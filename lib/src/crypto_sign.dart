@@ -15,6 +15,11 @@ class CryptoSign {
     return KeyPair.fromMap(map);
   }
 
+  /// Generates a random seed for use in seedKeys.
+  static Uint8List randomSeed() {
+    return Sodium.randombytesBuf(Sodium.cryptoSignSeedbytes);
+  }
+
   /// Generates a secret key and a corresponding public key for given seed.
   static KeyPair seedKeys(Uint8List seed) {
     final map = Sodium.cryptoSignSeedKeypair(seed);

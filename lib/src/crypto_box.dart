@@ -15,6 +15,9 @@ class CryptoBox {
     return KeyPair.fromMap(map);
   }
 
+  /// Generates a random seed for use in seedKeys.
+  static Uint8List randomSeed() => Sodium.randombytesBuf(Sodium.cryptoBoxSeedbytes);
+
   /// Generates a random secret key and a corresponding public key using given seed.
   static KeyPair seedKeys(Uint8List seed) {
     final map = Sodium.cryptoBoxSeedKeypair(seed);
