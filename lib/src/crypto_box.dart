@@ -16,7 +16,8 @@ class CryptoBox {
   }
 
   /// Generates a random seed for use in seedKeys.
-  static Uint8List randomSeed() => Sodium.randombytesBuf(Sodium.cryptoBoxSeedbytes);
+  static Uint8List randomSeed() =>
+      Sodium.randombytesBuf(Sodium.cryptoBoxSeedbytes);
 
   /// Generates a random secret key and a corresponding public key using given seed.
   static KeyPair seedKeys(Uint8List seed) {
@@ -62,10 +63,9 @@ class CryptoBox {
   }
 
   /// Verifies and decrypts a detached cipher text and tag.
-  static Uint8List decryptDetached(DetachedCipher cipher, Uint8List nonce,
-          Uint8List publicKey, Uint8List secretKey) =>
-      Sodium.cryptoBoxOpenDetached(
-          cipher.cipher, cipher.mac, nonce, publicKey, secretKey);
+  static Uint8List decryptDetached(Uint8List cipher, Uint8List mac,
+          Uint8List nonce, Uint8List publicKey, Uint8List secretKey) =>
+      Sodium.cryptoBoxOpenDetached(cipher, mac, nonce, publicKey, secretKey);
 
   /// Encrypts a string message with a key and a nonce, returning the encrypted message and authentication tag
   static DetachedCipher encryptStringDetached(String value, Uint8List nonce,
@@ -73,9 +73,9 @@ class CryptoBox {
       encryptDetached(utf8.encode(value), nonce, publicKey, secretKey);
 
   /// Verifies and decrypts a detached cipher text and tag.
-  static String decryptStringDetached(DetachedCipher cipher, Uint8List nonce,
-      Uint8List publicKey, Uint8List secretKey) {
-    final m = decryptDetached(cipher, nonce, publicKey, secretKey);
+  static String decryptStringDetached(Uint8List cipher, Uint8List mac,
+      Uint8List nonce, Uint8List publicKey, Uint8List secretKey) {
+    final m = decryptDetached(cipher, mac, nonce, publicKey, secretKey);
     return utf8.decode(m);
   }
 
@@ -110,8 +110,8 @@ class CryptoBox {
 
   /// Verifies and decrypts a detached cipher text and tag.
   static Uint8List decryptDetachedAfternm(
-          DetachedCipher cipher, Uint8List nonce, Uint8List k) =>
-      Sodium.cryptoBoxOpenDetachedAfternm(cipher.cipher, cipher.mac, nonce, k);
+          Uint8List cipher, Uint8List mac, Uint8List nonce, Uint8List k) =>
+      Sodium.cryptoBoxOpenDetachedAfternm(cipher, mac, nonce, k);
 
   /// Encrypts a string message with a key and a nonce, returning the encrypted message and authentication tag
   static DetachedCipher encryptStringDetachedAfternm(
@@ -120,8 +120,8 @@ class CryptoBox {
 
   /// Verifies and decrypts a detached cipher text and tag.
   static String decryptStringDetachedAfternm(
-      DetachedCipher cipher, Uint8List nonce, Uint8List k) {
-    final m = decryptDetachedAfternm(cipher, nonce, k);
+      Uint8List cipher, Uint8List mac, Uint8List nonce, Uint8List k) {
+    final m = decryptDetachedAfternm(cipher, mac, nonce, k);
     return utf8.decode(m);
   }
 }

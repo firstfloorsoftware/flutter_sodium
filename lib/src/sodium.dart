@@ -5,6 +5,7 @@ import 'bindings/core.dart';
 import 'bindings/crypto_box.dart';
 import 'bindings/crypto_generichash.dart';
 import 'bindings/crypto_pwhash.dart';
+import 'bindings/crypto_secretbox.dart';
 import 'bindings/crypto_shorthash.dart';
 import 'bindings/crypto_sign.dart';
 import 'bindings/random_bytes.dart';
@@ -665,6 +666,144 @@ class Sodium {
       return crypto_pwhash_str_needs_rehash(_str, opslimit, memlimit);
     } finally {
       free(_str);
+    }
+  }
+
+  //
+  // crypto_secretbox
+  //
+  static int get cryptoSecretboxKeybytes => crypto_secretbox_keybytes();
+  static int get cryptoSecretboxNoncebytes => crypto_secretbox_noncebytes();
+  static int get cryptoSecretboxMacbytes => crypto_secretbox_macbytes();
+  static int get cryptoSecretboxMessagebytesMax =>
+      crypto_secretbox_messagebytes_max();
+  static String get cryptoSecretboxPrimitive =>
+      Utf8.fromUtf8(crypto_secretbox_primitive());
+
+  static Uint8List cryptoSecretboxEasy(Uint8List m, Uint8List n, Uint8List k) {
+    assert(m != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, cryptoSecretboxNoncebytes,
+        cryptoSecretboxNoncebytes, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
+        cryptoSecretboxKeybytes, 'k', 'Invalid length');
+
+    final _c = allocate<Uint8>(count: m.length + cryptoSecretboxMacbytes);
+    final _m = m.toPointer();
+    final _n = n.toPointer();
+    final _k = k.toPointer();
+
+    try {
+      crypto_secretbox_easy(_c, _m, m.length, _n, _k)
+          .mustSucceed('crypto_secretbox_easy');
+      return _c.toList(m.length + cryptoSecretboxMacbytes);
+    } finally {
+      free(_c);
+      free(_m);
+      free(_n);
+      free(_k);
+    }
+  }
+
+  static Uint8List cryptoSecretboxOpenEasy(
+      Uint8List c, Uint8List n, Uint8List k) {
+    assert(c != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, cryptoSecretboxNoncebytes,
+        cryptoSecretboxNoncebytes, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
+        cryptoSecretboxKeybytes, 'k', 'Invalid length');
+
+    final _m = allocate<Uint8>(count: c.length - cryptoSecretboxMacbytes);
+    final _c = c.toPointer();
+    final _n = n.toPointer();
+    final _k = k.toPointer();
+
+    try {
+      crypto_secretbox_open_easy(_m, _c, c.length, _n, _k)
+          .mustSucceed('crypto_secretbox_open_easy');
+      return _m.toList(c.length - cryptoSecretboxMacbytes);
+    } finally {
+      free(_m);
+      free(_c);
+      free(_n);
+      free(_k);
+    }
+  }
+
+  static Map<String, Uint8List> cryptoSecretboxDetached(
+      Uint8List m, Uint8List n, Uint8List k) {
+    assert(m != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, cryptoSecretboxNoncebytes,
+        cryptoSecretboxNoncebytes, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
+        cryptoSecretboxKeybytes, 'k', 'Invalid length');
+
+    final _c = allocate<Uint8>(count: m.length);
+    final _mac = allocate<Uint8>(count: cryptoSecretboxMacbytes);
+    final _m = m.toPointer();
+    final _n = n.toPointer();
+    final _k = k.toPointer();
+
+    try {
+      crypto_secretbox_detached(_c, _mac, _m, m.length, _n, _k)
+          .mustSucceed('crypto_secretbox_detached');
+      return {
+        Names.c: _c.toList(m.length),
+        Names.mac: _mac.toList(cryptoSecretboxMacbytes)
+      };
+    } finally {
+      free(_c);
+      free(_mac);
+      free(_m);
+      free(_n);
+      free(_k);
+    }
+  }
+
+  static Uint8List cryptoSecretboxOpenDetached(
+      Uint8List c, Uint8List mac, Uint8List n, Uint8List k) {
+    assert(c != null);
+    assert(mac != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(mac.length, cryptoSecretboxMacbytes,
+        cryptoSecretboxMacbytes, 'mac', 'Invalid length');
+    RangeError.checkValueInInterval(n.length, cryptoSecretboxNoncebytes,
+        cryptoSecretboxNoncebytes, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
+        cryptoSecretboxKeybytes, 'k', 'Invalid length');
+
+    final _m = allocate<Uint8>(count: c.length);
+    final _mac = mac.toPointer();
+    final _c = c.toPointer();
+    final _n = n.toPointer();
+    final _k = k.toPointer();
+
+    try {
+      crypto_secretbox_open_detached(_m, _c, _mac, c.length, _n, _k)
+          .mustSucceed('crypto_secretbox_open_detached');
+      return _m.toList(c.length);
+    } finally {
+      free(_m);
+      free(_mac);
+      free(_c);
+      free(_n);
+      free(_k);
+    }
+  }
+
+  static Uint8List cryptoSecretboxKeygen() {
+    final _k = allocate<Uint8>(count: cryptoSecretboxKeybytes);
+    try {
+      crypto_secretbox_keygen(_k);
+      return _k.toList(cryptoSecretboxKeybytes);
+    } finally {
+      free(_k);
     }
   }
 

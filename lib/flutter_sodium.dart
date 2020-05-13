@@ -5,6 +5,7 @@ export 'src/crypto_sign.dart';
 export 'src/generic_hash.dart';
 export 'src/password_hash.dart';
 export 'src/random_bytes.dart';
+export 'src/secret_box.dart';
 export 'src/sealed_box.dart';
 export 'src/short_hash.dart';
 export 'src/sodium.dart';

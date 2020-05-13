@@ -66,19 +66,13 @@ class Samples {
 
   void version2(Function(Object) print) {
     // BEGIN version2: Primitives: Retrieves the names of the algorithms used in the various libsodium APIs.
-    final b = Sodium.cryptoBoxPrimitive;
-    final g = Sodium.cryptoGenerichashPrimitive;
-    final p = Sodium.cryptoPwhashPrimitive;
-    final s = Sodium.cryptoShorthashPrimitive;
-    final i = Sodium.cryptoSignPrimitive;
-    final r = Sodium.randombytesImplementationName;
-    
-    print('crypto_box: $b');
-    print('crypto_generichash: $g');
-    print('crypto_pwhash: $p');
-    print('crypto_shorthash: $s');
-    print('crypto_sign: $i');
-    print('randombytes: $r');
+    print('crypto_box: ${Sodium.cryptoBoxPrimitive}');
+    print('crypto_generichash: ${Sodium.cryptoGenerichashPrimitive}');
+    print('crypto_pwhash: ${Sodium.cryptoPwhashPrimitive}');
+    print('crypto_secretbox: ${Sodium.cryptoSecretboxPrimitive}');
+    print('crypto_shorthash: ${Sodium.cryptoShorthashPrimitive}');
+    print('crypto_sign: ${Sodium.cryptoSignPrimitive}');
+    print('randombytes: ${Sodium.randombytesImplementationName}');
     // END version2
   }
 
@@ -114,15 +108,15 @@ class Samples {
 
     // Alice encrypts message for Bob
     final msg = 'hello world';
-    final encrypted = CryptoBox.encryptStringDetached(
+    final c = CryptoBox.encryptStringDetached(
         msg, nonce, bob.publicKey, alice.secretKey);
 
-    print('cipher: ${hex.encode(encrypted.cipher)}');
-    print('mac: ${hex.encode(encrypted.mac)}');
+    print('cipher: ${hex.encode(c.cipher)}');
+    print('mac: ${hex.encode(c.mac)}');
 
     // Bob decrypts message from Alice
     final decrypted = CryptoBox.decryptStringDetached(
-        encrypted, nonce, alice.publicKey, bob.secretKey);
+        c.cipher, c.mac, nonce, alice.publicKey, bob.secretKey);
 
     assert(msg == decrypted);
     print('decrypted: $decrypted');
@@ -162,14 +156,14 @@ class Samples {
     // Alice encrypts message for Bob (precalculated)
     final key = CryptoBox.sharedSecret(bob.publicKey, alice.secretKey);
     final msg = 'hello world';
-    final encrypted = CryptoBox.encryptStringDetachedAfternm(msg, nonce, key);
+    final c = CryptoBox.encryptStringDetachedAfternm(msg, nonce, key);
 
-    print('cipher: ${hex.encode(encrypted.cipher)}');
-    print('mac: ${hex.encode(encrypted.mac)}');
+    print('cipher: ${hex.encode(c.cipher)}');
+    print('mac: ${hex.encode(c.mac)}');
 
     // Bob decrypts message from Alice
     final decrypted = CryptoBox.decryptStringDetached(
-        encrypted, nonce, alice.publicKey, bob.secretKey);
+        c.cipher, c.mac, nonce, alice.publicKey, bob.secretKey);
 
     assert(msg == decrypted);
     print('decrypted: $decrypted');
@@ -193,6 +187,43 @@ class Samples {
     assert(msg == decrypted);
     print('decrypted: $decrypted');
     // END box5
+  }
+
+  void secret1(Function(Object) print) {
+    // BEGIN secret1: Combined mode: The authentication tag and the encrypted message are stored together.
+    // Generate random secret and nonce
+    var key = SecretBox.randomKey();
+    var nonce = SecretBox.randomNonce();
+
+    // encrypt
+    var msg = 'hello world';
+    var encrypted = SecretBox.encryptString(msg, nonce, key);
+    print(hex.encode(encrypted));
+
+    // decrypt
+    var decrypted = SecretBox.decryptString(encrypted, nonce, key);
+    assert(msg == decrypted);
+    // END secret1
+  }
+
+  void secret2(Function(Object) print) {
+    // BEGIN secret2: Detached mode: The authentication tag and the encrypted message are detached so they can be stored at different locations.
+    // Generate random secret and nonce
+    var key = SecretBox.randomKey();
+    var nonce = SecretBox.randomNonce();
+
+    // encrypt
+    var msg = 'hello world';
+    var c = SecretBox.encryptStringDetached(msg, nonce, key);
+    print('cipher: ${hex.encode(c.cipher)}');
+    print('mac: ${hex.encode(c.mac)}');
+
+    // decrypt
+    var decrypted =
+        SecretBox.decryptStringDetached(c.cipher, c.mac, nonce, key);
+
+    assert(msg == decrypted);
+    // END secret2
   }
 
   void sign1(Function(Object) print) {

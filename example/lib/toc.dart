@@ -62,7 +62,10 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         description: 'Secret-key encryption and verification',
         url:
             'https://libsodium.gitbook.io/doc/secret-key_cryptography/secretbox',
-        samples: <Sample>[]),
+        samples: <Sample>[
+          Sample('secret1', func: samples.secret1),
+          Sample('secret2', func: samples.secret2)
+        ]),
     Topic('Authentication',
         description:
             'Computes an authentication tag for a message and a secret key, and provides a way to verify that a given tag is valid for a given message and a key.',
