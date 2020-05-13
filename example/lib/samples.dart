@@ -66,15 +66,19 @@ class Samples {
 
   void version2(Function(Object) print) {
     // BEGIN version2: Primitives: Retrieves the names of the algorithms used in the various libsodium APIs.
-    final cryptoBox = Sodium.cryptoBoxPrimitive;
-    final generichash = Sodium.cryptoGenerichashPrimitive;
-    final pwhash = Sodium.cryptoPwhashPrimitive;
-    final sign = Sodium.cryptoSignPrimitive;
-
-    print('crypto_box: $cryptoBox');
-    print('crypto_generichash: $generichash');
-    print('crypto_pwhash: $pwhash');
-    print('crypto_sign: $sign');
+    final b = Sodium.cryptoBoxPrimitive;
+    final g = Sodium.cryptoGenerichashPrimitive;
+    final p = Sodium.cryptoPwhashPrimitive;
+    final s = Sodium.cryptoShorthashPrimitive;
+    final i = Sodium.cryptoSignPrimitive;
+    final r = Sodium.randombytesImplementationName;
+    
+    print('crypto_box: $b');
+    print('crypto_generichash: $g');
+    print('crypto_pwhash: $p');
+    print('crypto_shorthash: $s');
+    print('crypto_sign: $i');
+    print('randombytes: $r');
     // END version2
   }
 
