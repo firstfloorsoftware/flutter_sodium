@@ -154,7 +154,7 @@ Future<List<Topic>> buildToc(BuildContext context) async {
     Topic('Diffie-Hellman',
         description: 'Perform scalar multiplication of elliptic curve points',
         url: 'https://libsodium.gitbook.io/doc/advanced/scalar_multiplication',
-        samples: <Sample>[]),
+        samples: <Sample>[Sample('scalarmult1', funcAsync: samples.scalarmult1)]),
     Topic('One-time authentication',
         description: 'Secret-key single-message authentication using Poly1305',
         url: 'https://libsodium.gitbook.io/doc/advanced/poly1305',

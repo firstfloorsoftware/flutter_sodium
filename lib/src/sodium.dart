@@ -1,7 +1,6 @@
 import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
-import 'package:flutter_sodium/flutter_sodium.dart';
 import 'bindings/core.dart';
 import 'bindings/crypto_auth.dart';
 import 'bindings/crypto_box.dart';
@@ -9,6 +8,7 @@ import 'bindings/crypto_generichash.dart';
 import 'bindings/crypto_kdf.dart';
 import 'bindings/crypto_kx.dart';
 import 'bindings/crypto_pwhash.dart';
+import 'bindings/crypto_scalarmult.dart';
 import 'bindings/crypto_secretbox.dart';
 import 'bindings/crypto_shorthash.dart';
 import 'bindings/crypto_sign.dart';
@@ -896,6 +896,51 @@ class Sodium {
       return crypto_pwhash_str_needs_rehash(_str, opslimit, memlimit);
     } finally {
       free(_str);
+    }
+  }
+
+  //
+  // crypto_scalarmult
+  //
+  static int get cryptoScalarmultBytes => crypto_scalarmult_bytes();
+  static int get cryptoScalarmultScalarbytes => crypto_scalarmult_scalarbytes();
+  static String get cryptoScalarmultPrimitive =>
+      Utf8.fromUtf8(crypto_scalarmult_primitive());
+
+  static Uint8List cryptoScalarmultBase(Uint8List n) {
+    assert(n != null);
+    RangeError.checkValueInInterval(n.length, cryptoScalarmultScalarbytes,
+        cryptoScalarmultScalarbytes, 'n', 'Invalid length');
+
+    final _q = allocate<Uint8>(count: cryptoScalarmultBytes);
+    final _n = n.toPointer();
+    try {
+      crypto_scalarmult_base(_q, _n).mustSucceed('crypto_scalarmult_base');
+      return _q.toList(cryptoScalarmultBytes);
+    } finally {
+      free(_q);
+      free(_n);
+    }
+  }
+
+  static Uint8List cryptoScalarmult(Uint8List n, Uint8List p) {
+    assert(n != null);
+    assert(p != null);
+    RangeError.checkValueInInterval(n.length, cryptoScalarmultScalarbytes,
+        cryptoScalarmultScalarbytes, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(p.length, cryptoScalarmultBytes,
+        cryptoScalarmultBytes, 'p', 'Invalid length');
+
+    final _q = allocate<Uint8>(count: cryptoScalarmultBytes);
+    final _n = n.toPointer();
+    final _p = p.toPointer();
+    try {
+      crypto_scalarmult(_q, _n, _p).mustSucceed('crypto_scalarmult');
+      return _q.toList(cryptoScalarmultBytes);
+    } finally {
+      free(_q);
+      free(_n);
+      free(_p);
     }
   }
 

@@ -10,6 +10,7 @@ export 'src/key_exchange.dart';
 export 'src/key_pair.dart';
 export 'src/password_hash.dart';
 export 'src/random_bytes.dart';
+export 'src/scalar_mult.dart';
 export 'src/secret_box.dart';
 export 'src/sealed_box.dart';
 export 'src/session_keys.dart';

@@ -72,6 +72,7 @@ class Samples {
     print('crypto_kdf: ${Sodium.cryptoKdfPrimitive}');
     print('crypto_kx: ${Sodium.cryptoKxPrimitive}');
     print('crypto_pwhash: ${Sodium.cryptoPwhashPrimitive}');
+    print('crypto_scalarmult: ${Sodium.cryptoScalarmultPrimitive}');
     print('crypto_secretbox: ${Sodium.cryptoSecretboxPrimitive}');
     print('crypto_shorthash: ${Sodium.cryptoShorthashPrimitive}');
     print('crypto_sign: ${Sodium.cryptoSignPrimitive}');
@@ -408,7 +409,7 @@ class Samples {
   }
 
   void kdf1(Function(Object) print) {
-    // BEGIN kdf1: Usage: Derive subkeys
+    // BEGIN kdf1: Usage: Derive subkeys.
     // random master key
     final k = KeyDerivation.randomKey();
 
@@ -424,7 +425,7 @@ class Samples {
   }
 
   void kx1(Function(Object) print) {
-    // BEGIN kx1: Usage: Compute a set of shared keys
+    // BEGIN kx1: Usage: Compute a set of shared keys.
     // generate key pairs
     final c = KeyExchange.randomKeys();
     final s = KeyExchange.randomKeys();
@@ -441,5 +442,33 @@ class Samples {
     print('client rx: ${hex.encode(ck.rx)}');
     print('client tx: ${hex.encode(ck.tx)}');
     // END kx1
+  }
+
+  Future scalarmult1(Function(Object) print) async {
+    // BEGIN scalarmult1: Usage: Computes a shared secret.
+    // client keys
+    final csk = ScalarMult.randomSecretKey();
+    final cpk = ScalarMult.computePublicKey(csk);
+
+    // server keys
+    final ssk = ScalarMult.randomSecretKey();
+    final spk = ScalarMult.computePublicKey(ssk);
+
+    // client derives shared key
+    final cq = ScalarMult.computeSharedSecret(csk, spk);
+    final cs =
+        await GenericHash.hashStream(Stream.fromIterable([cq, cpk, spk]));
+
+    // server derives shared key
+    final sq = ScalarMult.computeSharedSecret(ssk, cpk);
+    final ss =
+        await GenericHash.hashStream(Stream.fromIterable([sq, cpk, spk]));
+
+    // assert shared keys do match
+    final eq = ListEquality().equals;
+    assert(eq(cs, ss));
+
+    print(hex.encode(cs));
+    // END scalarmult1
   }
 }
