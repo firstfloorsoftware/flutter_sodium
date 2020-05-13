@@ -856,6 +856,38 @@ class Sodium {
     }
   }
 
+  static Uint8List cryptoSignEd25519SkToSeed(Uint8List sk) {
+    assert(sk != null);
+    RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
+        cryptoSignSecretkeybytes, 'sk', 'Invalid length');
+
+    final _seed = allocate<Uint8>(count: cryptoSignSeedbytes);
+    final _sk = sk.toPointer();
+    try {
+      crypto_sign_ed25519_sk_to_seed(_seed, _sk).requireSuccess();
+      return _seed.toList(cryptoSignSeedbytes);
+    } finally {
+      free(_seed);
+      free(_sk);
+    }
+  }
+
+  static Uint8List cryptoSignEd25519SkToPk(Uint8List sk) {
+    assert(sk != null);
+    RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
+        cryptoSignSecretkeybytes, 'sk', 'Invalid length');
+
+    final _pk = allocate<Uint8>(count: cryptoSignPublickeybytes);
+    final _sk = sk.toPointer();
+    try {
+      crypto_sign_ed25519_sk_to_pk(_pk, _sk).requireSuccess();
+      return _pk.toList(cryptoSignPublickeybytes);
+    } finally {
+      free(_pk);
+      free(_sk);
+    }
+  }
+
   //
   // randombytes
   //

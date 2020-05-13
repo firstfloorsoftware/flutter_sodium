@@ -103,3 +103,15 @@ final int Function(Pointer<Uint8> state, Pointer<Uint8> sig, Pointer<Uint8> pk)
                 Int32 Function(Pointer<Uint8>, Pointer<Uint8>,
                     Pointer<Uint8>)>>("crypto_sign_final_verify")
         .asFunction();
+
+final int Function(Pointer<Uint8> seed, Pointer<Uint8> sk)
+    crypto_sign_ed25519_sk_to_seed = libsodium
+        .lookup<NativeFunction<Int32 Function(Pointer<Uint8>, Pointer<Uint8>)>>(
+            "crypto_sign_ed25519_sk_to_seed")
+        .asFunction();
+
+final int Function(Pointer<Uint8> pk, Pointer<Uint8> sk)
+    crypto_sign_ed25519_sk_to_pk = libsodium
+        .lookup<NativeFunction<Int32 Function(Pointer<Uint8>, Pointer<Uint8>)>>(
+            "crypto_sign_ed25519_sk_to_pk")
+        .asFunction();

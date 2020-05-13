@@ -112,4 +112,12 @@ class CryptoSign {
       free(state);
     }
   }
+
+  /// Extracts the seed from the secret key
+  static Uint8List extractSeed(Uint8List secretKey) =>
+      Sodium.cryptoSignEd25519SkToSeed(secretKey);
+
+  /// Extracts the public key from the secret key
+  static Uint8List extractPublicKey(Uint8List secretKey) =>
+      Sodium.cryptoSignEd25519SkToPk(secretKey);
 }
