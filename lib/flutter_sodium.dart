@@ -1,5 +1,7 @@
 library flutter_sodium;
 
+export 'src/cha_cha20_poly1305_ietf.dart';
+export 'src/cha_cha20_poly1305.dart';
 export 'src/crypto_auth.dart';
 export 'src/crypto_box.dart';
 export 'src/crypto_sign.dart';
@@ -17,3 +19,4 @@ export 'src/session_keys.dart';
 export 'src/short_hash.dart';
 export 'src/sodium.dart';
 export 'src/sodium_exception.dart';
+export 'src/x_cha_cha20_poly1305_ietf.dart';

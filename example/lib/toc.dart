@@ -78,17 +78,26 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         description: 'Authenticated Encryption with Additional Data.',
         url:
             'https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/original_chacha20-poly1305_construction',
-        samples: <Sample>[]),
+        samples: <Sample>[
+          Sample('chacha1', func: samples.chacha1),
+          Sample('chacha2', func: samples.chacha2)
+        ]),
     Topic('IETF ChaCha20-Poly1305',
         description: 'Authenticated Encryption with Additional Data',
         url:
             'https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/ietf_chacha20-poly1305_construction',
-        samples: <Sample>[]),
+        samples: <Sample>[
+          Sample('chachaietf1', func: samples.chachaietf1),
+          Sample('chachaietf2', func: samples.chachaietf2)
+        ]),
     Topic('XChaCha20-Poly1305',
         description: 'Authenticated Encryption with Additional Data.',
         url:
             'https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction',
-        samples: <Sample>[]),
+        samples: <Sample>[
+          Sample('xchachaietf1', func: samples.xchachaietf1),
+          Sample('xchachaietf2', func: samples.xchachaietf2)
+        ]),
     Section('Public-key cryptography'),
     Topic('Authenticated encryption',
         description: 'Public-key authenticated encryption',
@@ -154,7 +163,9 @@ Future<List<Topic>> buildToc(BuildContext context) async {
     Topic('Diffie-Hellman',
         description: 'Perform scalar multiplication of elliptic curve points',
         url: 'https://libsodium.gitbook.io/doc/advanced/scalar_multiplication',
-        samples: <Sample>[Sample('scalarmult1', funcAsync: samples.scalarmult1)]),
+        samples: <Sample>[
+          Sample('scalarmult1', funcAsync: samples.scalarmult1)
+        ]),
     Topic('One-time authentication',
         description: 'Secret-key single-message authentication using Poly1305',
         url: 'https://libsodium.gitbook.io/doc/advanced/poly1305',

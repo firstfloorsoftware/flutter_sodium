@@ -471,4 +471,145 @@ class Samples {
     print(hex.encode(cs));
     // END scalarmult1
   }
+
+  void chacha1(Function(Object) print) {
+    // BEGIN chacha1: Combined mode: The authentication tag is directly appended to the encrypted message.
+    // random nonce and key
+    final n = ChaCha20Poly1305.randomNonce();
+    final k = ChaCha20Poly1305.randomKey();
+    print('nonce: ${hex.encode(n)}');
+    print('key: ${hex.encode(k)}');
+
+    // encrypt
+    final m = 'hello world';
+    final d = '123456';
+    final c = ChaCha20Poly1305.encryptString(m, n, k, additionalData: d);
+
+    print('cipher: ${hex.encode(c)}');
+
+    // decrypt
+    final s = ChaCha20Poly1305.decryptString(c, n, k, additionalData: d);
+
+    assert(m == s);
+    // END chacha1
+  }
+
+  void chacha2(Function(Object) print) {
+    // BEGIN chacha2: Detached mode: The authentication tag and the encrypted message are detached so they can be stored at different locations.
+    // random nonce and key
+    final n = ChaCha20Poly1305.randomNonce();
+    final k = ChaCha20Poly1305.randomKey();
+    print('nonce: ${hex.encode(n)}');
+    print('key: ${hex.encode(k)}');
+
+    // encrypt
+    final m = 'hello world';
+    final d = '123456';
+    final c =
+        ChaCha20Poly1305.encryptStringDetached(m, n, k, additionalData: d);
+
+    print('cipher: ${hex.encode(c.cipher)}');
+    print('mac: ${hex.encode(c.mac)}');
+
+    // decrypt
+    final s = ChaCha20Poly1305.decryptStringDetached(c.cipher, c.mac, n, k,
+        additionalData: d);
+
+    assert(m == s);
+    // END chacha2
+  }
+
+  void chachaietf1(Function(Object) print) {
+    // BEGIN chachaietf1: Combined mode: The authentication tag is directly appended to the encrypted message.
+    // random nonce and key
+    final n = ChaCha20Poly1305Ietf.randomNonce();
+    final k = ChaCha20Poly1305Ietf.randomKey();
+    print('nonce: ${hex.encode(n)}');
+    print('key: ${hex.encode(k)}');
+
+    // encrypt
+    final m = 'hello world';
+    final d = '123456';
+    final c = ChaCha20Poly1305Ietf.encryptString(m, n, k, additionalData: d);
+
+    print('cipher: ${hex.encode(c)}');
+
+    // decrypt
+    final s = ChaCha20Poly1305Ietf.decryptString(c, n, k, additionalData: d);
+
+    assert(m == s);
+    // END chachaietf1
+  }
+
+  void chachaietf2(Function(Object) print) {
+    // BEGIN chachaietf2: Detached mode: The authentication tag and the encrypted message are detached so they can be stored at different locations.
+    // random nonce and key
+    final n = ChaCha20Poly1305Ietf.randomNonce();
+    final k = ChaCha20Poly1305Ietf.randomKey();
+    print('nonce: ${hex.encode(n)}');
+    print('key: ${hex.encode(k)}');
+
+    // encrypt
+    final m = 'hello world';
+    final d = '123456';
+    final c =
+        ChaCha20Poly1305Ietf.encryptStringDetached(m, n, k, additionalData: d);
+
+    print('cipher: ${hex.encode(c.cipher)}');
+    print('mac: ${hex.encode(c.mac)}');
+
+    // decrypt
+    final s = ChaCha20Poly1305Ietf.decryptStringDetached(c.cipher, c.mac, n, k,
+        additionalData: d);
+
+    assert(m == s);
+    // END chachaietf2
+  }
+
+  void xchachaietf1(Function(Object) print) {
+    // BEGIN xchachaietf1: Combined mode: The authentication tag is directly appended to the encrypted message.
+    // random nonce and key
+    final n = XChaCha20Poly1305Ietf.randomNonce();
+    final k = XChaCha20Poly1305Ietf.randomKey();
+    print('nonce: ${hex.encode(n)}');
+    print('key: ${hex.encode(k)}');
+
+    // encrypt
+    final m = 'hello world';
+    final d = '123456';
+    final c = XChaCha20Poly1305Ietf.encryptString(m, n, k, additionalData: d);
+
+    print('cipher: ${hex.encode(c)}');
+
+    // decrypt
+    final s = XChaCha20Poly1305Ietf.decryptString(c, n, k, additionalData: d);
+
+    assert(m == s);
+    // END xchachaietf1
+  }
+
+  void xchachaietf2(Function(Object) print) {
+    // BEGIN xchachaietf2: Detached mode: The authentication tag and the encrypted message are detached so they can be stored at different locations.
+    // random nonce and key
+    final n = XChaCha20Poly1305Ietf.randomNonce();
+    final k = XChaCha20Poly1305Ietf.randomKey();
+    print('nonce: ${hex.encode(n)}');
+    print('key: ${hex.encode(k)}');
+
+    // encrypt
+    final m = 'hello world';
+    final d = '123456';
+    final c =
+        XChaCha20Poly1305Ietf.encryptStringDetached(m, n, k, additionalData: d);
+
+    print('cipher: ${hex.encode(c.cipher)}');
+    print('mac: ${hex.encode(c.mac)}');
+
+    // decrypt
+    final s = XChaCha20Poly1305Ietf.decryptStringDetached(c.cipher, c.mac, n, k,
+        additionalData: d);
+
+    assert(m == s);
+    // END xchachaietf2
+  }
 }
