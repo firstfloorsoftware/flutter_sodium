@@ -11,6 +11,9 @@ class CryptoScalarmultBindings {
   final int Function() crypto_scalarmult_scalarbytes =
       libsodium.lookupSizet("crypto_scalarmult_scalarbytes");
 
+  final int Function() crypto_scalarmult_curve25519_bytes =
+      libsodium.lookupSizet("crypto_scalarmult_curve25519_bytes");
+
   final Pointer<Utf8> Function() crypto_scalarmult_primitive = libsodium
       .lookup<NativeFunction<Pointer<Utf8> Function()>>(
           "crypto_scalarmult_primitive")

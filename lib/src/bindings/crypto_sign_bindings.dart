@@ -23,6 +23,12 @@ class CryptoSignBindings {
   final int Function() crypto_sign_messagebytes_max =
       libsodium.lookupSizet("crypto_sign_messagebytes_max");
 
+  final int Function() crypto_sign_ed25519_publickeybytes =
+      libsodium.lookupSizet("crypto_sign_ed25519_publickeybytes");
+
+  final int Function() crypto_sign_ed25519_secretkeybytes =
+      libsodium.lookupSizet("crypto_sign_ed25519_secretkeybytes");
+
   final Pointer<Utf8> Function() crypto_sign_primitive = libsodium
       .lookup<NativeFunction<Pointer<Utf8> Function()>>("crypto_sign_primitive")
       .asFunction();
@@ -135,5 +141,21 @@ class CryptoSignBindings {
           sk) crypto_sign_ed25519_sk_to_pk = libsodium
       .lookup<NativeFunction<Int32 Function(Pointer<Uint8>, Pointer<Uint8>)>>(
           "crypto_sign_ed25519_sk_to_pk")
+      .asFunction();
+
+  final int Function(
+      Pointer<Uint8> curve25519_pk,
+      Pointer<Uint8>
+          ed25519_pk) crypto_sign_ed25519_pk_to_curve25519 = libsodium
+      .lookup<NativeFunction<Int32 Function(Pointer<Uint8>, Pointer<Uint8>)>>(
+          "crypto_sign_ed25519_pk_to_curve25519")
+      .asFunction();
+
+  final int Function(
+      Pointer<Uint8> curve25519_sk,
+      Pointer<Uint8>
+          ed25519_sk) crypto_sign_ed25519_sk_to_curve25519 = libsodium
+      .lookup<NativeFunction<Int32 Function(Pointer<Uint8>, Pointer<Uint8>)>>(
+          "crypto_sign_ed25519_sk_to_curve25519")
       .asFunction();
 }

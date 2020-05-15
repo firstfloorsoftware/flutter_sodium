@@ -1046,6 +1046,8 @@ class Sodium {
       _cryptoScalarmult.crypto_scalarmult_bytes();
   static int get cryptoScalarmultScalarbytes =>
       _cryptoScalarmult.crypto_scalarmult_scalarbytes();
+  static int get cryptoScalarmultCurve25519Bytes =>
+      _cryptoScalarmult.crypto_scalarmult_curve25519_bytes();
   static String get cryptoScalarmultPrimitive =>
       Utf8.fromUtf8(_cryptoScalarmult.crypto_scalarmult_primitive());
 
@@ -1287,6 +1289,10 @@ class Sodium {
       _cryptoSign.crypto_sign_secretkeybytes();
   static int get cryptoSignMessagebytesMax =>
       _cryptoSign.crypto_sign_messagebytes_max();
+  static int get cryptoSignEd25519Publickeybytes =>
+      _cryptoSign.crypto_sign_ed25519_publickeybytes();
+  static int get cryptoSignEd25519Secretkeybytes =>
+      _cryptoSign.crypto_sign_ed25519_secretkeybytes();
   static String get cryptoSignPrimitive =>
       Utf8.fromUtf8(_cryptoSign.crypto_sign_primitive());
 
@@ -1522,6 +1528,52 @@ class Sodium {
     } finally {
       free(_pk);
       free(_sk);
+    }
+  }
+
+  static Uint8List cryptoSignEd25519PkToCurve25519(Uint8List ed25519Pk) {
+    assert(ed25519Pk != null);
+    RangeError.checkValueInInterval(
+        ed25519Pk.length,
+        cryptoSignEd25519Publickeybytes,
+        cryptoSignEd25519Publickeybytes,
+        'ed25519Pk',
+        'Invalid length');
+
+    final _curve25519Pk =
+        allocate<Uint8>(count: cryptoScalarmultCurve25519Bytes);
+    final _ed25519Pk = ed25519Pk.toPointer();
+    try {
+      _cryptoSign
+          .crypto_sign_ed25519_pk_to_curve25519(_curve25519Pk, _ed25519Pk)
+          .mustSucceed('crypto_sign_ed25519_pk_to_curve25519');
+      return _curve25519Pk.toList(cryptoScalarmultCurve25519Bytes);
+    } finally {
+      free(_curve25519Pk);
+      free(_ed25519Pk);
+    }
+  }
+
+  static Uint8List cryptoSignEd25519SkToCurve25519(Uint8List ed25519Sk) {
+    assert(ed25519Sk != null);
+    RangeError.checkValueInInterval(
+        ed25519Sk.length,
+        cryptoSignEd25519Secretkeybytes,
+        cryptoSignEd25519Secretkeybytes,
+        'ed25519Sk',
+        'Invalid length');
+
+    final _curve25519Pk =
+        allocate<Uint8>(count: cryptoScalarmultCurve25519Bytes);
+    final _ed25519Sk = ed25519Sk.toPointer();
+    try {
+      _cryptoSign
+          .crypto_sign_ed25519_sk_to_curve25519(_curve25519Pk, _ed25519Sk)
+          .mustSucceed('crypto_sign_ed25519_sk_to_curve25519');
+      return _curve25519Pk.toList(cryptoScalarmultCurve25519Bytes);
+    } finally {
+      free(_curve25519Pk);
+      free(_ed25519Sk);
     }
   }
 

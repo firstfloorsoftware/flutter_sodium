@@ -170,11 +170,11 @@ Future<List<Topic>> buildToc(BuildContext context) async {
         description: 'Secret-key single-message authentication using Poly1305',
         url: 'https://libsodium.gitbook.io/doc/advanced/poly1305',
         samples: <Sample>[]),
-    Topic('Ed25519 To Curve25519 Secret Key',
+    Topic('Ed25519 To Curve25519',
         description:
-            'Converts an Ed25519 Secret Key to a Curve25519 Secret Key',
+            'Ed25519 keys can be converted to X25519 keys, so that the same key pair can be used both for authenticated encryption (crypto_box) and for signatures (crypto_sign).',
         url: 'https://download.libsodium.org/doc/advanced/ed25519-curve25519',
-        samples: <Sample>[])
+        samples: <Sample>[Sample('sign5', func: samples.sign5)])
   ];
 
   // load asset samples.dart for code snippets

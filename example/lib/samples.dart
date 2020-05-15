@@ -318,6 +318,19 @@ class Samples {
     // END sign4
   }
 
+  void sign5(Function(Object) print) {
+    // BEGIN sign5: Usage: Converts an Ed25519 key pair to a Curve25519 key pair.
+    var k = CryptoSign.randomKeys();
+    print('ed25519 pk: ${hex.encode(k.publicKey)}');
+    print('ed25519 sk: ${hex.encode(k.secretKey)}');
+
+    var pk = Sodium.cryptoSignEd25519PkToCurve25519(k.publicKey);
+    var sk = Sodium.cryptoSignEd25519SkToCurve25519(k.secretKey);
+    print('curve25519 pk: ${hex.encode(pk)}');
+    print('curve25519 sk: ${hex.encode(sk)}');
+    // END sign5
+  }
+
   void generic1(Function(Object) print) {
     // BEGIN generic1: Single-part without a key:
     final value = 'Arbitrary data to hash';
