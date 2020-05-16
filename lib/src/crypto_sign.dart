@@ -7,10 +7,7 @@ import 'sodium.dart';
 /// Computes a signature for a message using a secret key, and provides verification using a public key.
 class CryptoSign {
   /// Generates a random key for use with public-key signatures.
-  static KeyPair randomKeys() {
-    final map = Sodium.cryptoSignKeypair();
-    return KeyPair.fromMap(map);
-  }
+  static KeyPair randomKeys() => Sodium.cryptoSignKeypair();
 
   /// Generates a random seed for use in seedKeys.
   static Uint8List randomSeed() {
@@ -18,10 +15,7 @@ class CryptoSign {
   }
 
   /// Generates a secret key and a corresponding public key for given seed.
-  static KeyPair seedKeys(Uint8List seed) {
-    final map = Sodium.cryptoSignSeedKeypair(seed);
-    return KeyPair.fromMap(map);
-  }
+  static KeyPair seedKeys(Uint8List seed) => Sodium.cryptoSignSeedKeypair(seed);
 
   /// Prepends a signature to specified message for given secret key.
   static Uint8List sign(Uint8List message, Uint8List secretKey) =>

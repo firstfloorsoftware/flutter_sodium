@@ -1,11 +1,9 @@
 import 'dart:typed_data';
-import 'names.dart';
+import 'package:flutter/foundation.dart';
 
 /// Detached cipher and associated authentication tag.
 class DetachedCipher {
-  final Uint8List cipher, mac;
+  final Uint8List c, mac;
 
-  const DetachedCipher(this.cipher, this.mac);
-  DetachedCipher.fromMap(Map<String, Uint8List> map)
-      : this(map[Names.c], map[Names.mac]);
+  const DetachedCipher({@required this.c, @required this.mac});
 }

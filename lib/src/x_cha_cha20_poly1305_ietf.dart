@@ -6,7 +6,8 @@ import 'sodium.dart';
 /// The XChaCha20-Poly1305 construction
 class XChaCha20Poly1305Ietf {
   /// Generates a random key for use with the XChaCha20-Poly1305 construction.
-  static Uint8List randomKey() => Sodium.cryptoAeadXchacha20poly1305IetfKeygen();
+  static Uint8List randomKey() =>
+      Sodium.cryptoAeadXchacha20poly1305IetfKeygen();
 
   /// Generates a random nonce for use with the XChaCha20-Poly1305 construction.
   static Uint8List randomNonce() =>
@@ -43,12 +44,10 @@ class XChaCha20Poly1305Ietf {
 
   /// Encrypts a message with optional additional data, a key and a nonce. Returns a detached cipher text and mac.
   static DetachedCipher encryptDetached(
-      Uint8List value, Uint8List nonce, Uint8List key,
-      {Uint8List additionalData}) {
-    final map = Sodium.cryptoAeadXchacha20poly1305IetfEncryptDetached(
-        value, additionalData, null, nonce, key);
-    return DetachedCipher.fromMap(map);
-  }
+          Uint8List value, Uint8List nonce, Uint8List key,
+          {Uint8List additionalData}) =>
+      Sodium.cryptoAeadXchacha20poly1305IetfEncryptDetached(
+          value, additionalData, null, nonce, key);
 
   /// Verifies and decrypts a cipher text and mac produced by encrypt detached.
   static Uint8List decryptDetached(

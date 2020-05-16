@@ -7,20 +7,14 @@ import 'sodium.dart';
 /// Public-key authenticated encryption
 class CryptoBox {
   /// Generates a random secret key and a corresponding public key.
-  static KeyPair randomKeys() {
-    final map = Sodium.cryptoBoxKeypair();
-    return KeyPair.fromMap(map);
-  }
+  static KeyPair randomKeys() => Sodium.cryptoBoxKeypair();
 
   /// Generates a random seed for use in seedKeys.
   static Uint8List randomSeed() =>
       Sodium.randombytesBuf(Sodium.cryptoBoxSeedbytes);
 
   /// Generates a secret key and a corresponding public key using given seed.
-  static KeyPair seedKeys(Uint8List seed) {
-    final map = Sodium.cryptoBoxSeedKeypair(seed);
-    return KeyPair.fromMap(map);
-  }
+  static KeyPair seedKeys(Uint8List seed) => Sodium.cryptoBoxSeedKeypair(seed);
 
   /// Generates a random nonce for use with public key-authenticated encryption.
   static Uint8List randomNonce() =>
@@ -54,10 +48,8 @@ class CryptoBox {
 
   /// Encrypts a message with a key and a nonce, returning the encrypted message and authentication tag
   static DetachedCipher encryptDetached(Uint8List value, Uint8List nonce,
-      Uint8List publicKey, Uint8List secretKey) {
-    final map = Sodium.cryptoBoxDetached(value, nonce, publicKey, secretKey);
-    return DetachedCipher.fromMap(map);
-  }
+          Uint8List publicKey, Uint8List secretKey) =>
+      Sodium.cryptoBoxDetached(value, nonce, publicKey, secretKey);
 
   /// Verifies and decrypts a detached cipher text and tag.
   static Uint8List decryptDetached(Uint8List cipher, Uint8List mac,
@@ -100,10 +92,8 @@ class CryptoBox {
 
   /// Encrypts a message with a key and a nonce, returning the encrypted message and authentication tag
   static DetachedCipher encryptDetachedAfternm(
-      Uint8List value, Uint8List nonce, Uint8List k) {
-    final map = Sodium.cryptoBoxDetachedAfternm(value, nonce, k);
-    return DetachedCipher.fromMap(map);
-  }
+          Uint8List value, Uint8List nonce, Uint8List k) =>
+      Sodium.cryptoBoxDetachedAfternm(value, nonce, k);
 
   /// Verifies and decrypts a detached cipher text and tag.
   static Uint8List decryptDetachedAfternm(

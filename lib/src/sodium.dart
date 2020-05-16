@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
@@ -12,13 +13,18 @@ import 'bindings/crypto_onetimeauth_bindings.dart';
 import 'bindings/crypto_pwhash_bindings.dart';
 import 'bindings/crypto_scalarmult_bindings.dart';
 import 'bindings/crypto_secretbox_bindings.dart';
+import 'bindings/crypto_secretstream_bindings.dart';
 import 'bindings/crypto_shorthash_bindings.dart';
 import 'bindings/crypto_sign_bindings.dart';
 import 'bindings/randombytes_bindings.dart';
 import 'bindings/sodium_bindings.dart';
 import 'sodium_exception.dart';
 import 'extensions.dart';
-import 'names.dart';
+import 'detached_cipher.dart';
+import 'init_push_result.dart';
+import 'key_pair.dart';
+import 'pull_result.dart';
+import 'session_keys.dart';
 
 class Sodium {
   static final _chacha20poly1305 = _CryptoAead.chacha20poly1305();
@@ -34,6 +40,7 @@ class Sodium {
   static final _cryptoPwhash = CryptoPwhashBindings();
   static final _cryptoScalarmult = CryptoScalarmultBindings();
   static final _cryptoSecretbox = CryptoSecretboxBindings();
+  static final _cryptoSecretStream = CryptoSecretstreamBindings();
   static final _cryptoShorthash = CryptoShorthashBindings();
   static final _cryptoSign = CryptoSignBindings();
   static final _randombytes = RandombytesBindings();
@@ -191,7 +198,7 @@ class Sodium {
   static String get cryptoBoxPrimitive =>
       Utf8.fromUtf8(_cryptoBox.crypto_box_primitive());
 
-  static Map<String, Uint8List> cryptoBoxSeedKeypair(Uint8List seed) {
+  static KeyPair cryptoBoxSeedKeypair(Uint8List seed) {
     assert(seed != null);
     RangeError.checkValueInInterval(seed.length, cryptoBoxSeedbytes,
         cryptoBoxSeedbytes, 'seed', 'Invalid length');
@@ -203,10 +210,9 @@ class Sodium {
       _cryptoBox
           .crypto_box_seed_keypair(_pk, _sk, _seed)
           .mustSucceed('crypto_box_seed_keypair');
-      return {
-        Names.pk: _pk.toList(cryptoBoxPublickeybytes),
-        Names.sk: _sk.toList(cryptoBoxSecretkeybytes)
-      };
+      return KeyPair(
+          pk: _pk.toList(cryptoBoxPublickeybytes),
+          sk: _sk.toList(cryptoBoxSecretkeybytes));
     } finally {
       free(_pk);
       free(_sk);
@@ -214,16 +220,15 @@ class Sodium {
     }
   }
 
-  static Map<String, Uint8List> cryptoBoxKeypair() {
+  static KeyPair cryptoBoxKeypair() {
     final _pk = allocate<Uint8>(count: cryptoBoxPublickeybytes);
     final _sk = allocate<Uint8>(count: cryptoBoxSecretkeybytes);
 
     try {
       _cryptoBox.crypto_box_keypair(_pk, _sk).mustSucceed('crypto_box_keypair');
-      return {
-        Names.pk: _pk.toList(cryptoBoxPublickeybytes),
-        Names.sk: _sk.toList(cryptoBoxSecretkeybytes)
-      };
+      return KeyPair(
+          pk: _pk.toList(cryptoBoxPublickeybytes),
+          sk: _sk.toList(cryptoBoxSecretkeybytes));
     } finally {
       free(_pk);
       free(_sk);
@@ -298,7 +303,7 @@ class Sodium {
     }
   }
 
-  static Map<String, Uint8List> cryptoBoxDetached(
+  static DetachedCipher cryptoBoxDetached(
       Uint8List m, Uint8List n, Uint8List pk, Uint8List sk) {
     assert(m != null);
     assert(n != null);
@@ -323,10 +328,8 @@ class Sodium {
           .crypto_box_detached(_c, _mac, _m, m.length, _n, _pk, _sk)
           .mustSucceed('crypto_box_detached');
 
-      return {
-        Names.c: _c.toList(m.length),
-        Names.mac: _mac.toList(cryptoBoxMacbytes)
-      };
+      return DetachedCipher(
+          c: _c.toList(m.length), mac: _mac.toList(cryptoBoxMacbytes));
     } finally {
       free(_c);
       free(_mac);
@@ -457,7 +460,7 @@ class Sodium {
     }
   }
 
-  static Map<String, Uint8List> cryptoBoxDetachedAfternm(
+  static DetachedCipher cryptoBoxDetachedAfternm(
       Uint8List m, Uint8List n, Uint8List k) {
     assert(m != null);
     assert(n != null);
@@ -478,10 +481,8 @@ class Sodium {
           .crypto_box_detached_afternm(_c, _mac, _m, m.length, _n, _k)
           .mustSucceed('crypto_box_detached_afternm');
 
-      return {
-        Names.c: _c.toList(m.length),
-        Names.mac: _mac.toList(cryptoBoxMacbytes)
-      };
+      return DetachedCipher(
+          c: _c.toList(m.length), mac: _mac.toList(cryptoBoxMacbytes));
     } finally {
       free(_c);
       free(_mac);
@@ -773,7 +774,7 @@ class Sodium {
   static String get cryptoKxPrimitive =>
       Utf8.fromUtf8(_cryptoKx.crypto_kx_primitive());
 
-  static Map<String, Uint8List> cryptoKxSeedKeypair(Uint8List seed) {
+  static KeyPair cryptoKxSeedKeypair(Uint8List seed) {
     assert(seed != null);
     RangeError.checkValueInInterval(seed.length, cryptoKxSeedbytes,
         cryptoKxSeedbytes, 'seed', 'Invalid length');
@@ -785,10 +786,9 @@ class Sodium {
       _cryptoKx
           .crypto_kx_seed_keypair(_pk, _sk, _seed)
           .mustSucceed('crypto_kx_seed_keypair');
-      return {
-        Names.pk: _pk.toList(cryptoKxPublickeybytes),
-        Names.sk: _sk.toList(cryptoKxSecretkeybytes)
-      };
+      return KeyPair(
+          pk: _pk.toList(cryptoKxPublickeybytes),
+          sk: _sk.toList(cryptoKxSecretkeybytes));
     } finally {
       free(_pk);
       free(_sk);
@@ -796,23 +796,22 @@ class Sodium {
     }
   }
 
-  static Map<String, Uint8List> cryptoKxKeypair() {
+  static KeyPair cryptoKxKeypair() {
     final _pk = allocate<Uint8>(count: cryptoKxPublickeybytes);
     final _sk = allocate<Uint8>(count: cryptoKxSecretkeybytes);
 
     try {
       _cryptoKx.crypto_kx_keypair(_pk, _sk).mustSucceed('crypto_kx_keypair');
-      return {
-        Names.pk: _pk.toList(cryptoKxPublickeybytes),
-        Names.sk: _sk.toList(cryptoKxSecretkeybytes)
-      };
+      return KeyPair(
+          pk: _pk.toList(cryptoKxPublickeybytes),
+          sk: _sk.toList(cryptoKxSecretkeybytes));
     } finally {
       free(_pk);
       free(_sk);
     }
   }
 
-  static Map<String, Uint8List> cryptoKxClientSessionKeys(
+  static SessionKeys cryptoKxClientSessionKeys(
       Uint8List clientPk, Uint8List clientSk, Uint8List serverPk) {
     assert(clientPk != null);
     assert(clientSk != null);
@@ -836,10 +835,9 @@ class Sodium {
               _rx, _tx, _clientPk, _clientSk, _serverPk)
           .mustSucceed('crypto_kx_client_session_keys');
 
-      return {
-        Names.rx: _rx.toList(cryptoKxSessionkeybytes),
-        Names.tx: _tx.toList(cryptoKxSessionkeybytes)
-      };
+      return SessionKeys(
+          rx: _rx.toList(cryptoKxSessionkeybytes),
+          tx: _tx.toList(cryptoKxSessionkeybytes));
     } finally {
       free(_rx);
       free(_tx);
@@ -849,7 +847,7 @@ class Sodium {
     }
   }
 
-  static Map<String, Uint8List> cryptoKxServerSessionKeys(
+  static SessionKeys cryptoKxServerSessionKeys(
       Uint8List serverPk, Uint8List serverSk, Uint8List clientPk) {
     assert(serverPk != null);
     assert(serverSk != null);
@@ -873,10 +871,9 @@ class Sodium {
               _rx, _tx, _serverPk, _serverSk, _clientPk)
           .mustSucceed('crypto_kx_server_session_keys');
 
-      return {
-        Names.rx: _rx.toList(cryptoKxSessionkeybytes),
-        Names.tx: _tx.toList(cryptoKxSessionkeybytes)
-      };
+      return SessionKeys(
+          rx: _rx.toList(cryptoKxSessionkeybytes),
+          tx: _tx.toList(cryptoKxSessionkeybytes));
     } finally {
       free(_rx);
       free(_tx);
@@ -1078,8 +1075,7 @@ class Sodium {
     }
   }
 
-  static Uint8List cryptoPwhashStr(
-      Uint8List passwd, int opslimit, int memlimit) {
+  static String cryptoPwhashStr(Uint8List passwd, int opslimit, int memlimit) {
     assert(passwd != null);
     assert(opslimit != null);
     assert(memlimit != null);
@@ -1096,14 +1092,14 @@ class Sodium {
       _cryptoPwhash
           .crypto_pwhash_str(_out, _passwd, passwd.length, opslimit, memlimit)
           .mustSucceed('crypto_pwhash_str');
-      return _out.toList(cryptoPwhashStrbytes);
+      return ascii.decode(_out.toList(cryptoPwhashStrbytes));
     } finally {
       free(_out);
       free(_passwd);
     }
   }
 
-  static Uint8List cryptoPwhashStrAlg(
+  static String cryptoPwhashStrAlg(
       Uint8List passwd, int opslimit, int memlimit, int alg) {
     assert(passwd != null);
     assert(opslimit != null);
@@ -1125,21 +1121,21 @@ class Sodium {
           .crypto_pwhash_str_alg(
               _out, _passwd, passwd.length, opslimit, memlimit, alg)
           .mustSucceed('crypto_pwhash_str_alg');
-      return _out.toList(cryptoPwhashStrbytes);
+      return ascii.decode(_out.toList(cryptoPwhashStrbytes));
     } finally {
       free(_out);
       free(_passwd);
     }
   }
 
-  static int cryptoPwhashStrVerify(Uint8List str, Uint8List passwd) {
+  static int cryptoPwhashStrVerify(String str, Uint8List passwd) {
     assert(str != null);
     assert(passwd != null);
     RangeError.checkValueInInterval(str.length, cryptoPwhashStrbytes,
         cryptoPwhashStrbytes, 'str', 'Invalid length');
     RangeError.checkValueInInterval(passwd.length, cryptoPwhashPasswdMin,
         cryptoPwhashPasswdMax, 'passwd', 'Invalid length');
-    final _str = str.toPointer();
+    final _str = ascii.encode(str).toPointer();
     final _passwd = passwd.toPointer();
     try {
       return _cryptoPwhash.crypto_pwhash_str_verify(
@@ -1151,7 +1147,7 @@ class Sodium {
   }
 
   static int cryptoPwhashStrNeedsRehash(
-      Uint8List str, int opslimit, int memlimit) {
+      String str, int opslimit, int memlimit) {
     assert(str != null);
     assert(opslimit != null);
     assert(memlimit != null);
@@ -1162,7 +1158,7 @@ class Sodium {
     RangeError.checkValueInInterval(
         memlimit, cryptoPwhashMemlimitMin, cryptoPwhashMemlimitMax, 'memlimit');
 
-    final _str = str.toPointer();
+    final _str = ascii.encode(str).toPointer();
     try {
       return _cryptoPwhash.crypto_pwhash_str_needs_rehash(
           _str, opslimit, memlimit);
@@ -1293,7 +1289,7 @@ class Sodium {
     }
   }
 
-  static Map<String, Uint8List> cryptoSecretboxDetached(
+  static DetachedCipher cryptoSecretboxDetached(
       Uint8List m, Uint8List n, Uint8List k) {
     assert(m != null);
     assert(n != null);
@@ -1313,10 +1309,8 @@ class Sodium {
       _cryptoSecretbox
           .crypto_secretbox_detached(_c, _mac, _m, m.length, _n, _k)
           .mustSucceed('crypto_secretbox_detached');
-      return {
-        Names.c: _c.toList(m.length),
-        Names.mac: _mac.toList(cryptoSecretboxMacbytes)
-      };
+      return DetachedCipher(
+          c: _c.toList(m.length), mac: _mac.toList(cryptoSecretboxMacbytes));
     } finally {
       free(_c);
       free(_mac);
@@ -1367,6 +1361,172 @@ class Sodium {
     } finally {
       free(_k);
     }
+  }
+
+  //
+  // crypto_secretstream
+  //
+  static int get cryptoSecretstreamXchacha20poly1305Abytes =>
+      _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_abytes();
+  static int get cryptoSecretstreamXchacha20poly1305Headerbytes =>
+      _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_headerbytes();
+  static int get cryptoSecretstreamXchacha20poly1305Keybytes =>
+      _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_keybytes();
+  static int get cryptoSecretstreamXchacha20poly1305MessagebytesMax =>
+      _cryptoSecretStream
+          .crypto_secretstream_xchacha20poly1305_messagebytes_max();
+  static int get cryptoSecretstreamXchacha20poly1305TagMessage =>
+      _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_tag_message();
+  static int get cryptoSecretstreamXchacha20poly1305TagPush =>
+      _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_tag_push();
+  static int get cryptoSecretstreamXchacha20poly1305TagRekey =>
+      _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_tag_rekey();
+  static int get cryptoSecretstreamXchacha20poly1305TagFinal =>
+      _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_tag_final();
+  static int get cryptoSecretstreamXchacha20poly1305Statebytes =>
+      _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_statebytes();
+
+  static Uint8List cryptoSecretstreamXchacha20poly1305Keygen() {
+    final _k =
+        allocate<Uint8>(count: cryptoSecretstreamXchacha20poly1305Keybytes);
+    try {
+      _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_keygen(_k);
+      return _k.toList(cryptoSecretstreamXchacha20poly1305Keybytes);
+    } finally {
+      free(_k);
+    }
+  }
+
+  static InitPushResult cryptoSecretstreamXchacha20poly1305InitPush(
+      Uint8List key) {
+    assert(key != null);
+    RangeError.checkValueInInterval(
+        key.length,
+        cryptoSecretstreamXchacha20poly1305Keybytes,
+        cryptoSecretstreamXchacha20poly1305Keybytes,
+        'key',
+        'Invalid length');
+
+    final _state =
+        allocate<Uint8>(count: cryptoSecretstreamXchacha20poly1305Statebytes);
+    final _header =
+        allocate<Uint8>(count: cryptoSecretstreamXchacha20poly1305Headerbytes);
+    final _k = key.toPointer();
+
+    try {
+      _cryptoSecretStream
+          .crypto_secretstream_xchacha20poly1305_init_push(_state, _header, _k)
+          .mustSucceed('crypto_secretstream_xchacha20poly1305_init_push');
+
+      return InitPushResult(
+          state: _state,
+          header:
+              _header.toList(cryptoSecretstreamXchacha20poly1305Headerbytes));
+    } finally {
+      free(_header);
+      free(_k);
+    }
+  }
+
+  static Uint8List cryptoSecretstreamXchacha20poly1305Push(
+      Pointer<Uint8> state, Uint8List m, Uint8List ad, int tag) {
+    assert(state != null);
+    assert(m != null);
+    assert(tag != null);
+
+    final _c = allocate<Uint8>(
+        count: m.length + cryptoSecretstreamXchacha20poly1305Abytes);
+    final _clenP = allocate<Uint64>(count: 1);
+    final _m = m.toPointer();
+    final _ad = ad.toPointer();
+    final _adlen = ad?.length ?? 0;
+    try {
+      _cryptoSecretStream
+          .crypto_secretstream_xchacha20poly1305_push(
+              state, _c, _clenP, _m, m.length, _ad, _adlen, tag)
+          .mustSucceed('crypto_secretstream_xchacha20poly1305_push');
+
+      return _c.toList(_clenP[0]);
+    } finally {
+      free(_c);
+      free(_clenP);
+      free(_m);
+      free(_ad);
+    }
+  }
+
+  static Pointer<Uint8> cryptoSecretstreamXchacha20poly1305InitPull(
+      Uint8List header, Uint8List k) {
+    assert(header != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(
+        header.length,
+        cryptoSecretstreamXchacha20poly1305Headerbytes,
+        cryptoSecretstreamXchacha20poly1305Headerbytes,
+        'header',
+        'Invalid length');
+    RangeError.checkValueInInterval(
+        k.length,
+        cryptoSecretstreamXchacha20poly1305Keybytes,
+        cryptoSecretstreamXchacha20poly1305Keybytes,
+        'k',
+        'Invalid length');
+
+    final _state =
+        allocate<Uint8>(count: cryptoSecretstreamXchacha20poly1305Statebytes);
+    final _header = header.toPointer();
+    final _k = k.toPointer();
+
+    try {
+      _cryptoSecretStream
+          .crypto_secretstream_xchacha20poly1305_init_pull(_state, _header, _k)
+          .mustSucceed('crypto_secretstream_xchacha20poly1305_init_pull');
+      return _state;
+    } finally {
+      free(_header);
+      free(_k);
+    }
+  }
+
+  static PullResult cryptoSecretstreamXchacha20poly1305Pull(
+      Pointer<Uint8> state, Uint8List c, Uint8List ad) {
+    assert(state != null);
+    assert(c != null);
+
+    final _m = allocate<Uint8>(
+        count: c.length - cryptoSecretstreamXchacha20poly1305Abytes);
+    final _mlenP = allocate<Uint64>(count: 1);
+    final _tagP = allocate<Uint8>(count: 1);
+    final _c = c.toPointer();
+    final _ad = ad.toPointer();
+    final _adlen = ad?.length ?? 0;
+    try {
+      _cryptoSecretStream
+          .crypto_secretstream_xchacha20poly1305_pull(
+            state,
+            _m,
+            _mlenP,
+            _tagP,
+            _c,
+            c.length,
+            _ad,
+            _adlen,
+          )
+          .mustSucceed('crypto_secretstream_xchacha20poly1305_pull');
+
+      return PullResult(m: _m.toList(_mlenP[0]), tag: _tagP[0]);
+    } finally {
+      free(_m);
+      free(_mlenP);
+      free(_tagP);
+      free(_c);
+      free(_ad);
+    }
+  }
+
+  static void cryptoSecretstreamXchacha20poly1305Rekey(Pointer<Uint8> state) {
+    assert(state != null);
+    _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_rekey(state);
   }
 
   //
@@ -1428,7 +1588,7 @@ class Sodium {
   static String get cryptoSignPrimitive =>
       Utf8.fromUtf8(_cryptoSign.crypto_sign_primitive());
 
-  static Map<String, Uint8List> cryptoSignSeedKeypair(Uint8List seed) {
+  static KeyPair cryptoSignSeedKeypair(Uint8List seed) {
     assert(seed != null);
     RangeError.checkValueInInterval(seed.length, cryptoSignSeedbytes,
         cryptoSignSeedbytes, 'seed', 'Invalid length');
@@ -1440,10 +1600,9 @@ class Sodium {
       _cryptoSign
           .crypto_sign_seed_keypair(_pk, _sk, _seed)
           .mustSucceed('crypto_sign_seed_keypair');
-      return {
-        Names.pk: _pk.toList(cryptoSignPublickeybytes),
-        Names.sk: _sk.toList(cryptoSignSecretkeybytes)
-      };
+      return KeyPair(
+          pk: _pk.toList(cryptoSignPublickeybytes),
+          sk: _sk.toList(cryptoSignSecretkeybytes));
     } finally {
       free(_pk);
       free(_sk);
@@ -1451,7 +1610,7 @@ class Sodium {
     }
   }
 
-  static Map<String, Uint8List> cryptoSignKeypair() {
+  static KeyPair cryptoSignKeypair() {
     final _pk = allocate<Uint8>(count: cryptoSignPublickeybytes);
     final _sk = allocate<Uint8>(count: cryptoSignSecretkeybytes);
 
@@ -1459,10 +1618,9 @@ class Sodium {
       _cryptoSign
           .crypto_sign_keypair(_pk, _sk)
           .mustSucceed('crypto_sign_keypair');
-      return {
-        Names.pk: _pk.toList(cryptoSignPublickeybytes),
-        Names.sk: _sk.toList(cryptoSignSecretkeybytes)
-      };
+      return KeyPair(
+          pk: _pk.toList(cryptoSignPublickeybytes),
+          sk: _sk.toList(cryptoSignSecretkeybytes));
     } finally {
       free(_pk);
       free(_sk);
@@ -1863,7 +2021,7 @@ class _CryptoAead {
     }
   }
 
-  Map<String, Uint8List> encryptDetached(
+  DetachedCipher encryptDetached(
       Uint8List m, Uint8List ad, Uint8List nsec, Uint8List npub, Uint8List k) {
     assert(m != null);
     assert(nsec == null); // yes, nsec must be null
@@ -1887,10 +2045,8 @@ class _CryptoAead {
           .encrypt_detached(_c, _mac, _maclenP, _m, m.length, _ad, _adlen,
               Pointer.fromAddress(0), _npub, _k)
           .mustSucceed('${name}_encrypt_detached');
-      return {
-        Names.c: _c.toList(m.length),
-        Names.mac: _mac.toList(_maclenP[0])
-      };
+      return DetachedCipher(
+          c: _c.toList(m.length), mac: _mac.toList(_maclenP[0]));
     } finally {
       free(_c);
       free(_mac);

@@ -47,6 +47,7 @@ The flutter_sodium plugin implements the following libsodium APIs:
 - crypto_pwhash
 - crypto_scalarmult
 - crypto_secretbox
+- crypto_secretstream
 - crypto_shorthash
 - crypto_sign
 - randombytes

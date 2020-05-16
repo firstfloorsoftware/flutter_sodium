@@ -43,12 +43,10 @@ class ChaCha20Poly1305 {
 
   /// Encrypts a message with optional additional data, a key and a nonce. Returns a detached cipher text and mac.
   static DetachedCipher encryptDetached(
-      Uint8List value, Uint8List nonce, Uint8List key,
-      {Uint8List additionalData}) {
-    final map = Sodium.cryptoAeadChacha20poly1305EncryptDetached(
-        value, additionalData, null, nonce, key);
-    return DetachedCipher.fromMap(map);
-  }
+          Uint8List value, Uint8List nonce, Uint8List key,
+          {Uint8List additionalData}) =>
+      Sodium.cryptoAeadChacha20poly1305EncryptDetached(
+          value, additionalData, null, nonce, key);
 
   /// Verifies and decrypts a cipher text and mac produced by encrypt detached.
   static Uint8List decryptDetached(

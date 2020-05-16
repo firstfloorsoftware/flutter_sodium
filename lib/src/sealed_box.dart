@@ -6,10 +6,7 @@ import 'sodium.dart';
 /// Anonymously send messages to a recipient given its public key.
 class SealedBox {
   /// Generates a random secret key and a corresponding public key.
-  static KeyPair randomKeys() {
-    final map = Sodium.cryptoBoxKeypair();
-    return KeyPair.fromMap(map);
-  }
+  static KeyPair randomKeys() => Sodium.cryptoBoxKeypair();
 
   /// Encrypts a value for a recipient having specified public key.
   static Uint8List seal(Uint8List value, Uint8List publicKey) =>
@@ -17,7 +14,7 @@ class SealedBox {
 
   /// Decrypts the ciphertext using given keypair.
   static Uint8List open(Uint8List cipher, KeyPair keys) =>
-      Sodium.cryptoBoxSealOpen(cipher, keys.publicKey, keys.secretKey);
+      Sodium.cryptoBoxSealOpen(cipher, keys.pk, keys.sk);
 
   /// Encrypts a string message for a recipient having specified public key.
   static Uint8List sealString(String value, Uint8List publicKey) =>

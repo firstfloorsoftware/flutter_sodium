@@ -59,8 +59,7 @@ class PasswordHash {
     opslimit ??= Sodium.cryptoPwhashOpslimitInteractive;
     memlimit ??= Sodium.cryptoPwhashMemlimitInteractive;
 
-    final hash = Sodium.cryptoPwhashStr(password, opslimit, memlimit);
-    return ascii.decode(hash);
+    return Sodium.cryptoPwhashStr(password, opslimit, memlimit);
   }
 
   /// Computes a password verification string for given string password.
@@ -83,9 +82,8 @@ class PasswordHash {
 
   /// Verifies that the storage is a valid password verification string for given password.
   static bool verifyStorage(String storage, String password) {
-    final str = ascii.encode(storage);
     final passwd = utf8.encode(password);
 
-    return Sodium.cryptoPwhashStrVerify(str, passwd) == 0;
+    return Sodium.cryptoPwhashStrVerify(storage, passwd) == 0;
   }
 }

@@ -35,10 +35,8 @@ class SecretBox {
 
   /// Encrypts a message with a key and a nonce, returning the encrypted message and authentication tag
   static DetachedCipher encryptDetached(
-      Uint8List value, Uint8List nonce, Uint8List key) {
-    final map = Sodium.cryptoSecretboxDetached(value, nonce, key);
-    return DetachedCipher.fromMap(map);
-  }
+          Uint8List value, Uint8List nonce, Uint8List key) =>
+      Sodium.cryptoSecretboxDetached(value, nonce, key);
 
   /// Verifies and decrypts a detached cipher text and tag.
   static Uint8List decryptDetached(

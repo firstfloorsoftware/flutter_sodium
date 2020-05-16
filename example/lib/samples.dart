@@ -108,13 +108,13 @@ class Samples {
     // Alice encrypts message for Bob
     final msg = 'hello world';
     final encrypted =
-        CryptoBox.encryptString(msg, nonce, bob.publicKey, alice.secretKey);
+        CryptoBox.encryptString(msg, nonce, bob.pk, alice.sk);
 
     print(hex.encode(encrypted));
 
     // Bob decrypts message from Alice
     final decrypted = CryptoBox.decryptString(
-        encrypted, nonce, alice.publicKey, bob.secretKey);
+        encrypted, nonce, alice.pk, bob.sk);
 
     assert(msg == decrypted);
     print('decrypted: $decrypted');
@@ -131,14 +131,14 @@ class Samples {
     // Alice encrypts message for Bob
     final msg = 'hello world';
     final c = CryptoBox.encryptStringDetached(
-        msg, nonce, bob.publicKey, alice.secretKey);
+        msg, nonce, bob.pk, alice.sk);
 
-    print('cipher: ${hex.encode(c.cipher)}');
+    print('cipher: ${hex.encode(c.c)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // Bob decrypts message from Alice
     final decrypted = CryptoBox.decryptStringDetached(
-        c.cipher, c.mac, nonce, alice.publicKey, bob.secretKey);
+        c.c, c.mac, nonce, alice.pk, bob.sk);
 
     assert(msg == decrypted);
     print('decrypted: $decrypted');
@@ -155,12 +155,12 @@ class Samples {
     // Alice encrypts message for Bob
     final msg = 'hello world';
     final encrypted =
-        CryptoBox.encryptString(msg, nonce, bob.publicKey, alice.secretKey);
+        CryptoBox.encryptString(msg, nonce, bob.pk, alice.sk);
 
     print(hex.encode(encrypted));
 
     // Bob decrypts message from Alice (precalculated)
-    final key = CryptoBox.sharedSecret(alice.publicKey, bob.secretKey);
+    final key = CryptoBox.sharedSecret(alice.pk, bob.sk);
     final decrypted = CryptoBox.decryptStringAfternm(encrypted, nonce, key);
 
     assert(msg == decrypted);
@@ -176,16 +176,16 @@ class Samples {
     final nonce = CryptoBox.randomNonce();
 
     // Alice encrypts message for Bob (precalculated)
-    final key = CryptoBox.sharedSecret(bob.publicKey, alice.secretKey);
+    final key = CryptoBox.sharedSecret(bob.pk, alice.sk);
     final msg = 'hello world';
     final c = CryptoBox.encryptStringDetachedAfternm(msg, nonce, key);
 
-    print('cipher: ${hex.encode(c.cipher)}');
+    print('cipher: ${hex.encode(c.c)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // Bob decrypts message from Alice
     final decrypted = CryptoBox.decryptStringDetached(
-        c.cipher, c.mac, nonce, alice.publicKey, bob.secretKey);
+        c.c, c.mac, nonce, alice.pk, bob.sk);
 
     assert(msg == decrypted);
     print('decrypted: $decrypted');
@@ -199,7 +199,7 @@ class Samples {
 
     // Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
     final msg = 'hello world';
-    final cipher = SealedBox.sealString(msg, keys.publicKey);
+    final cipher = SealedBox.sealString(msg, keys.pk);
 
     print('cipher: ${hex.encode(cipher)}');
 
@@ -237,12 +237,12 @@ class Samples {
     // encrypt
     final msg = 'hello world';
     final c = SecretBox.encryptStringDetached(msg, nonce, key);
-    print('cipher: ${hex.encode(c.cipher)}');
+    print('cipher: ${hex.encode(c.c)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // decrypt
     final decrypted =
-        SecretBox.decryptStringDetached(c.cipher, c.mac, nonce, key);
+        SecretBox.decryptStringDetached(c.c, c.mac, nonce, key);
 
     assert(msg == decrypted);
     // END secret2
@@ -254,11 +254,11 @@ class Samples {
     final keys = CryptoSign.randomKeys();
 
     // sign with secret key
-    final signed = CryptoSign.signString(msg, keys.secretKey);
+    final signed = CryptoSign.signString(msg, keys.sk);
     print('signed: ${hex.encode(signed)}');
 
     // verify with public key
-    final unsigned = CryptoSign.openString(signed, keys.publicKey);
+    final unsigned = CryptoSign.openString(signed, keys.pk);
     print('unsigned: $unsigned');
 
     assert(msg == unsigned);
@@ -272,11 +272,11 @@ class Samples {
 
     // Author computes signature using secret key
     final msg = 'hello world';
-    final sig = CryptoSign.signStringDetached(msg, keys.secretKey);
+    final sig = CryptoSign.signStringDetached(msg, keys.sk);
     print(hex.encode(sig));
 
     // Recipient verifies message was issued by author using public key
-    final valid = CryptoSign.verifyString(sig, msg, keys.publicKey);
+    final valid = CryptoSign.verifyString(sig, msg, keys.pk);
 
     assert(valid);
     // END sign2
@@ -290,12 +290,12 @@ class Samples {
     // Author computes signature using secret key
     final parts = ['Arbitrary data to hash', 'is longer than expected'];
     final sig = await CryptoSign.signStrings(
-        Stream.fromIterable(parts), keys.secretKey);
+        Stream.fromIterable(parts), keys.sk);
     print(hex.encode(sig));
 
     // Recipient verifies message was issued by author using public key
     final valid = await CryptoSign.verifyStrings(
-        sig, Stream.fromIterable(parts), keys.publicKey);
+        sig, Stream.fromIterable(parts), keys.pk);
 
     assert(valid);
     // END sign3
@@ -307,27 +307,27 @@ class Samples {
     final keys = CryptoSign.seedKeys(seed);
 
     print('seed: ${hex.encode(seed)}');
-    print('pk: ${hex.encode(keys.publicKey)}');
-    print('sk: ${hex.encode(keys.secretKey)}');
+    print('pk: ${hex.encode(keys.pk)}');
+    print('sk: ${hex.encode(keys.sk)}');
 
-    final s = CryptoSign.extractSeed(keys.secretKey);
-    final pk = CryptoSign.extractPublicKey(keys.secretKey);
+    final s = CryptoSign.extractSeed(keys.sk);
+    final pk = CryptoSign.extractPublicKey(keys.sk);
 
     // assert equality
     final eq = ListEquality().equals;
     assert(eq(s, seed));
-    assert(eq(pk, keys.publicKey));
+    assert(eq(pk, keys.pk));
     // END sign4
   }
 
   void sign5(Function(Object) print) {
     // BEGIN sign5: Usage: Converts an Ed25519 key pair to a Curve25519 key pair.
     final k = CryptoSign.randomKeys();
-    print('ed25519 pk: ${hex.encode(k.publicKey)}');
-    print('ed25519 sk: ${hex.encode(k.secretKey)}');
+    print('ed25519 pk: ${hex.encode(k.pk)}');
+    print('ed25519 sk: ${hex.encode(k.sk)}');
 
-    final pk = Sodium.cryptoSignEd25519PkToCurve25519(k.publicKey);
-    final sk = Sodium.cryptoSignEd25519SkToCurve25519(k.secretKey);
+    final pk = Sodium.cryptoSignEd25519PkToCurve25519(k.pk);
+    final sk = Sodium.cryptoSignEd25519SkToCurve25519(k.sk);
     print('curve25519 pk: ${hex.encode(pk)}');
     print('curve25519 sk: ${hex.encode(sk)}');
     // END sign5
@@ -446,8 +446,8 @@ class Samples {
     final s = KeyExchange.randomKeys();
 
     // compute session keys
-    final ck = KeyExchange.computeClientSessionKeys(c, s.publicKey);
-    final sk = KeyExchange.computeServerSessionKeys(s, c.publicKey);
+    final ck = KeyExchange.computeClientSessionKeys(c, s.pk);
+    final sk = KeyExchange.computeServerSessionKeys(s, c.sk);
 
     // assert keys do match
     final eq = ListEquality().equals;
@@ -523,11 +523,11 @@ class Samples {
     final c =
         ChaCha20Poly1305.encryptStringDetached(m, n, k, additionalData: d);
 
-    print('cipher: ${hex.encode(c.cipher)}');
+    print('cipher: ${hex.encode(c.c)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // decrypt
-    final s = ChaCha20Poly1305.decryptStringDetached(c.cipher, c.mac, n, k,
+    final s = ChaCha20Poly1305.decryptStringDetached(c.c, c.mac, n, k,
         additionalData: d);
 
     assert(m == s);
@@ -570,11 +570,11 @@ class Samples {
     final c =
         ChaCha20Poly1305Ietf.encryptStringDetached(m, n, k, additionalData: d);
 
-    print('cipher: ${hex.encode(c.cipher)}');
+    print('cipher: ${hex.encode(c.c)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // decrypt
-    final s = ChaCha20Poly1305Ietf.decryptStringDetached(c.cipher, c.mac, n, k,
+    final s = ChaCha20Poly1305Ietf.decryptStringDetached(c.c, c.mac, n, k,
         additionalData: d);
 
     assert(m == s);
@@ -617,11 +617,11 @@ class Samples {
     final c =
         XChaCha20Poly1305Ietf.encryptStringDetached(m, n, k, additionalData: d);
 
-    print('cipher: ${hex.encode(c.cipher)}');
+    print('cipher: ${hex.encode(c.c)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // decrypt
-    final s = XChaCha20Poly1305Ietf.decryptStringDetached(c.cipher, c.mac, n, k,
+    final s = XChaCha20Poly1305Ietf.decryptStringDetached(c.c, c.mac, n, k,
         additionalData: d);
 
     assert(m == s);
