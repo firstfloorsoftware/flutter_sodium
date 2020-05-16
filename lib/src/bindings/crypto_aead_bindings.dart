@@ -59,11 +59,11 @@ class CryptoAeadBindings {
   final void Function(Pointer<Uint8> k) keygen;
 
   CryptoAeadBindings(this.name)
-      : keybytes = libsodium.lookupSizet("${name}_keybytes"),
-        nsecbytes = libsodium.lookupSizet("${name}_nsecbytes"),
-        npubbytes = libsodium.lookupSizet("${name}_npubbytes"),
-        abytes = libsodium.lookupSizet("${name}_abytes"),
-        messagebytes_max = libsodium.lookupSizet("${name}_messagebytes_max"),
+      : keybytes = libsodium.lookupSizet('${name}_keybytes'),
+        nsecbytes = libsodium.lookupSizet('${name}_nsecbytes'),
+        npubbytes = libsodium.lookupSizet('${name}_npubbytes'),
+        abytes = libsodium.lookupSizet('${name}_abytes'),
+        messagebytes_max = libsodium.lookupSizet('${name}_messagebytes_max'),
         encrypt = libsodium
             .lookup<
                 NativeFunction<
@@ -76,7 +76,7 @@ class CryptoAeadBindings {
                         Uint64,
                         Pointer<Uint8>,
                         Pointer<Uint8>,
-                        Pointer<Uint8>)>>("${name}_encrypt")
+                        Pointer<Uint8>)>>('${name}_encrypt')
             .asFunction(),
         decrypt = libsodium
             .lookup<
@@ -90,7 +90,7 @@ class CryptoAeadBindings {
                         Pointer<Uint8>,
                         Uint64,
                         Pointer<Uint8>,
-                        Pointer<Uint8>)>>("${name}_decrypt")
+                        Pointer<Uint8>)>>('${name}_decrypt')
             .asFunction(),
         encrypt_detached = libsodium
             .lookup<
@@ -105,7 +105,7 @@ class CryptoAeadBindings {
                         Uint64,
                         Pointer<Uint8>,
                         Pointer<Uint8>,
-                        Pointer<Uint8>)>>("${name}_encrypt_detached")
+                        Pointer<Uint8>)>>('${name}_encrypt_detached')
             .asFunction(),
         decrypt_detached = libsodium
             .lookup<
@@ -119,10 +119,10 @@ class CryptoAeadBindings {
                         Pointer<Uint8>,
                         Uint64,
                         Pointer<Uint8>,
-                        Pointer<Uint8>)>>("${name}_decrypt_detached")
+                        Pointer<Uint8>)>>('${name}_decrypt_detached')
             .asFunction(),
         keygen = libsodium
             .lookup<NativeFunction<Void Function(Pointer<Uint8>)>>(
-                "${name}_keygen")
+                '${name}_keygen')
             .asFunction();
 }

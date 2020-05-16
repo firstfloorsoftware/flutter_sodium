@@ -6,20 +6,20 @@ import 'libsodium.dart';
 
 class CryptoSecretboxBindings {
   final int Function() crypto_secretbox_keybytes =
-      libsodium.lookupSizet("crypto_secretbox_keybytes");
+      libsodium.lookupSizet('crypto_secretbox_keybytes');
 
   final int Function() crypto_secretbox_noncebytes =
-      libsodium.lookupSizet("crypto_secretbox_noncebytes");
+      libsodium.lookupSizet('crypto_secretbox_noncebytes');
 
   final int Function() crypto_secretbox_macbytes =
-      libsodium.lookupSizet("crypto_secretbox_macbytes");
+      libsodium.lookupSizet('crypto_secretbox_macbytes');
 
   final int Function() crypto_secretbox_messagebytes_max =
-      libsodium.lookupSizet("crypto_secretbox_messagebytes_max");
+      libsodium.lookupSizet('crypto_secretbox_messagebytes_max');
 
   final Pointer<Utf8> Function() crypto_secretbox_primitive = libsodium
       .lookup<NativeFunction<Pointer<Utf8> Function()>>(
-          "crypto_secretbox_primitive")
+          'crypto_secretbox_primitive')
       .asFunction();
 
   final int Function(Pointer<Uint8> c, Pointer<Uint8> m, int mlen,
@@ -28,7 +28,7 @@ class CryptoSecretboxBindings {
           .lookup<
               NativeFunction<
                   Int32 Function(Pointer<Uint8>, Pointer<Uint8>, Uint64,
-                      Pointer<Uint8>, Pointer<Uint8>)>>("crypto_secretbox_easy")
+                      Pointer<Uint8>, Pointer<Uint8>)>>('crypto_secretbox_easy')
           .asFunction();
 
   final int Function(Pointer<Uint8> m, Pointer<Uint8> c, int clen,
@@ -41,7 +41,7 @@ class CryptoSecretboxBindings {
                       Pointer<Uint8>,
                       Uint64,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_secretbox_open_easy")
+                      Pointer<Uint8>)>>('crypto_secretbox_open_easy')
           .asFunction();
 
   final int Function(Pointer<Uint8> c, Pointer<Uint8> mac, Pointer<Uint8> m,
@@ -55,7 +55,7 @@ class CryptoSecretboxBindings {
                       Pointer<Uint8>,
                       Uint64,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_secretbox_detached")
+                      Pointer<Uint8>)>>('crypto_secretbox_detached')
           .asFunction();
 
   final int Function(Pointer<Uint8> m, Pointer<Uint8> c, Pointer<Uint8> mac,
@@ -69,11 +69,11 @@ class CryptoSecretboxBindings {
                       Pointer<Uint8>,
                       Uint64,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_secretbox_open_detached")
+                      Pointer<Uint8>)>>('crypto_secretbox_open_detached')
           .asFunction();
 
   final void Function(Pointer<Uint8> k) crypto_secretbox_keygen = libsodium
       .lookup<NativeFunction<Void Function(Pointer<Uint8>)>>(
-          "crypto_secretbox_keygen")
+          'crypto_secretbox_keygen')
       .asFunction();
 }

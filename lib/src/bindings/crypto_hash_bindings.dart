@@ -12,10 +12,10 @@ class CryptoHashBindings {
   final int Function(Pointer<Uint8> out, Pointer<Uint8> i, int inlen) hash;
 
   CryptoHashBindings(this.name)
-      : bytes = libsodium.lookupSizet("${name}_bytes"),
+      : bytes = libsodium.lookupSizet('${name}_bytes'),
         primitive = libsodium
             .lookup<NativeFunction<Pointer<Utf8> Function()>>(
-                "${name}_primitive")
+                '${name}_primitive')
             .asFunction(),
         hash = libsodium
             .lookup<

@@ -2,7 +2,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 final libsodium = Platform.isAndroid
-      ? DynamicLibrary.open("libsodium.so")
+      ? DynamicLibrary.open('libsodium.so')
       : DynamicLibrary.process();
 
 // Extension helper for functions returning size_t

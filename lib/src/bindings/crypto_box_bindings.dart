@@ -6,31 +6,31 @@ import 'libsodium.dart';
 
 class CryptoBoxBindings {
   final int Function() crypto_box_seedbytes =
-      libsodium.lookupSizet("crypto_box_seedbytes");
+      libsodium.lookupSizet('crypto_box_seedbytes');
 
   final int Function() crypto_box_publickeybytes =
-      libsodium.lookupSizet("crypto_box_publickeybytes");
+      libsodium.lookupSizet('crypto_box_publickeybytes');
 
   final int Function() crypto_box_secretkeybytes =
-      libsodium.lookupSizet("crypto_box_secretkeybytes");
+      libsodium.lookupSizet('crypto_box_secretkeybytes');
 
   final int Function() crypto_box_noncebytes =
-      libsodium.lookupSizet("crypto_box_noncebytes");
+      libsodium.lookupSizet('crypto_box_noncebytes');
 
   final int Function() crypto_box_macbytes =
-      libsodium.lookupSizet("crypto_box_macbytes");
+      libsodium.lookupSizet('crypto_box_macbytes');
 
   final int Function() crypto_box_messagebytes_max =
-      libsodium.lookupSizet("crypto_box_messagebytes_max");
+      libsodium.lookupSizet('crypto_box_messagebytes_max');
 
   final int Function() crypto_box_sealbytes =
-      libsodium.lookupSizet("crypto_box_sealbytes");
+      libsodium.lookupSizet('crypto_box_sealbytes');
 
   final int Function() crypto_box_beforenmbytes =
-      libsodium.lookupSizet("crypto_box_beforenmbytes");
+      libsodium.lookupSizet('crypto_box_beforenmbytes');
 
   final Pointer<Utf8> Function() crypto_box_primitive = libsodium
-      .lookup<NativeFunction<Pointer<Utf8> Function()>>("crypto_box_primitive")
+      .lookup<NativeFunction<Pointer<Utf8> Function()>>('crypto_box_primitive')
       .asFunction();
 
   final int Function(Pointer<Uint8> pk, Pointer<Uint8> sk, Pointer<Uint8> seed)
@@ -38,7 +38,7 @@ class CryptoBoxBindings {
           .lookup<
               NativeFunction<
                   Int32 Function(Pointer<Uint8>, Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_box_seed_keypair")
+                      Pointer<Uint8>)>>('crypto_box_seed_keypair')
           .asFunction();
 
   final int Function(
@@ -46,7 +46,7 @@ class CryptoBoxBindings {
       Pointer<Uint8>
           sk) crypto_box_keypair = libsodium
       .lookup<NativeFunction<Int32 Function(Pointer<Uint8>, Pointer<Uint8>)>>(
-          "crypto_box_keypair")
+          'crypto_box_keypair')
       .asFunction();
 
   final int Function(Pointer<Uint8> c, Pointer<Uint8> m, int mlen,
@@ -60,7 +60,7 @@ class CryptoBoxBindings {
                       Uint64,
                       Pointer<Uint8>,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_box_easy")
+                      Pointer<Uint8>)>>('crypto_box_easy')
           .asFunction();
 
   final int Function(Pointer<Uint8> m, Pointer<Uint8> c, int clen,
@@ -74,7 +74,7 @@ class CryptoBoxBindings {
                       Uint64,
                       Pointer<Uint8>,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_box_open_easy")
+                      Pointer<Uint8>)>>('crypto_box_open_easy')
           .asFunction();
 
   final int Function(Pointer<Uint8> c, Pointer<Uint8> mac, Pointer<Uint8> m,
@@ -89,7 +89,7 @@ class CryptoBoxBindings {
                       Uint64,
                       Pointer<Uint8>,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_box_detached")
+                      Pointer<Uint8>)>>('crypto_box_detached')
           .asFunction();
 
   final int Function(Pointer<Uint8> m, Pointer<Uint8> c, Pointer<Uint8> mac,
@@ -104,7 +104,7 @@ class CryptoBoxBindings {
                       Uint64,
                       Pointer<Uint8>,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_box_open_detached")
+                      Pointer<Uint8>)>>('crypto_box_open_detached')
           .asFunction();
 
   final int Function(
@@ -113,7 +113,7 @@ class CryptoBoxBindings {
           .lookup<
               NativeFunction<
                   Int32 Function(Pointer<Uint8>, Pointer<Uint8>, Uint64,
-                      Pointer<Uint8>)>>("crypto_box_seal")
+                      Pointer<Uint8>)>>('crypto_box_seal')
           .asFunction();
 
   final int Function(Pointer<Uint8> m, Pointer<Uint8> c, int clen,
@@ -122,7 +122,7 @@ class CryptoBoxBindings {
           .lookup<
               NativeFunction<
                   Int32 Function(Pointer<Uint8>, Pointer<Uint8>, Uint64,
-                      Pointer<Uint8>, Pointer<Uint8>)>>("crypto_box_seal_open")
+                      Pointer<Uint8>, Pointer<Uint8>)>>('crypto_box_seal_open')
           .asFunction();
 
   final int Function(Pointer<Uint8> k, Pointer<Uint8> pk, Pointer<Uint8> sk)
@@ -130,7 +130,7 @@ class CryptoBoxBindings {
           .lookup<
               NativeFunction<
                   Int32 Function(Pointer<Uint8>, Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_box_beforenm")
+                      Pointer<Uint8>)>>('crypto_box_beforenm')
           .asFunction();
 
   final int Function(Pointer<Uint8> c, Pointer<Uint8> m, int mlen,
@@ -143,7 +143,7 @@ class CryptoBoxBindings {
                       Pointer<Uint8>,
                       Uint64,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_box_easy_afternm")
+                      Pointer<Uint8>)>>('crypto_box_easy_afternm')
           .asFunction();
 
   final int Function(Pointer<Uint8> m, Pointer<Uint8> c, int clen,
@@ -156,7 +156,7 @@ class CryptoBoxBindings {
                       Pointer<Uint8>,
                       Uint64,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_box_open_easy_afternm")
+                      Pointer<Uint8>)>>('crypto_box_open_easy_afternm')
           .asFunction();
 
   final int Function(Pointer<Uint8> c, Pointer<Uint8> mac, Pointer<Uint8> m,
@@ -170,7 +170,7 @@ class CryptoBoxBindings {
                       Pointer<Uint8>,
                       Uint64,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_box_detached_afternm")
+                      Pointer<Uint8>)>>('crypto_box_detached_afternm')
           .asFunction();
 
   final int Function(Pointer<Uint8> m, Pointer<Uint8> c, Pointer<Uint8> mac,
@@ -184,6 +184,6 @@ class CryptoBoxBindings {
                       Pointer<Uint8>,
                       Uint64,
                       Pointer<Uint8>,
-                      Pointer<Uint8>)>>("crypto_box_open_detached_afternm")
+                      Pointer<Uint8>)>>('crypto_box_open_detached_afternm')
           .asFunction();
 }
