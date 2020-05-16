@@ -40,6 +40,7 @@ The flutter_sodium plugin implements the following libsodium APIs:
 - crypto_auth
 - crypto_box
 - crypto_generichash
+- crypto_hash
 - crypto_kdf
 - crypto_kx
 - crypto_onetimeauth

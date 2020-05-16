@@ -69,6 +69,7 @@ class Samples {
     print('crypto_auth: ${Sodium.cryptoAuthPrimitive}');
     print('crypto_box: ${Sodium.cryptoBoxPrimitive}');
     print('crypto_generichash: ${Sodium.cryptoGenerichashPrimitive}');
+    print('crypto_hash: ${Sodium.cryptoHashPrimitive}');
     print('crypto_kdf: ${Sodium.cryptoKdfPrimitive}');
     print('crypto_kx: ${Sodium.cryptoKxPrimitive}');
     print('crypto_onetimeauth: ${Sodium.cryptoOnetimeauthPrimitive}');
@@ -642,10 +643,18 @@ class Samples {
 
   Future onetime2(Function(Object) print) async {
     // BEGIN onetime2: Multi-part:
-    final i = Stream.fromIterable(['Muti-part','data']);
+    final i = Stream.fromIterable(['Muti-part', 'data']);
     final k = OnetimeAuth.randomKey();
     final t = await OnetimeAuth.computeStrings(i, k);
     print(hex.encode(t));
     // END onetime2
+  }
+
+  void hash1(Function(Object) print) {
+    // BEGIN hash1: Usage: SHA-512 hashing
+    final m = 'hello world';
+    final h = Hash.hashString(m);
+    print(hex.encode(h));
+    // END hash1
   }
 }

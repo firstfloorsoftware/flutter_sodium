@@ -1,11 +1,11 @@
 import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
-import 'package:flutter_sodium/flutter_sodium.dart';
 import 'bindings/crypto_aead_bindings.dart';
 import 'bindings/crypto_auth_bindings.dart';
 import 'bindings/crypto_box_bindings.dart';
 import 'bindings/crypto_generichash_bindings.dart';
+import 'bindings/crypto_hash_bindings.dart';
 import 'bindings/crypto_kdf_bindings.dart';
 import 'bindings/crypto_kx_bindings.dart';
 import 'bindings/crypto_onetimeauth_bindings.dart';
@@ -16,6 +16,7 @@ import 'bindings/crypto_shorthash_bindings.dart';
 import 'bindings/crypto_sign_bindings.dart';
 import 'bindings/randombytes_bindings.dart';
 import 'bindings/sodium_bindings.dart';
+import 'sodium_exception.dart';
 import 'extensions.dart';
 import 'names.dart';
 
@@ -26,6 +27,7 @@ class Sodium {
   static final _cryptoAuth = CryptoAuthBindings();
   static final _cryptoBox = CryptoBoxBindings();
   static final _cryptoGenerichash = CryptoGenerichashBindings();
+  static final _cryptoHash = CryptoHashBindings('crypto_hash');
   static final _cryptoKdf = CryptoKdfBindings();
   static final _cryptoKx = CryptoKxBindings();
   static final _cryptoOnetimeauth = CryptoOnetimeauthBindings();
@@ -688,6 +690,25 @@ class Sodium {
       return _k.toList(cryptoGenerichashKeybytes);
     } finally {
       free(_k);
+    }
+  }
+
+  //
+  // crypto_hash
+  //
+  static int get cryptoHashBytes => _cryptoHash.bytes();
+  static String get cryptoHashPrimitive =>
+      Utf8.fromUtf8(_cryptoHash.primitive());
+  static Uint8List cryptoHash(Uint8List i) {
+    assert(i != null);
+    final _out = allocate<Uint8>(count: cryptoHashBytes);
+    final _i = i.toPointer();
+    try {
+      _cryptoHash.hash(_out, _i, i.length).mustSucceed('crypto_hash');
+      return _out.toList(cryptoHashBytes);
+    } finally {
+      free(_out);
+      free(_i);
     }
   }
 
