@@ -8,6 +8,7 @@ import 'bindings/crypto_box_bindings.dart';
 import 'bindings/crypto_generichash_bindings.dart';
 import 'bindings/crypto_kdf_bindings.dart';
 import 'bindings/crypto_kx_bindings.dart';
+import 'bindings/crypto_onetimeauth_bindings.dart';
 import 'bindings/crypto_pwhash_bindings.dart';
 import 'bindings/crypto_scalarmult_bindings.dart';
 import 'bindings/crypto_secretbox_bindings.dart';
@@ -27,6 +28,7 @@ class Sodium {
   static final _cryptoGenerichash = CryptoGenerichashBindings();
   static final _cryptoKdf = CryptoKdfBindings();
   static final _cryptoKx = CryptoKxBindings();
+  static final _cryptoOnetimeauth = CryptoOnetimeauthBindings();
   static final _cryptoPwhash = CryptoPwhashBindings();
   static final _cryptoScalarmult = CryptoScalarmultBindings();
   static final _cryptoSecretbox = CryptoSecretboxBindings();
@@ -860,6 +862,115 @@ class Sodium {
       free(_serverPk);
       free(_serverSk);
       free(_clientPk);
+    }
+  }
+
+  //
+  // crypto_onetimeauth
+  //
+  static int get cryptoOnetimeauthStatebytes =>
+      _cryptoOnetimeauth.crypto_onetimeauth_statebytes();
+  static int get cryptoOnetimeauthBytes =>
+      _cryptoOnetimeauth.crypto_onetimeauth_bytes();
+  static int get cryptoOnetimeauthKeybytes =>
+      _cryptoOnetimeauth.crypto_onetimeauth_keybytes();
+  static String get cryptoOnetimeauthPrimitive =>
+      Utf8.fromUtf8(_cryptoOnetimeauth.crypto_onetimeauth_primitive());
+
+  static Uint8List cryptoOnetimeauth(Uint8List i, Uint8List k) {
+    assert(i != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(k.length, cryptoOnetimeauthKeybytes,
+        cryptoOnetimeauthKeybytes, 'k', 'Invalid length');
+
+    final _out = allocate<Uint8>(count: cryptoOnetimeauthBytes);
+    final _in = i.toPointer();
+    final _k = k.toPointer();
+    try {
+      _cryptoOnetimeauth
+          .crypto_onetimeauth(_out, _in, i.length, _k)
+          .mustSucceed('crypto_onetimeauth');
+      return _out.toList(cryptoOnetimeauthBytes);
+    } finally {
+      free(_out);
+      free(_in);
+      free(_k);
+    }
+  }
+
+  static bool cryptoOnetimeauthVerify(Uint8List h, Uint8List i, Uint8List k) {
+    assert(h != null);
+    assert(i != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(h.length, cryptoOnetimeauthBytes,
+        cryptoOnetimeauthBytes, 'h', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, cryptoOnetimeauthKeybytes,
+        cryptoOnetimeauthKeybytes, 'k', 'Invalid length');
+
+    final _h = h.toPointer();
+    final _in = i.toPointer();
+    final _k = k.toPointer();
+    try {
+      return _cryptoOnetimeauth.crypto_onetimeauth_verify(
+              _h, _in, i.length, _k) ==
+          0;
+    } finally {
+      free(_h);
+      free(_in);
+      free(_k);
+    }
+  }
+
+  static Pointer<Uint8> cryptoOnetimeauthInit(Uint8List key) {
+    assert(key != null);
+    RangeError.checkValueInInterval(key.length, cryptoOnetimeauthKeybytes,
+        cryptoOnetimeauthKeybytes, 'key', 'Invalid length');
+
+    final _state = allocate<Uint8>(count: cryptoOnetimeauthStatebytes);
+    final _k = key.toPointer();
+    try {
+      _cryptoOnetimeauth
+          .crypto_onetimeauth_init(_state, _k)
+          .mustSucceed('crypto_onetimeauth_init');
+      return _state;
+    } finally {
+      free(_k);
+    }
+  }
+
+  static void cryptoOnetimeauthUpdate(Pointer<Uint8> state, Uint8List i) {
+    assert(state != null);
+    assert(i != null);
+
+    final _in = i.toPointer();
+    try {
+      _cryptoOnetimeauth
+          .crypto_onetimeauth_update(state, _in, i.length)
+          .mustSucceed('crypto_onetimeauth_update');
+    } finally {
+      free(_in);
+    }
+  }
+
+  static Uint8List cryptoOnetimeauthFinal(Pointer<Uint8> state) {
+    assert(state != null);
+
+    final _out = allocate<Uint8>(count: cryptoOnetimeauthBytes);
+    try {
+      _cryptoOnetimeauth.crypto_onetimeauth_final(state, _out);
+      return _out.toList(cryptoOnetimeauthBytes);
+    } finally {
+      free(_out);
+    }
+  }
+
+  static Uint8List cryptoOnetimeauthKeygen() {
+    final _k = allocate<Uint8>(count: cryptoOnetimeauthKeybytes);
+    try {
+      _cryptoOnetimeauth.crypto_onetimeauth_keygen(_k);
+      return _k.toList(cryptoOnetimeauthKeybytes);
+    } finally {
+      free(_k);
     }
   }
 

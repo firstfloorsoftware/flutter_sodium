@@ -169,7 +169,10 @@ Future<List<Topic>> buildToc(BuildContext context) async {
     Topic('One-time authentication',
         description: 'Secret-key single-message authentication using Poly1305',
         url: 'https://libsodium.gitbook.io/doc/advanced/poly1305',
-        samples: <Sample>[]),
+        samples: <Sample>[
+          Sample('onetime1', func: samples.onetime1),
+          Sample('onetime2', funcAsync: samples.onetime2)
+        ]),
     Topic('Ed25519 To Curve25519',
         description:
             'Ed25519 keys can be converted to X25519 keys, so that the same key pair can be used both for authenticated encryption (crypto_box) and for signatures (crypto_sign).',

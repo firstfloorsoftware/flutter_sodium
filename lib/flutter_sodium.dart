@@ -10,6 +10,7 @@ export 'src/generic_hash.dart';
 export 'src/key_derivation.dart';
 export 'src/key_exchange.dart';
 export 'src/key_pair.dart';
+export 'src/onetime_auth.dart';
 export 'src/password_hash.dart';
 export 'src/random_bytes.dart';
 export 'src/scalar_mult.dart';

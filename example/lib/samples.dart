@@ -71,6 +71,7 @@ class Samples {
     print('crypto_generichash: ${Sodium.cryptoGenerichashPrimitive}');
     print('crypto_kdf: ${Sodium.cryptoKdfPrimitive}');
     print('crypto_kx: ${Sodium.cryptoKxPrimitive}');
+    print('crypto_onetimeauth: ${Sodium.cryptoOnetimeauthPrimitive}');
     print('crypto_pwhash: ${Sodium.cryptoPwhashPrimitive}');
     print('crypto_scalarmult: ${Sodium.cryptoScalarmultPrimitive}');
     print('crypto_secretbox: ${Sodium.cryptoSecretboxPrimitive}');
@@ -320,12 +321,12 @@ class Samples {
 
   void sign5(Function(Object) print) {
     // BEGIN sign5: Usage: Converts an Ed25519 key pair to a Curve25519 key pair.
-    var k = CryptoSign.randomKeys();
+    final k = CryptoSign.randomKeys();
     print('ed25519 pk: ${hex.encode(k.publicKey)}');
     print('ed25519 sk: ${hex.encode(k.secretKey)}');
 
-    var pk = Sodium.cryptoSignEd25519PkToCurve25519(k.publicKey);
-    var sk = Sodium.cryptoSignEd25519SkToCurve25519(k.secretKey);
+    final pk = Sodium.cryptoSignEd25519PkToCurve25519(k.publicKey);
+    final sk = Sodium.cryptoSignEd25519SkToCurve25519(k.secretKey);
     print('curve25519 pk: ${hex.encode(pk)}');
     print('curve25519 sk: ${hex.encode(sk)}');
     // END sign5
@@ -624,5 +625,27 @@ class Samples {
 
     assert(m == s);
     // END xchachaietf2
+  }
+
+  void onetime1(Function(Object) print) {
+    // BEGIN onetime1: Single-part:
+    final m = 'hello world';
+    final k = OnetimeAuth.randomKey();
+    final t = OnetimeAuth.computeString(m, k);
+    print(hex.encode(t));
+
+    // verify tag
+    final valid = OnetimeAuth.verifyString(t, m, k);
+    assert(valid);
+    // END onetime1
+  }
+
+  Future onetime2(Function(Object) print) async {
+    // BEGIN onetime2: Multi-part:
+    final i = Stream.fromIterable(['Muti-part','data']);
+    final k = OnetimeAuth.randomKey();
+    final t = await OnetimeAuth.computeStrings(i, k);
+    print(hex.encode(t));
+    // END onetime2
   }
 }
