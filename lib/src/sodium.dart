@@ -2005,7 +2005,7 @@ class Sodium {
       _sodium.sodium_library_version_major();
   static int get sodiumLibraryVersionMinor =>
       _sodium.sodium_library_version_minor();
-  static int get sodiumLibraryMinimal => _sodium.sodium_library_minimal();
+  static bool get sodiumLibraryMinimal => _sodium.sodium_library_minimal() == 1;
 }
 
 class _CryptoAead {
