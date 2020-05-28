@@ -61,5 +61,13 @@ The plugin includes a core API that maps native libsodium functions 1:1 to Dart 
 
 Also included in flutter_sodium is a high-level, opinionated API providing access to libsodium in a Dart friendly manner. The various functions are available in separate Dart classes. Password hashing for example is available in the `PasswordHash` class. The high-level API depends on the core API to get things done.
 
+## Migrating to fluttter_sodium FFI
+The FFI implementation of flutter_sodium is backwards incompatible with the previous platform channel implementation. The list of changes:
+- the entire FFI API is now synchronous, while the previous implementation was entirely asynchronous
+- all hardcoded libsodium constants are now available as properties on the Sodium class.
+- in the platform channel versions the Android and iOS implementations were not in sync. Some functions were available only in iOS, others only in Android. With the FFI implementation, there is a single API covering both platforms.
+
+When performing long running crypto functions, such as password hashing, it is adviced to use Flutter's compute to execute the function on a background thread.
+
 ## Known issues
 - Previous incarnations of flutter_sodium used platform channels for native interop. The latest version has been rewritten to take full advantage of Dart FFI. FFI offers fast native interop and is the obvious choice for flutter_sodium. One minor problem, FFI is still in beta and its API may change. This may affect flutter_sodium.
