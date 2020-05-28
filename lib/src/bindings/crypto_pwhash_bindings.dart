@@ -52,6 +52,18 @@ class CryptoPwhashBindings {
   final int Function() crypto_pwhash_memlimit_max =
       libsodium.lookupSizet('crypto_pwhash_memlimit_max');
 
+  final int Function() crypto_pwhash_argon2i_opslimit_min =
+      libsodium.lookupSizet('crypto_pwhash_argon2i_opslimit_min');
+
+  final int Function() crypto_pwhash_argon2i_opslimit_max =
+      libsodium.lookupSizet('crypto_pwhash_argon2i_opslimit_max');
+
+  final int Function() crypto_pwhash_argon2i_memlimit_min =
+      libsodium.lookupSizet('crypto_pwhash_argon2i_memlimit_min');
+
+  final int Function() crypto_pwhash_argon2i_memlimit_max =
+      libsodium.lookupSizet('crypto_pwhash_argon2i_memlimit_max');
+
   final int Function() crypto_pwhash_opslimit_interactive =
       libsodium.lookupSizet('crypto_pwhash_opslimit_interactive');
 

@@ -1024,6 +1024,14 @@ class Sodium {
       _cryptoPwhash.crypto_pwhash_memlimit_min();
   static int get cryptoPwhashMemlimitMax =>
       _cryptoPwhash.crypto_pwhash_memlimit_max();
+  static int get cryptoPwhashArgon2iOpslimitMin =>
+      _cryptoPwhash.crypto_pwhash_argon2i_opslimit_min();
+  static int get cryptoPwhashArgon2iOpslimitMax =>
+      _cryptoPwhash.crypto_pwhash_argon2i_opslimit_max();
+  static int get cryptoPwhashArgon2iMemlimitMin =>
+      _cryptoPwhash.crypto_pwhash_argon2i_memlimit_min();
+  static int get cryptoPwhashArgon2iMemlimitMax =>
+      _cryptoPwhash.crypto_pwhash_argon2i_memlimit_max();
   static int get cryptoPwhashOpslimitInteractive =>
       _cryptoPwhash.crypto_pwhash_opslimit_interactive();
   static int get cryptoPwhashMemlimitInteractive =>
@@ -1036,6 +1044,7 @@ class Sodium {
       _cryptoPwhash.crypto_pwhash_opslimit_sensitive();
   static int get cryptoPwhashMemlimitSensitive =>
       _cryptoPwhash.crypto_pwhash_memlimit_sensitive();
+
   static String get cryptoPwhashPrimitive =>
       Utf8.fromUtf8(_cryptoPwhash.crypto_pwhash_primitive());
 
@@ -1053,10 +1062,17 @@ class Sodium {
         cryptoPwhashPasswdMax, 'passwd', 'Invalid length');
     RangeError.checkValueInInterval(salt.length, cryptoPwhashSaltbytes,
         cryptoPwhashSaltbytes, 'salt', 'Invalid length');
-    RangeError.checkValueInInterval(
-        opslimit, cryptoPwhashOpslimitMin, cryptoPwhashOpslimitMax, 'opslimit');
-    RangeError.checkValueInInterval(
-        memlimit, cryptoPwhashMemlimitMin, cryptoPwhashMemlimitMax, 'memlimit');
+    if (alg == cryptoPwhashAlgArgon2i13) {
+      RangeError.checkValueInInterval(opslimit, cryptoPwhashArgon2iOpslimitMin,
+          cryptoPwhashArgon2iOpslimitMax, 'opslimit');
+      RangeError.checkValueInInterval(memlimit, cryptoPwhashArgon2iMemlimitMin,
+          cryptoPwhashArgon2iMemlimitMax, 'memlimit');
+    } else {
+      RangeError.checkValueInInterval(opslimit, cryptoPwhashOpslimitMin,
+          cryptoPwhashOpslimitMax, 'opslimit');
+      RangeError.checkValueInInterval(memlimit, cryptoPwhashMemlimitMin,
+          cryptoPwhashMemlimitMax, 'memlimit');
+    }
     RangeError.checkValueInInterval(
         alg, cryptoPwhashAlgArgon2i13, cryptoPwhashAlgArgon2id13, 'alg');
 
