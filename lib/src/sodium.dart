@@ -16,6 +16,7 @@ import 'bindings/crypto_secretbox_bindings.dart';
 import 'bindings/crypto_secretstream_bindings.dart';
 import 'bindings/crypto_shorthash_bindings.dart';
 import 'bindings/crypto_sign_bindings.dart';
+import 'bindings/crypto_stream_bindings.dart';
 import 'bindings/randombytes_bindings.dart';
 import 'bindings/sodium_bindings.dart';
 import 'sodium_exception.dart';
@@ -43,6 +44,7 @@ class Sodium {
   static final _cryptoSecretStream = CryptoSecretstreamBindings();
   static final _cryptoShorthash = CryptoShorthashBindings();
   static final _cryptoSign = CryptoSignBindings();
+  static final _cryptoStream = CryptoStreamBindings();
   static final _randombytes = RandombytesBindings();
   static final _sodium = SodiumBindings();
 
@@ -1864,6 +1866,76 @@ class Sodium {
     } finally {
       free(_curve25519Pk);
       free(_ed25519Sk);
+    }
+  }
+
+  //
+  // crypto_stream
+  //
+  static int get cryptoStreamKeybytes => _cryptoStream.crypto_stream_keybytes();
+  static int get cryptoStreamNoncebytes =>
+      _cryptoStream.crypto_stream_noncebytes();
+  static int get cryptoStreamMessagebytesMax =>
+      _cryptoStream.crypto_stream_messagebytes_max();
+  static String get cryptoStreamPrimitive =>
+      Utf8.fromUtf8(_cryptoStream.crypto_stream_primitive());
+
+  static Uint8List cryptoStream(int clen, Uint8List n, Uint8List k) {
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, cryptoStreamNoncebytes,
+        cryptoStreamNoncebytes, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, cryptoStreamKeybytes,
+        cryptoStreamKeybytes, 'k', 'Invalid length');
+
+    final _c = allocate<Uint8>(count: clen);
+    final _n = n.toPointer();
+    final _k = k.toPointer();
+    try {
+      _cryptoStream
+          .crypto_stream(_c, clen, _n, _k)
+          .mustSucceed('crypto_stream');
+      return _c.toList(clen);
+    } finally {
+      free(_c);
+      free(_n);
+      free(_k);
+    }
+  }
+
+  static Uint8List cryptoStreamXor(Uint8List m, Uint8List n, Uint8List k) {
+    assert(m != null);
+    assert(n != null);
+    assert(k != null);
+    RangeError.checkValueInInterval(n.length, cryptoStreamNoncebytes,
+        cryptoStreamNoncebytes, 'n', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, cryptoStreamKeybytes,
+        cryptoStreamKeybytes, 'k', 'Invalid length');
+
+    final _c = allocate<Uint8>(count: m.length);
+    final _m = m.toPointer();
+    final _n = n.toPointer();
+    final _k = k.toPointer();
+    try {
+      _cryptoStream
+          .crypto_stream_xor(_c, _m, m.length, _n, _k)
+          .mustSucceed('crypto_stream_xor');
+      return _c.toList(m.length);
+    } finally {
+      free(_c);
+      free(_m);
+      free(_n);
+      free(_k);
+    }
+  }
+
+  static Uint8List cryptoStreamKeygen() {
+    final _k = allocate<Uint8>(count: cryptoStreamKeybytes);
+    try {
+      _cryptoStream.crypto_stream_keygen(_k);
+      return _k.toList(cryptoStreamKeybytes);
+    } finally {
+      free(_k);
     }
   }
 

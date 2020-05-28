@@ -5,6 +5,7 @@ export 'src/cha_cha20_poly1305.dart';
 export 'src/crypto_auth.dart';
 export 'src/crypto_box.dart';
 export 'src/crypto_sign.dart';
+export 'src/crypto_stream.dart';
 export 'src/detached_cipher.dart';
 export 'src/generic_hash.dart';
 export 'src/hash.dart';

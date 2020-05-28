@@ -177,6 +177,10 @@ Future<List<Topic>> buildToc(BuildContext context) async {
           Sample('onetime1', func: samples.onetime1),
           Sample('onetime2', funcAsync: samples.onetime2)
         ]),
+    Topic('Stream ciphers',
+        description: 'Generate pseudo-random data from a key',
+        url: 'https://libsodium.gitbook.io/doc/advanced/stream_ciphers',
+        samples: <Sample>[Sample('stream1', func: samples.stream1)]),
     Topic('Ed25519 To Curve25519',
         description:
             'Ed25519 keys can be converted to X25519 keys, so that the same key pair can be used both for authenticated encryption (crypto_box) and for signatures (crypto_sign).',

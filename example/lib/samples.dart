@@ -78,6 +78,7 @@ class Samples {
     print('crypto_secretbox: ${Sodium.cryptoSecretboxPrimitive}');
     print('crypto_shorthash: ${Sodium.cryptoShorthashPrimitive}');
     print('crypto_sign: ${Sodium.cryptoSignPrimitive}');
+    print('crypto_stream: ${Sodium.cryptoStreamPrimitive}');
     print('randombytes: ${Sodium.randombytesImplementationName}');
     // END version2
   }
@@ -107,14 +108,13 @@ class Samples {
 
     // Alice encrypts message for Bob
     final msg = 'hello world';
-    final encrypted =
-        CryptoBox.encryptString(msg, nonce, bob.pk, alice.sk);
+    final encrypted = CryptoBox.encryptString(msg, nonce, bob.pk, alice.sk);
 
     print(hex.encode(encrypted));
 
     // Bob decrypts message from Alice
-    final decrypted = CryptoBox.decryptString(
-        encrypted, nonce, alice.pk, bob.sk);
+    final decrypted =
+        CryptoBox.decryptString(encrypted, nonce, alice.pk, bob.sk);
 
     assert(msg == decrypted);
     print('decrypted: $decrypted');
@@ -130,15 +130,14 @@ class Samples {
 
     // Alice encrypts message for Bob
     final msg = 'hello world';
-    final c = CryptoBox.encryptStringDetached(
-        msg, nonce, bob.pk, alice.sk);
+    final c = CryptoBox.encryptStringDetached(msg, nonce, bob.pk, alice.sk);
 
     print('cipher: ${hex.encode(c.c)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // Bob decrypts message from Alice
-    final decrypted = CryptoBox.decryptStringDetached(
-        c.c, c.mac, nonce, alice.pk, bob.sk);
+    final decrypted =
+        CryptoBox.decryptStringDetached(c.c, c.mac, nonce, alice.pk, bob.sk);
 
     assert(msg == decrypted);
     print('decrypted: $decrypted');
@@ -154,8 +153,7 @@ class Samples {
 
     // Alice encrypts message for Bob
     final msg = 'hello world';
-    final encrypted =
-        CryptoBox.encryptString(msg, nonce, bob.pk, alice.sk);
+    final encrypted = CryptoBox.encryptString(msg, nonce, bob.pk, alice.sk);
 
     print(hex.encode(encrypted));
 
@@ -184,8 +182,8 @@ class Samples {
     print('mac: ${hex.encode(c.mac)}');
 
     // Bob decrypts message from Alice
-    final decrypted = CryptoBox.decryptStringDetached(
-        c.c, c.mac, nonce, alice.pk, bob.sk);
+    final decrypted =
+        CryptoBox.decryptStringDetached(c.c, c.mac, nonce, alice.pk, bob.sk);
 
     assert(msg == decrypted);
     print('decrypted: $decrypted');
@@ -241,8 +239,7 @@ class Samples {
     print('mac: ${hex.encode(c.mac)}');
 
     // decrypt
-    final decrypted =
-        SecretBox.decryptStringDetached(c.c, c.mac, nonce, key);
+    final decrypted = SecretBox.decryptStringDetached(c.c, c.mac, nonce, key);
 
     assert(msg == decrypted);
     // END secret2
@@ -289,8 +286,8 @@ class Samples {
 
     // Author computes signature using secret key
     final parts = ['Arbitrary data to hash', 'is longer than expected'];
-    final sig = await CryptoSign.signStrings(
-        Stream.fromIterable(parts), keys.sk);
+    final sig =
+        await CryptoSign.signStrings(Stream.fromIterable(parts), keys.sk);
     print(hex.encode(sig));
 
     // Recipient verifies message was issued by author using public key
@@ -656,5 +653,24 @@ class Samples {
     final h = Hash.hashString(m);
     print(hex.encode(h));
     // END hash1
+  }
+
+  void stream1(Function(Object) print) {
+    // BEGIN stream1: Usage: Generate pseudo random bytes using a nonce and a secret key
+    // random key and nonce
+    final n = CryptoStream.randomNonce();
+    final k = CryptoStream.randomKey();
+
+    // generate 16 bytes
+    var c = CryptoStream.stream(16, n, k);
+    print(hex.encode(c));
+
+    // use same nonce and key yields same bytes
+    var c2 = CryptoStream.stream(16, n, k);
+
+    // assert equality
+    final eq = ListEquality().equals;
+    assert(eq(c, c2));
+    // END stream1
   }
 }
