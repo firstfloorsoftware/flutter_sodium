@@ -67,7 +67,17 @@ The FFI implementation of flutter_sodium is backwards incompatible with the prev
 - all hardcoded libsodium constants are now available as properties on the Sodium class.
 - in the platform channel versions the Android and iOS implementations were not in sync. Some functions were available only in iOS, others only in Android. With the FFI implementation, there is a single API covering both platforms.
 
-When performing long running crypto functions, such as password hashing, it is adviced to use Flutter's compute to execute the function on a background thread.
+## Background threads
+Since the entire FFI API is synchronous, you'll need to do some extra work to execute long running crypto function on a background thread. Luckily this is very easy with Flutter's [compute function](https://api.flutter.dev/flutter/foundation/compute.html).
+
+The following code snippet demonstrates running a password hash on the background thread.
+
+```dart
+final pw = 'hello world';
+final str = await compute(PasswordHash.hashStringStorageModerate, pw);
+
+print(str);
+```
 
 ## Known issues
 - Previous incarnations of flutter_sodium used platform channels for native interop. The latest version has been rewritten to take full advantage of Dart FFI. FFI offers fast native interop and is the obvious choice for flutter_sodium. One minor problem, FFI is still in beta and its API may change. This may affect flutter_sodium.
