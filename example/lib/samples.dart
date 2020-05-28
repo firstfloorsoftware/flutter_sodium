@@ -9,58 +9,58 @@ class Samples {
 
   void api1(Function(Object) print) {
     // BEGIN api1: Core API: Compute a password hash using the Core API with predefined salt.
-    final pw = utf8.encode('hello world');
-    final hash = Sodium.cryptoPwhash(
+    final p = utf8.encode('hello world');
+    final h = Sodium.cryptoPwhash(
         Sodium.cryptoPwhashBytesMin,
-        pw,
+        p,
         salt,
         Sodium.cryptoPwhashOpslimitInteractive,
         Sodium.cryptoPwhashMemlimitInteractive,
         Sodium.cryptoPwhashAlgDefault);
 
     print('salt: ${hex.encode(salt)}');
-    print('hash: ${hex.encode(hash)}');
+    print('hash: ${hex.encode(h)}');
     // END api1
   }
 
   void api2(Function(Object) print) {
     // BEGIN api2: High-level API: Compute a password hash using the high-level API with predefined salt.
-    final pw = 'hello world';
-    final hash = PasswordHash.hashString(pw, salt);
+    final p = 'hello world';
+    final h = PasswordHash.hashString(p, salt);
 
     print('salt: ${hex.encode(salt)}');
-    print('hash: ${hex.encode(hash)}');
+    print('hash: ${hex.encode(h)}');
     // END api2
   }
 
   void random1(Function(Object) print) {
     // BEGIN random1: Random: Returns an unpredictable value between 0 and 0xffffffff (included).
-    final rnd = RandomBytes.random();
-    print(rnd.toRadixString(16));
+    final r = RandomBytes.random();
+    print(r.toRadixString(16));
     // END random1
   }
 
   void random2(Function(Object) print) {
     // BEGIN random2: Uniform: Generates an unpredictable value between 0 and upperBound (excluded)
-    final rnd = RandomBytes.uniform(16);
-    print(rnd);
+    final r = RandomBytes.uniform(16);
+    print(r);
     // END random2
   }
 
   void random3(Function(Object) print) {
     // BEGIN random3: Buffer: Generates an unpredictable sequence of bytes of specified size.
-    final buf = RandomBytes.buffer(16);
-    print(hex.encode(buf));
+    final b = RandomBytes.buffer(16);
+    print(hex.encode(b));
     // END random3
   }
 
   void version1(Function(Object) print) {
     // BEGIN version1: Usage: Retrieves the version details of the loaded libsodium library.
-    final version = Sodium.sodiumVersionString;
-    final major = Sodium.sodiumLibraryVersionMajor;
-    final minor = Sodium.sodiumLibraryVersionMinor;
+    final v = Sodium.sodiumVersionString;
+    final ma = Sodium.sodiumLibraryVersionMajor;
+    final mi = Sodium.sodiumLibraryVersionMinor;
 
-    print('$version ($major.$minor)');
+    print('$v ($ma.$mi)');
     // END version1
   }
 
@@ -86,234 +86,229 @@ class Samples {
   void auth1(Function(Object) print) {
     // BEGIN auth1: Usage: Secret key authentication
     // generate secret
-    final key = CryptoAuth.randomKey();
+    final k = CryptoAuth.randomKey();
 
     // compute tag
-    final msg = 'hello world';
-    final tag = CryptoAuth.computeString(msg, key);
-    print(hex.encode(tag));
+    final m = 'hello world';
+    final t = CryptoAuth.computeString(m, k);
+    print(hex.encode(t));
 
     // verify tag
-    final valid = CryptoAuth.verifyString(tag, msg, key);
-    assert(valid);
+    final v = CryptoAuth.verifyString(t, m, k);
+    assert(v);
     // END auth1
   }
 
   void box1(Function(Object) print) {
     // BEGIN box1: Combined mode: The authentication tag and the encrypted message are stored together.
     // Generate key pairs
-    final alice = CryptoBox.randomKeys();
-    final bob = CryptoBox.randomKeys();
-    final nonce = CryptoBox.randomNonce();
+    final a = CryptoBox.randomKeys();
+    final b = CryptoBox.randomKeys();
+    final n = CryptoBox.randomNonce();
 
     // Alice encrypts message for Bob
-    final msg = 'hello world';
-    final encrypted = CryptoBox.encryptString(msg, nonce, bob.pk, alice.sk);
+    final m = 'hello world';
+    final e = CryptoBox.encryptString(m, n, b.pk, a.sk);
 
-    print(hex.encode(encrypted));
+    print(hex.encode(e));
 
     // Bob decrypts message from Alice
-    final decrypted =
-        CryptoBox.decryptString(encrypted, nonce, alice.pk, bob.sk);
+    final d = CryptoBox.decryptString(e, n, a.pk, b.sk);
 
-    assert(msg == decrypted);
-    print('decrypted: $decrypted');
+    assert(m == d);
+    print('decrypted: $d');
     // END box1
   }
 
   void box2(Function(Object) print) {
     // BEGIN box2: Detached mode: The authentication tag and the encrypted message are detached so they can be stored at different locations.
     // Generate key pairs
-    final alice = CryptoBox.randomKeys();
-    final bob = CryptoBox.randomKeys();
-    final nonce = CryptoBox.randomNonce();
+    final a = CryptoBox.randomKeys();
+    final b = CryptoBox.randomKeys();
+    final n = CryptoBox.randomNonce();
 
     // Alice encrypts message for Bob
-    final msg = 'hello world';
-    final c = CryptoBox.encryptStringDetached(msg, nonce, bob.pk, alice.sk);
+    final m = 'hello world';
+    final c = CryptoBox.encryptStringDetached(m, n, b.pk, a.sk);
 
     print('cipher: ${hex.encode(c.c)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // Bob decrypts message from Alice
-    final decrypted =
-        CryptoBox.decryptStringDetached(c.c, c.mac, nonce, alice.pk, bob.sk);
+    final d = CryptoBox.decryptStringDetached(c.c, c.mac, n, a.pk, b.sk);
 
-    assert(msg == decrypted);
-    print('decrypted: $decrypted');
+    assert(m == d);
+    print('decrypted: $d');
     // END box2
   }
 
   void box3(Function(Object) print) {
     // BEGIN box3: Precalculated combined mode: The authentication tag and the encrypted message are stored together.
     // Generate key pairs
-    final alice = CryptoBox.randomKeys();
-    final bob = CryptoBox.randomKeys();
-    final nonce = CryptoBox.randomNonce();
+    final a = CryptoBox.randomKeys();
+    final b = CryptoBox.randomKeys();
+    final n = CryptoBox.randomNonce();
 
     // Alice encrypts message for Bob
-    final msg = 'hello world';
-    final encrypted = CryptoBox.encryptString(msg, nonce, bob.pk, alice.sk);
+    final m = 'hello world';
+    final e = CryptoBox.encryptString(m, n, b.pk, a.sk);
 
-    print(hex.encode(encrypted));
+    print(hex.encode(e));
 
     // Bob decrypts message from Alice (precalculated)
-    final key = CryptoBox.sharedSecret(alice.pk, bob.sk);
-    final decrypted = CryptoBox.decryptStringAfternm(encrypted, nonce, key);
+    final k = CryptoBox.sharedSecret(a.pk, b.sk);
+    final d = CryptoBox.decryptStringAfternm(e, n, k);
 
-    assert(msg == decrypted);
-    print('decrypted: $decrypted');
+    assert(m == d);
+    print('decrypted: $d');
     // END box3
   }
 
   void box4(Function(Object) print) {
     // BEGIN box4: Precalculated detached mode: The authentication tag and the encrypted message are detached so they can be stored at different locations.
     // Generate key pairs
-    final alice = CryptoBox.randomKeys();
-    final bob = CryptoBox.randomKeys();
-    final nonce = CryptoBox.randomNonce();
+    final a = CryptoBox.randomKeys();
+    final b = CryptoBox.randomKeys();
+    final n = CryptoBox.randomNonce();
 
     // Alice encrypts message for Bob (precalculated)
-    final key = CryptoBox.sharedSecret(bob.pk, alice.sk);
-    final msg = 'hello world';
-    final c = CryptoBox.encryptStringDetachedAfternm(msg, nonce, key);
+    final k = CryptoBox.sharedSecret(b.pk, a.sk);
+    final m = 'hello world';
+    final c = CryptoBox.encryptStringDetachedAfternm(m, n, k);
 
     print('cipher: ${hex.encode(c.c)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // Bob decrypts message from Alice
-    final decrypted =
-        CryptoBox.decryptStringDetached(c.c, c.mac, nonce, alice.pk, bob.sk);
+    final d = CryptoBox.decryptStringDetached(c.c, c.mac, n, a.pk, b.sk);
 
-    assert(msg == decrypted);
-    print('decrypted: $decrypted');
+    assert(m == d);
+    print('decrypted: $d');
     // END box4
   }
 
   void box5(Function(Object) print) {
     // BEGIN box5: Usage: Anonymous sender encrypts a message intended for recipient only.
     // Recipient creates a long-term key pair
-    final keys = SealedBox.randomKeys();
+    final k = SealedBox.randomKeys();
 
     // Anonymous sender encrypts a message using an ephemeral key pair and the recipient's public key
-    final msg = 'hello world';
-    final cipher = SealedBox.sealString(msg, keys.pk);
+    final m = 'hello world';
+    final c = SealedBox.sealString(m, k.pk);
 
-    print('cipher: ${hex.encode(cipher)}');
+    print('cipher: ${hex.encode(c)}');
 
     // Recipient decrypts the ciphertext
-    final decrypted = SealedBox.openString(cipher, keys);
+    final d = SealedBox.openString(c, k);
 
-    assert(msg == decrypted);
-    print('decrypted: $decrypted');
+    assert(m == d);
+    print('decrypted: $d');
     // END box5
   }
 
   void secret1(Function(Object) print) {
     // BEGIN secret1: Combined mode: The authentication tag and the encrypted message are stored together.
     // Generate random secret and nonce
-    final key = SecretBox.randomKey();
-    final nonce = SecretBox.randomNonce();
+    final k = SecretBox.randomKey();
+    final n = SecretBox.randomNonce();
 
     // encrypt
-    final msg = 'hello world';
-    final encrypted = SecretBox.encryptString(msg, nonce, key);
-    print(hex.encode(encrypted));
+    final m = 'hello world';
+    final e = SecretBox.encryptString(m, n, k);
+    print(hex.encode(e));
 
     // decrypt
-    final decrypted = SecretBox.decryptString(encrypted, nonce, key);
-    assert(msg == decrypted);
+    final d = SecretBox.decryptString(e, n, k);
+    assert(m == d);
     // END secret1
   }
 
   void secret2(Function(Object) print) {
     // BEGIN secret2: Detached mode: The authentication tag and the encrypted message are detached so they can be stored at different locations.
     // Generate random secret and nonce
-    final key = SecretBox.randomKey();
-    final nonce = SecretBox.randomNonce();
+    final k = SecretBox.randomKey();
+    final n = SecretBox.randomNonce();
 
     // encrypt
-    final msg = 'hello world';
-    final c = SecretBox.encryptStringDetached(msg, nonce, key);
+    final m = 'hello world';
+    final c = SecretBox.encryptStringDetached(m, n, k);
     print('cipher: ${hex.encode(c.c)}');
     print('mac: ${hex.encode(c.mac)}');
 
     // decrypt
-    final decrypted = SecretBox.decryptStringDetached(c.c, c.mac, nonce, key);
+    final d = SecretBox.decryptStringDetached(c.c, c.mac, n, k);
 
-    assert(msg == decrypted);
+    assert(m == d);
     // END secret2
   }
 
   void sign1(Function(Object) print) {
     // BEGIN sign1: Combined mode: Compute a signed message
-    final msg = 'hello world';
-    final keys = CryptoSign.randomKeys();
+    final m = 'hello world';
+    final k = CryptoSign.randomKeys();
 
     // sign with secret key
-    final signed = CryptoSign.signString(msg, keys.sk);
-    print('signed: ${hex.encode(signed)}');
+    final s = CryptoSign.signString(m, k.sk);
+    print('signed: ${hex.encode(s)}');
 
     // verify with public key
-    final unsigned = CryptoSign.openString(signed, keys.pk);
-    print('unsigned: $unsigned');
+    final u = CryptoSign.openString(s, k.pk);
+    print('unsigned: $u');
 
-    assert(msg == unsigned);
+    assert(m == u);
     // END sign1
   }
 
   void sign2(Function(Object) print) {
     // BEGIN sign2: Detached mode: Compute a signature
     // Author generates keypair
-    final keys = CryptoSign.randomKeys();
+    final k = CryptoSign.randomKeys();
 
     // Author computes signature using secret key
-    final msg = 'hello world';
-    final sig = CryptoSign.signStringDetached(msg, keys.sk);
-    print(hex.encode(sig));
+    final m = 'hello world';
+    final s = CryptoSign.signStringDetached(m, k.sk);
+    print(hex.encode(s));
 
     // Recipient verifies message was issued by author using public key
-    final valid = CryptoSign.verifyString(sig, msg, keys.pk);
+    final v = CryptoSign.verifyString(s, m, k.pk);
 
-    assert(valid);
+    assert(v);
     // END sign2
   }
 
   Future sign3(Function(Object) print) async {
     // BEGIN sign3: Multi-part message: Compute a signature for multiple messages.
     // Author generates keypair
-    final keys = CryptoSign.randomKeys();
+    final k = CryptoSign.randomKeys();
 
     // Author computes signature using secret key
-    final parts = ['Arbitrary data to hash', 'is longer than expected'];
-    final sig =
-        await CryptoSign.signStrings(Stream.fromIterable(parts), keys.sk);
-    print(hex.encode(sig));
+    final p = ['Arbitrary data to hash', 'is longer than expected'];
+    final s = await CryptoSign.signStrings(Stream.fromIterable(p), k.sk);
+    print(hex.encode(s));
 
     // Recipient verifies message was issued by author using public key
-    final valid = await CryptoSign.verifyStrings(
-        sig, Stream.fromIterable(parts), keys.pk);
+    final v = await CryptoSign.verifyStrings(s, Stream.fromIterable(p), k.pk);
 
-    assert(valid);
+    assert(v);
     // END sign3
   }
 
   void sign4(Function(Object) print) {
     // BEGIN sign4: Secret key extraction: Extracts seed and public key from a secret key.
-    final seed = CryptoSign.randomSeed();
-    final keys = CryptoSign.seedKeys(seed);
+    final s = CryptoSign.randomSeed();
+    final k = CryptoSign.seedKeys(s);
 
-    print('seed: ${hex.encode(seed)}');
-    print('pk: ${hex.encode(keys.pk)}');
-    print('sk: ${hex.encode(keys.sk)}');
+    print('seed: ${hex.encode(s)}');
+    print('pk: ${hex.encode(k.pk)}');
+    print('sk: ${hex.encode(k.sk)}');
 
-    final s = CryptoSign.extractSeed(keys.sk);
-    final pk = CryptoSign.extractPublicKey(keys.sk);
+    final s2 = CryptoSign.extractSeed(k.sk);
+    final pk = CryptoSign.extractPublicKey(k.sk);
 
     // assert equality
     final eq = ListEquality().equals;
-    assert(eq(s, seed));
-    assert(eq(pk, keys.pk));
+    assert(eq(s, s2));
+    assert(eq(pk, k.pk));
     // END sign4
   }
 
@@ -332,81 +327,81 @@ class Samples {
 
   void generic1(Function(Object) print) {
     // BEGIN generic1: Single-part without a key:
-    final value = 'Arbitrary data to hash';
-    final hash = GenericHash.hashString(value);
+    final v = 'Arbitrary data to hash';
+    final h = GenericHash.hashString(v);
 
-    print(hex.encode(hash));
+    print(hex.encode(h));
     // END generic1
   }
 
   void generic2(Function(Object) print) {
     // BEGIN generic2: Single-part with a key:
-    final value = 'Arbitrary data to hash';
-    final key = GenericHash.randomKey();
+    final v = 'Arbitrary data to hash';
+    final k = GenericHash.randomKey();
 
-    final hash = GenericHash.hashString(value, key: key);
+    final h = GenericHash.hashString(v, key: k);
 
-    print(hex.encode(hash));
+    print(hex.encode(h));
     // END generic2
   }
 
   Future generic3(Function(Object) print) async {
     // BEGIN generic3: Multi-part without a key: Should result in a hash equal to the single-part without a key sample.
-    final stream = Stream.fromIterable(['Arbitrary data ', 'to hash']);
+    final s = Stream.fromIterable(['Arbitrary data ', 'to hash']);
 
-    final hash = await GenericHash.hashStrings(stream);
+    final h = await GenericHash.hashStrings(s);
 
-    print(hex.encode(hash));
+    print(hex.encode(h));
     // END generic3
   }
 
   Future generic4(Function(Object) print) async {
     // BEGIN generic4: Multi-part with a key:
-    final stream = Stream.fromIterable(
+    final s = Stream.fromIterable(
         ['Arbitrary data to hash', 'is longer than expected']);
-    final key = GenericHash.randomKey();
+    final k = GenericHash.randomKey();
 
-    final hash = await GenericHash.hashStrings(stream, key: key);
+    final h = await GenericHash.hashStrings(s, key: k);
 
-    print(hex.encode(hash));
+    print(hex.encode(h));
     // END generic4
   }
 
   void pwhash1(Function(Object) print) {
     // BEGIN pwhash1: Hash: Derives a hash from given password and salt.
-    final pw = 'hello world';
-    final salt = PasswordHash.randomSalt();
-    final hash = PasswordHash.hashString(pw, salt);
+    final p = 'hello world';
+    final s = PasswordHash.randomSalt();
+    final h = PasswordHash.hashString(p, s);
 
-    print(hex.encode(hash));
+    print(hex.encode(h));
     // END pwhash1
   }
 
   void pwhash2(Function(Object) print) {
     // BEGIN pwhash2: Hash storage: Computes a password verification string for given password.
-    final pw = 'hello world';
-    final str = PasswordHash.hashStringStorage(pw);
-    print(str);
+    final p = 'hello world';
+    final s = PasswordHash.hashStringStorage(p);
+    print(s);
 
     // verify storage string
-    final valid = PasswordHash.verifyStorage(str, pw);
-    print('Valid: $valid');
+    final v = PasswordHash.verifyStorage(s, p);
+    print('Valid: $v');
     // END pwhash2
   }
 
   Future pwhash3(Function(Object) print) async {
     // BEGIN pwhash3: Hash storage async: Execute long running hash operation in background using Flutter's compute.
     // time operation
-    final watch = Stopwatch();
-    watch.start();
+    final w = Stopwatch();
+    w.start();
 
     // compute hash
-    final pw = 'hello world';
-    final str = await compute(PasswordHash.hashStringStorageModerate, pw);
+    final p = 'hello world';
+    final s = await compute(PasswordHash.hashStringStorageModerate, p);
 
-    print(str);
-    print('Compute took ${watch.elapsedMilliseconds}ms');
-    watch.stop();
+    print(s);
+    print('Compute took ${w.elapsedMilliseconds}ms');
+    w.stop();
     // END pwhash3
   }
 
