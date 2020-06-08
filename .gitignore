@@ -4,6 +4,7 @@
 .dart_tool/
 .packages
 .pub/
+.vscode/
 build/
 ios/.generated/
 packages
