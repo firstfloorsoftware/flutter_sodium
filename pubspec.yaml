@@ -19,5 +19,5 @@ dev_dependencies:
 
 flutter:
   plugin:
-    androidPackage: com.firstfloorsoftware.flutter_sodium
-    pluginClass: FlutterSodiumPlugin
+    android:
+    ios:
