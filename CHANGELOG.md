@@ -1,3 +1,3 @@
-## 0.9.0 - May 6, 2020
+## 0.1.0 - June 10, 2020
 * Rewrite flutter_sodium using FFI
 
