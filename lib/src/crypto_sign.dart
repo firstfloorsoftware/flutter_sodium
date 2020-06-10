@@ -1,61 +1,119 @@
-import 'dart:async';
 import 'dart:typed_data';
 import 'dart:convert';
-import '../flutter_sodium.dart';
+import 'package:ffi/ffi.dart';
+import 'key_pair.dart';
+import 'sodium.dart';
 
 /// Computes a signature for a message using a secret key, and provides verification using a public key.
 class CryptoSign {
   /// Generates a random key for use with public-key signatures.
-  static Future<KeyPair> generateKeyPair() async {
-    var map = await Sodium.cryptoSignKeypair();
-    return KeyPair.fromMap(map);
+  static KeyPair randomKeys() => Sodium.cryptoSignKeypair();
+
+  /// Generates a random seed for use in seedKeys.
+  static Uint8List randomSeed() {
+    return Sodium.randombytesBuf(Sodium.cryptoSignSeedbytes);
   }
+
+  /// Generates a secret key and a corresponding public key for given seed.
+  static KeyPair seedKeys(Uint8List seed) => Sodium.cryptoSignSeedKeypair(seed);
 
   /// Prepends a signature to specified message for given secret key.
-  static Future<Uint8List> signCombined(
-          Uint8List message, Uint8List secretKey) =>
+  static Uint8List sign(Uint8List message, Uint8List secretKey) =>
       Sodium.cryptoSign(message, secretKey);
 
-  /// Computes a signature for given string value and secret key.
-  static Future<Uint8List> sign(String message, Uint8List secretKey) =>
-      Sodium.cryptoSignDetached(utf8.encode(message), secretKey);
-
-  /// Computes a signature for given message and secret key.
-  static Future<Uint8List> signBytes(Uint8List message, Uint8List secretKey) =>
-      Sodium.cryptoSignDetached(message, secretKey);
-
-  /// Computes a signature for given stream value and secret key.
-  static Future<Uint8List> signStream(
-      Stream<String> stream, Uint8List secretKey) async {
-    var state = await Sodium.cryptoSignInit();
-    await for (var value in stream) {
-      state = await Sodium.cryptoSignUpdate(state, utf8.encode(value));
-    }
-    return await Sodium.cryptoSignFinalCreate(state, secretKey);
-  }
+  /// Prepends a signature to specified string message for given secret key.
+  static Uint8List signString(String message, Uint8List secretKey) =>
+      sign(utf8.encode(message), secretKey);
 
   /// Checks the signed message using given public key and returns the message with the signature removed.
-  static Future<Uint8List> open(Uint8List signedMessage, Uint8List publicKey) =>
+  static Uint8List open(Uint8List signedMessage, Uint8List publicKey) =>
       Sodium.cryptoSignOpen(signedMessage, publicKey);
 
-  /// Verifies whether the signature is valid for given string message using the signer's public key.
-  static Future<bool> verify(
-          Uint8List signature, String message, Uint8List publicKey) =>
-      Sodium.cryptoSignVerifyDetached(
-          signature, utf8.encode(message), publicKey);
+  /// Checks the signed message using given public key and returns the string message with the signature removed.
+  static String openString(Uint8List signedMessage, Uint8List publicKey) {
+    final m = open(signedMessage, publicKey);
+    return utf8.decode(m);
+  }
+
+  /// Computes a signature for given message and secret key.
+  static Uint8List signDetached(Uint8List message, Uint8List secretKey) =>
+      Sodium.cryptoSignDetached(message, secretKey);
+
+  /// Computes a signature for given string message and secret key.
+  static Uint8List signStringDetached(String message, Uint8List secretKey) =>
+      signDetached(utf8.encode(message), secretKey);
 
   /// Verifies whether the signature is valid for given message using the signer's public key.
-  static Future<bool> verifyBytes(
+  static bool verify(
           Uint8List signature, Uint8List message, Uint8List publicKey) =>
-      Sodium.cryptoSignVerifyDetached(signature, message, publicKey);
+      Sodium.cryptoSignVerifyDetached(signature, message, publicKey) == 0;
 
-  /// Verifies whether the signature is valid for given stream meage using the signer's public key.
-  static Future<bool> verifyStream(
-      Uint8List signature, Stream<String> stream, Uint8List publicKey) async {
-    var state = await Sodium.cryptoSignInit();
-    await for (var value in stream) {
-      state = await Sodium.cryptoSignUpdate(state, utf8.encode(value));
+  /// Verifies whether the signature is valid for given string message using the signer's public key.
+  static bool verifyString(
+          Uint8List signature, String message, Uint8List publicKey) =>
+      verify(signature, utf8.encode(message), publicKey);
+
+  /// Computes a signature for given stream and secret key.
+  static Future<Uint8List> signStream(
+      Stream<Uint8List> stream, Uint8List secretKey) async {
+    final state = Sodium.cryptoSignInit();
+    try {
+      await for (var value in stream) {
+        Sodium.cryptoSignUpdate(state, value);
+      }
+      return Sodium.cryptoSignFinalCreate(state, secretKey);
+    } finally {
+      free(state);
     }
-    return await Sodium.cryptoSignFinalVerify(state, signature, publicKey);
   }
+
+  /// Verifies whether the signature is valid for given stream using the signer's public key.
+  static Future<bool> verifyStream(Uint8List signature,
+      Stream<Uint8List> stream, Uint8List publicKey) async {
+    final state = Sodium.cryptoSignInit();
+    try {
+      await for (var value in stream) {
+        Sodium.cryptoSignUpdate(state, value);
+      }
+      return Sodium.cryptoSignFinalVerify(state, signature, publicKey) == 0;
+    } finally {
+      free(state);
+    }
+  }
+
+  /// Computes a signature for given stream of strings and secret key.
+  static Future<Uint8List> signStrings(
+      Stream<String> stream, Uint8List secretKey) async {
+    final state = Sodium.cryptoSignInit();
+    try {
+      await for (var value in stream) {
+        Sodium.cryptoSignUpdate(state, utf8.encode(value));
+      }
+      return Sodium.cryptoSignFinalCreate(state, secretKey);
+    } finally {
+      free(state);
+    }
+  }
+
+  /// Verifies whether the signature is valid for given stream using the signer's public key.
+  static Future<bool> verifyStrings(
+      Uint8List signature, Stream<String> stream, Uint8List publicKey) async {
+    final state = Sodium.cryptoSignInit();
+    try {
+      await for (var value in stream) {
+        Sodium.cryptoSignUpdate(state, utf8.encode(value));
+      }
+      return Sodium.cryptoSignFinalVerify(state, signature, publicKey) == 0;
+    } finally {
+      free(state);
+    }
+  }
+
+  /// Extracts the seed from the secret key
+  static Uint8List extractSeed(Uint8List secretKey) =>
+      Sodium.cryptoSignEd25519SkToSeed(secretKey);
+
+  /// Extracts the public key from the secret key
+  static Uint8List extractPublicKey(Uint8List secretKey) =>
+      Sodium.cryptoSignEd25519SkToPk(secretKey);
 }

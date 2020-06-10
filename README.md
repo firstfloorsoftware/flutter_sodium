@@ -13,9 +13,6 @@ dependencies:
   ...
   flutter_sodium: any
 ```
-
-__Important:__ For iOS you'll need to [manually update](https://github.com/firstfloorsoftware/flutter_sodium/issues/1#issuecomment-403973858) the Podfile in your ios project.
-
 ## Usage example
 
 ```dart
@@ -23,12 +20,12 @@ import 'package:flutter_sodium/flutter_sodium.dart';
 
 // Password hashing (using Argon)
 final password = 'my password';
-final str = await PasswordHash.hashStorage(password);
+final str = PasswordHash.hashStringStorage(password);
 
 print(str);
 
 // verify hash str
-final valid = await PasswordHash.verifyStorage(str, password);
+final valid = PasswordHash.verifyStorage(str, password);
 
 assert(valid);
 ```
@@ -38,35 +35,49 @@ This project includes an extensive example app with runnable code samples. Be su
 <img src="https://raw.githubusercontent.com/firstfloorsoftware/flutter_sodium/master/example/assets/screenshots/screenshot1.png" width="300">
 
 ## API coverage
-The flutter_sodium plugin implements the following libsodium APIs *):
+The flutter_sodium plugin implements the following libsodium APIs:
 - crypto_aead
 - crypto_auth
 - crypto_box
 - crypto_generichash
+- crypto_hash
 - crypto_kdf
 - crypto_kx
 - crypto_onetimeauth
 - crypto_pwhash
 - crypto_scalarmult
 - crypto_secretbox
+- crypto_secretstream
 - crypto_shorthash
 - crypto_sign
+- crypto_stream
 - randombytes
 - sodium_version
 
-*) Some APIs are not available on Android. See [this issue](https://github.com/firstfloorsoftware/flutter_sodium/issues/7) for details.
+API coverage is not 100% complete, track the progress in issue #35.
 
 ## Dart APIs
 The plugin includes a core API that maps native libsodium functions 1:1 to Dart equivalents. The core API is available in the class [`Sodium`](https://github.com/firstfloorsoftware/flutter_sodium/blob/master/lib/flutter_sodium.dart). Dart naming conventions are used for core API function names. A native libsodium function such as `crypto_pwhash_str`, is available in flutter as `Sodium.cryptoPwhashStr`.
 
 Also included in flutter_sodium is a high-level, opinionated API providing access to libsodium in a Dart friendly manner. The various functions are available in separate Dart classes. Password hashing for example is available in the `PasswordHash` class. The high-level API depends on the core API to get things done.
 
-## Threading
-The flutter_sodium APIs can be executed on the UI thread, or on a background thread. Most crypto tasks can safely run on the UI thread, some tasks take considerable time to execute (most notable crypto_pwhash_* ), and will run on a background thread by default. All methods of the core API includes an optional ```useBackgroundThread``` argument to switch from UI to background thread or vice versa. Background execution is implemented using ```AsyncTask``` in Android, and ```DispatchQueue``` in iOS.
+## Migrating to fluttter_sodium FFI
+The FFI implementation of flutter_sodium is backwards incompatible with the previous platform channel implementation. The list of changes:
+- the entire FFI API is now synchronous, while the previous implementation was entirely asynchronous
+- all hardcoded libsodium constants are now available as properties on the Sodium class.
+- in the platform channel versions the Android and iOS implementations were not in sync. Some functions were available only in iOS, others only in Android. With the FFI implementation, there is a single API covering both platforms.
 
-Please note that the entire API is asynchronous. Even when a crypto task is executed on the UI thread, the method returns an async ```Future``` which needs to be awaited.
+## Background threads
+Since the entire FFI API is synchronous, you'll need to do some extra work to execute long running crypto function on a background thread. Luckily this is very easy with Flutter's [compute function](https://api.flutter.dev/flutter/foundation/compute.html).
 
-## Current issues
-- Some APIs are not available on Android. An issue has been created with the [complete list](https://github.com/firstfloorsoftware/flutter_sodium/issues/7).
-- Using flutter_sodium in iOS doesn't work right out of the box. [Manual installation](https://github.com/firstfloorsoftware/flutter_sodium/issues/1#issuecomment-403973858) steps are required.
-- Since Flutter does [not support native binaries](https://github.com/flutter/flutter/issues/7053), a [platform channel](https://flutter.io/platform-channels/) is established to enable native function invocation. One side effect of this approach is that the entire flutter_sodium API is asynchronous. This is great for potential long-running operations such as Argon password hashing, but does not make much sense for other short-running functions.
+The following code snippet demonstrates running a password hash on the background thread.
+
+```dart
+final pw = 'hello world';
+final str = await compute(PasswordHash.hashStringStorageModerate, pw);
+
+print(str);
+```
+
+## Known issues
+- Previous incarnations of flutter_sodium used platform channels for native interop. The latest version has been rewritten to take full advantage of Dart FFI. FFI offers fast native interop and is the obvious choice for flutter_sodium. One minor problem, FFI is still in beta and its API may change. This may affect flutter_sodium.

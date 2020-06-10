@@ -1,65 +1,57 @@
-import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
-import '../flutter_sodium.dart';
+import 'dart:convert';
+import 'detached_cipher.dart';
+import 'sodium.dart';
 
 /// Encrypts a message with a key and a nonce and computes an authentication tag.
 class SecretBox {
   /// Generates a random key for use with secret key encryption.
-  static Future<Uint8List> generateKey() => Sodium.cryptoSecretboxKeygen();
+  static Uint8List randomKey() => Sodium.cryptoSecretboxKeygen();
 
   /// Generates a random nonce for use with secret key encryption.
-  static Future<Uint8List> generateNonce() =>
-      RandomBytes.buffer(crypto_secretbox_NONCEBYTES);
-
-  /// Encrypts a string message with a key and a nonce.
-  static Future<Uint8List> encrypt(
-          String value, Uint8List nonce, Uint8List key) =>
-      Sodium.cryptoSecretboxEasy(utf8.encode(value), nonce, key);
+  static Uint8List randomNonce() =>
+      Sodium.randombytesBuf(Sodium.cryptoSecretboxNoncebytes);
 
   /// Encrypts a message with a key and a nonce.
-  static Future<Uint8List> encryptBytes(
-          Uint8List value, Uint8List nonce, Uint8List key) =>
+  static Uint8List encrypt(Uint8List value, Uint8List nonce, Uint8List key) =>
       Sodium.cryptoSecretboxEasy(value, nonce, key);
 
   /// Verifies and decrypts a cipher text produced by encrypt.
-  static Future<String> decrypt(
-      Uint8List cipherText, Uint8List nonce, Uint8List key) async {
-    final message =
-        await Sodium.cryptoSecretboxOpenEasy(cipherText, nonce, key);
-    return utf8.decode(message);
-  }
-
-  /// Verifies and decrypts a cipher text produced by encrypt.
-  static Future<Uint8List> decryptBytes(
+  static Uint8List decrypt(
           Uint8List cipherText, Uint8List nonce, Uint8List key) =>
       Sodium.cryptoSecretboxOpenEasy(cipherText, nonce, key);
 
-  /// Encrypts a string message with a key and a nonce, returning the encrypted message and authentication tag
-  static Future<DetachedCipher> encryptDetached(
-      String value, Uint8List nonce, Uint8List key) async {
-    var map =
-        await Sodium.cryptoSecretboxDetached(utf8.encode(value), nonce, key);
-    return DetachedCipher.fromMap(map);
+  /// Encrypts a string message with a key and a nonce.
+  static Uint8List encryptString(
+          String value, Uint8List nonce, Uint8List key) =>
+      encrypt(utf8.encode(value), nonce, key);
+
+  /// Verifies and decrypts a cipher text produced by encrypt.
+  static String decryptString(
+      Uint8List cipherText, Uint8List nonce, Uint8List key) {
+    final m = decrypt(cipherText, nonce, key);
+    return utf8.decode(m);
   }
 
   /// Encrypts a message with a key and a nonce, returning the encrypted message and authentication tag
-  static Future<DetachedCipher> encryptBytesDetached(
-      Uint8List value, Uint8List nonce, Uint8List key) async {
-    var map = await Sodium.cryptoSecretboxDetached(value, nonce, key);
-    return DetachedCipher.fromMap(map);
-  }
+  static DetachedCipher encryptDetached(
+          Uint8List value, Uint8List nonce, Uint8List key) =>
+      Sodium.cryptoSecretboxDetached(value, nonce, key);
 
   /// Verifies and decrypts a detached cipher text and tag.
-  static Future<String> decryptDetached(
-      DetachedCipher cipher, Uint8List nonce, Uint8List key) async {
-    final message = await Sodium.cryptoSecretboxOpenDetached(
-        cipher.cipher, cipher.mac, nonce, key);
-    return utf8.decode(message);
-  }
+  static Uint8List decryptDetached(
+          Uint8List cipher, Uint8List mac, Uint8List nonce, Uint8List key) =>
+      Sodium.cryptoSecretboxOpenDetached(cipher, mac, nonce, key);
+
+  /// Encrypts a string message with a key and a nonce, returning the encrypted message and authentication tag
+  static DetachedCipher encryptStringDetached(
+          String value, Uint8List nonce, Uint8List key) =>
+      encryptDetached(utf8.encode(value), nonce, key);
 
   /// Verifies and decrypts a detached cipher text and tag.
-  static Future<Uint8List> decryptBytesDetached(
-          DetachedCipher cipher, Uint8List nonce, Uint8List key) =>
-      Sodium.cryptoSecretboxOpenDetached(cipher.cipher, cipher.mac, nonce, key);
+  static String decryptStringDetached(
+      Uint8List cipher, Uint8List mac, Uint8List nonce, Uint8List key) {
+    final m = decryptDetached(cipher, mac, nonce, key);
+    return utf8.decode(m);
+  }
 }

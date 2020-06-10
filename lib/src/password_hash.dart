@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:typed_data';
 import 'dart:convert';
-import 'constants.dart';
-import '../flutter_sodium.dart';
+import 'sodium.dart';
 
 /// Defines the supported password hashing algorithms.
 enum PasswordHashAlgorithm {
@@ -21,44 +19,71 @@ class PasswordHash {
   static int _alg(PasswordHashAlgorithm alg) {
     switch (alg) {
       case PasswordHashAlgorithm.Argon2i13:
-        return crypto_pwhash_ALG_ARGON2I13;
+        return Sodium.cryptoPwhashAlgArgon2i13;
       case PasswordHashAlgorithm.Argon2id13:
-        return crypto_pwhash_ALG_ARGON2ID13;
+        return Sodium.cryptoPwhashAlgArgon2id13;
       default:
-        return crypto_pwhash_ALG_DEFAULT;
+        return Sodium.cryptoPwhashAlgDefault;
     }
   }
 
   /// Generates a random salt for use in password hashing.
-  static Future<Uint8List> generateSalt() =>
-      Sodium.randombytesBuf(crypto_pwhash_SALTBYTES);
+  static Uint8List randomSalt() =>
+      Sodium.randombytesBuf(Sodium.cryptoPwhashSaltbytes);
 
   /// Derives a hash from given password and salt.
-  static Future<Uint8List> hash(String password, Uint8List salt,
-      {int outlen = crypto_pwhash_BYTES_MIN,
-      int opslimit = crypto_pwhash_OPSLIMIT_INTERACTIVE,
-      int memlimit = crypto_pwhash_MEMLIMIT_INTERACTIVE,
+  static Uint8List hash(Uint8List password, Uint8List salt,
+      {int outlen,
+      int opslimit,
+      int memlimit,
       PasswordHashAlgorithm alg = PasswordHashAlgorithm.Default}) {
-    var passwd = utf8.encode(password);
+    outlen ??= Sodium.cryptoPwhashBytesMin;
+    opslimit ??= Sodium.cryptoPwhashOpslimitInteractive;
+    memlimit ??= Sodium.cryptoPwhashMemlimitInteractive;
 
     return Sodium.cryptoPwhash(
-        outlen, passwd, salt, opslimit, memlimit, _alg(alg));
+        outlen, password, salt, opslimit, memlimit, _alg(alg));
   }
+
+  /// Derives a hash from given string password and salt.
+  static Uint8List hashString(String password, Uint8List salt,
+          {int outlen,
+          int opslimit,
+          int memlimit,
+          PasswordHashAlgorithm alg = PasswordHashAlgorithm.Default}) =>
+      hash(utf8.encode(password), salt,
+          outlen: outlen, opslimit: opslimit, memlimit: memlimit);
 
   /// Computes a password verification string for given password.
-  static Future<String> hashStorage(String password,
-      {int opslimit = crypto_pwhash_OPSLIMIT_INTERACTIVE,
-      int memlimit = crypto_pwhash_MEMLIMIT_INTERACTIVE}) async {
-    var passwd = utf8.encode(password);
-    var hash = await Sodium.cryptoPwhashStr(passwd, opslimit, memlimit);
-    return ascii.decode(hash);
+  static String hashStorage(Uint8List password, {int opslimit, int memlimit}) {
+    opslimit ??= Sodium.cryptoPwhashOpslimitInteractive;
+    memlimit ??= Sodium.cryptoPwhashMemlimitInteractive;
+
+    return Sodium.cryptoPwhashStr(password, opslimit, memlimit);
   }
 
-  /// Verifies that the storage is a valid password verification string for given password.
-  static Future<bool> verifyStorage(String storage, String password) {
-    var str = ascii.encode(storage);
-    var passwd = utf8.encode(password);
+  /// Computes a password verification string for given string password.
+  static String hashStringStorage(String password,
+          {int opslimit, int memlimit}) =>
+      hashStorage(utf8.encode(password),
+          opslimit: opslimit, memlimit: memlimit);
 
-    return Sodium.cryptoPwhashStrVerify(str, passwd);
+  /// Computes a password verification string for given password in moderate mode.
+  static String hashStringStorageModerate(String password) =>
+      hashStringStorage(password,
+          opslimit: Sodium.cryptoPwhashOpslimitModerate,
+          memlimit: Sodium.cryptoPwhashMemlimitModerate);
+
+  /// Computes a password verification string for given password in sensitive mode.
+  static String hashStringStorageSensitive(String password) =>
+      hashStringStorage(password,
+          opslimit: Sodium.cryptoPwhashOpslimitSensitive,
+          memlimit: Sodium.cryptoPwhashMemlimitSensitive);
+
+  /// Verifies that the storage is a valid password verification string for given password.
+  static bool verifyStorage(String storage, String password) {
+    final passwd = utf8.encode(password);
+
+    return Sodium.cryptoPwhashStrVerify(storage, passwd) == 0;
   }
 }

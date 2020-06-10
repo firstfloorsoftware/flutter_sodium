@@ -1,38 +1,7 @@
-group 'com.firstfloorsoftware.fluttersodium'
-version '1.0-SNAPSHOT'
-
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-    }
-}
-
-rootProject.allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-}
-
 apply plugin: 'com.android.library'
-
 android {
     compileSdkVersion 28
-
-    defaultConfig {
-        minSdkVersion 16
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 }
 
 dependencies {
-    implementation group: 'com.github.joshjdevl.libsodiumjni', name: 'libsodium-jni-aar', version: '2.0.2'
 }

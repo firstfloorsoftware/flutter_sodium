@@ -1,41 +1,50 @@
-import 'dart:async';
 import 'dart:typed_data';
 import 'dart:convert';
-import 'constants.dart';
-import '../flutter_sodium.dart';
+import 'package:ffi/ffi.dart';
+import 'sodium.dart';
 
 /// Computes a fixed-length fingerprint for an arbitrary long message using the BLAKE2b algorithm.
 class GenericHash {
   /// Generates a random key for use with generic hashing.
-  static Future<Uint8List> generateKey() => Sodium.cryptoGenerichashKeygen();
-
-  /// Computes a generic hash of specified length for given string value and optional key.
-  static Future<Uint8List> hash(String value,
-          {Uint8List key, int outlen = crypto_generichash_BYTES}) =>
-      Sodium.cryptoGenerichash(outlen, utf8.encode(value), key);
+  static Uint8List randomKey() => Sodium.cryptoGenerichashKeygen();
 
   /// Computes a generic hash of specified length for given value and optional key.
-  static Future<Uint8List> hashBytes(Uint8List value,
-          {Uint8List key, int outlen = crypto_generichash_BYTES}) =>
-      Sodium.cryptoGenerichash(outlen, value, key);
-
-  /// Computes a generic hash of specified length for given stream of string values and optional key.
-  static Future<Uint8List> hashStream(Stream<String> stream,
-      {Uint8List key, int outlen = crypto_generichash_BYTES}) async {
-    var state = await Sodium.cryptoGenerichashInit(key, outlen);
-    await for (var value in stream) {
-      state = await Sodium.cryptoGenerichashUpdate(state, utf8.encode(value));
-    }
-    return await Sodium.cryptoGenerichashFinal(state, outlen);
+  static Uint8List hash(Uint8List value, {Uint8List key, int outlen}) {
+    outlen ??= Sodium.cryptoGenerichashBytes;
+    return Sodium.cryptoGenerichash(outlen, value, key);
   }
 
+  /// Computes a generic hash of specified length for given string value and optional key.
+  static Uint8List hashString(String value, {Uint8List key, int outlen}) =>
+      hash(utf8.encode(value), key: key, outlen: outlen);
+
   /// Computes a generic hash of specified length for given stream of byte values and optional key.
-  static Future<Uint8List> hashByteStream(Stream<Uint8List> stream,
-      {Uint8List key, int outlen = crypto_generichash_BYTES}) async {
-    var state = await Sodium.cryptoGenerichashInit(key, outlen);
-    await for (var value in stream) {
-      state = await Sodium.cryptoGenerichashUpdate(state, value);
+  static Future<Uint8List> hashStream(Stream<Uint8List> stream,
+      {Uint8List key, int outlen}) async {
+    outlen ??= Sodium.cryptoGenerichashBytes;
+    final state = Sodium.cryptoGenerichashInit(key, outlen);
+    try {
+      await for (var value in stream) {
+        Sodium.cryptoGenerichashUpdate(state, value);
+      }
+      return Sodium.cryptoGenerichashFinal(state, outlen);
+    } finally {
+      free(state);
     }
-    return await Sodium.cryptoGenerichashFinal(state, outlen);
+  }
+
+  /// Computes a generic hash of specified length for given stream of string values and optional key.
+  static Future<Uint8List> hashStrings(Stream<String> stream,
+      {Uint8List key, int outlen}) async {
+    outlen ??= Sodium.cryptoGenerichashBytes;
+    final state = Sodium.cryptoGenerichashInit(key, outlen);
+    try {
+      await for (var value in stream) {
+        Sodium.cryptoGenerichashUpdate(state, utf8.encode(value));
+      }
+      return Sodium.cryptoGenerichashFinal(state, outlen);
+    } finally {
+      free(state);
+    }
   }
 }
