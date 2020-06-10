@@ -4,7 +4,8 @@ import 'sodium.dart';
 /// Provides a set of functions to generate unpredictable data, suitable for creating secret keys
 class RandomBytes {
   /// Generates a random seed for use in bufferDeterministic.
-  static Uint8List randomSeed() => Sodium.randombytesBuf(Sodium.randombytesSeedbytes);
+  static Uint8List randomSeed() =>
+      Sodium.randombytesBuf(Sodium.randombytesSeedbytes);
 
   /// Generates an unpredictable value between 0 and 0xffffffff (included).
   static int random() => Sodium.randombytesRandom();

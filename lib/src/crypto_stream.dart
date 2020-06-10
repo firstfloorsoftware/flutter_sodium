@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'sodium.dart';
 
-/// Generate deterministic streams of random data based off a secret key and random nonce. 
+/// Generate deterministic streams of random data based off a secret key and random nonce.
 class CryptoStream {
   /// Generates a random key for use with crypto stream.
   static Uint8List randomKey() => Sodium.cryptoStreamKeygen();
