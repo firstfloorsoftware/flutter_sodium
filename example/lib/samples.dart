@@ -440,7 +440,7 @@ class Samples {
 
     // compute session keys
     final ck = KeyExchange.computeClientSessionKeys(c, s.pk);
-    final sk = KeyExchange.computeServerSessionKeys(s, c.sk);
+    final sk = KeyExchange.computeServerSessionKeys(s, c.pk);
 
     // assert keys do match
     final eq = ListEquality().equals;
