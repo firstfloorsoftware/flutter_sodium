@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget {
                     AsyncSnapshot<List<Topic>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return snapshot.hasError
-                        ? Text('Build TOC failed')
+                        ? Text("Build TOC failed\n\n${snapshot.error}")
                         : ListView(children: <Widget>[
                             for (var topic in snapshot.data)
                               if (topic is Section)
