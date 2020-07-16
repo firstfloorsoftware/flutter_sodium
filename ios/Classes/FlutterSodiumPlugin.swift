@@ -1,7 +1,7 @@
 import Flutter
 import UIKit
 
-public class SwiftDummyPlugin: NSObject, FlutterPlugin {
+public class FlutterSodiumPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     // We are not using Flutter channels here
   }
