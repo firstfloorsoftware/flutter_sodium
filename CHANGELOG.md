@@ -1,3 +1,6 @@
+## 0.1.2 - July 16, 2020
+* Fixes documentation and multiplatform support warnings
+
 ## 0.1.1 - July 15, 2020
 * Fixes "Failed to lookup symbol" errors on iOS in release mode.
 
