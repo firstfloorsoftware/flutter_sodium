@@ -56,10 +56,10 @@ class Samples {
 
   void version1(Function(Object) print) {
     // BEGIN version1: Usage: Retrieves the version details of the loaded libsodium library.
-    final v = Sodium.sodiumVersionString;
-    final v1 = Sodium.sodiumLibraryVersionMajor;
-    final v2 = Sodium.sodiumLibraryVersionMinor;
-    final m = Sodium.sodiumLibraryMinimal;
+    final v = Sodium.versionString;
+    final v1 = Sodium.libraryVersionMajor;
+    final v2 = Sodium.libraryVersionMinor;
+    final m = Sodium.libraryMinimal;
 
     print('$v ($v1.$v2), minimal: $m');
     // END version1

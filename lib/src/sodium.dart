@@ -2009,19 +2009,17 @@ class Sodium {
   //
   // sodium
   //
-  static void sodiumInit() {
+  static void init() {
     if (_sodium.sodium_init() == -1) {
       throw SodiumException('Libsodium initialization failed');
     }
   }
 
-  static String get sodiumVersionString =>
+  static String get versionString =>
       Utf8.fromUtf8(_sodium.sodium_version_string());
-  static int get sodiumLibraryVersionMajor =>
-      _sodium.sodium_library_version_major();
-  static int get sodiumLibraryVersionMinor =>
-      _sodium.sodium_library_version_minor();
-  static bool get sodiumLibraryMinimal => _sodium.sodium_library_minimal() == 1;
+  static int get libraryVersionMajor => _sodium.sodium_library_version_major();
+  static int get libraryVersionMinor => _sodium.sodium_library_version_minor();
+  static bool get libraryMinimal => _sodium.sodium_library_minimal() == 1;
 }
 
 class _CryptoAead {
