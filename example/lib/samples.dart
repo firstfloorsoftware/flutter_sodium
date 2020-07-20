@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:collection/collection.dart';
-import 'package:convert/convert.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 
 class Samples {
@@ -18,8 +17,8 @@ class Samples {
         Sodium.cryptoPwhashMemlimitInteractive,
         Sodium.cryptoPwhashAlgDefault);
 
-    print('salt: ${hex.encode(salt)}');
-    print('hash: ${hex.encode(h)}');
+    print('salt: ${Sodium.bin2hex(salt)}');
+    print('hash: ${Sodium.bin2hex(h)}');
     // END api1
   }
 
@@ -28,8 +27,8 @@ class Samples {
     final p = 'hello world';
     final h = PasswordHash.hashString(p, salt);
 
-    print('salt: ${hex.encode(salt)}');
-    print('hash: ${hex.encode(h)}');
+    print('salt: ${Sodium.bin2hex(salt)}');
+    print('hash: ${Sodium.bin2hex(h)}');
     // END api2
   }
 
@@ -50,7 +49,7 @@ class Samples {
   void random3(Function(Object) print) {
     // BEGIN random3: Buffer: Generates an unpredictable sequence of bytes of specified size.
     final b = RandomBytes.buffer(16);
-    print(hex.encode(b));
+    print(Sodium.bin2hex(b));
     // END random3
   }
 
@@ -109,7 +108,7 @@ class Samples {
     // compute tag
     final m = 'hello world';
     final t = CryptoAuth.computeString(m, k);
-    print(hex.encode(t));
+    print(Sodium.bin2hex(t));
 
     // verify tag
     final v = CryptoAuth.verifyString(t, m, k);
@@ -128,7 +127,7 @@ class Samples {
     final m = 'hello world';
     final e = CryptoBox.encryptString(m, n, b.pk, a.sk);
 
-    print(hex.encode(e));
+    print(Sodium.bin2hex(e));
 
     // Bob decrypts message from Alice
     final d = CryptoBox.decryptString(e, n, a.pk, b.sk);
@@ -149,8 +148,8 @@ class Samples {
     final m = 'hello world';
     final c = CryptoBox.encryptStringDetached(m, n, b.pk, a.sk);
 
-    print('cipher: ${hex.encode(c.c)}');
-    print('mac: ${hex.encode(c.mac)}');
+    print('cipher: ${Sodium.bin2hex(c.c)}');
+    print('mac: ${Sodium.bin2hex(c.mac)}');
 
     // Bob decrypts message from Alice
     final d = CryptoBox.decryptStringDetached(c.c, c.mac, n, a.pk, b.sk);
@@ -171,7 +170,7 @@ class Samples {
     final m = 'hello world';
     final e = CryptoBox.encryptString(m, n, b.pk, a.sk);
 
-    print(hex.encode(e));
+    print(Sodium.bin2hex(e));
 
     // Bob decrypts message from Alice (precalculated)
     final k = CryptoBox.sharedSecret(a.pk, b.sk);
@@ -194,8 +193,8 @@ class Samples {
     final m = 'hello world';
     final c = CryptoBox.encryptStringDetachedAfternm(m, n, k);
 
-    print('cipher: ${hex.encode(c.c)}');
-    print('mac: ${hex.encode(c.mac)}');
+    print('cipher: ${Sodium.bin2hex(c.c)}');
+    print('mac: ${Sodium.bin2hex(c.mac)}');
 
     // Bob decrypts message from Alice
     final d = CryptoBox.decryptStringDetached(c.c, c.mac, n, a.pk, b.sk);
@@ -214,7 +213,7 @@ class Samples {
     final m = 'hello world';
     final c = SealedBox.sealString(m, k.pk);
 
-    print('cipher: ${hex.encode(c)}');
+    print('cipher: ${Sodium.bin2hex(c)}');
 
     // Recipient decrypts the ciphertext
     final d = SealedBox.openString(c, k);
@@ -233,7 +232,7 @@ class Samples {
     // encrypt
     final m = 'hello world';
     final e = SecretBox.encryptString(m, n, k);
-    print(hex.encode(e));
+    print(Sodium.bin2hex(e));
 
     // decrypt
     final d = SecretBox.decryptString(e, n, k);
@@ -250,8 +249,8 @@ class Samples {
     // encrypt
     final m = 'hello world';
     final c = SecretBox.encryptStringDetached(m, n, k);
-    print('cipher: ${hex.encode(c.c)}');
-    print('mac: ${hex.encode(c.mac)}');
+    print('cipher: ${Sodium.bin2hex(c.c)}');
+    print('mac: ${Sodium.bin2hex(c.mac)}');
 
     // decrypt
     final d = SecretBox.decryptStringDetached(c.c, c.mac, n, k);
@@ -267,7 +266,7 @@ class Samples {
 
     // sign with secret key
     final s = CryptoSign.signString(m, k.sk);
-    print('signed: ${hex.encode(s)}');
+    print('signed: ${Sodium.bin2hex(s)}');
 
     // verify with public key
     final u = CryptoSign.openString(s, k.pk);
@@ -285,7 +284,7 @@ class Samples {
     // Author computes signature using secret key
     final m = 'hello world';
     final s = CryptoSign.signStringDetached(m, k.sk);
-    print(hex.encode(s));
+    print(Sodium.bin2hex(s));
 
     // Recipient verifies message was issued by author using public key
     final v = CryptoSign.verifyString(s, m, k.pk);
@@ -302,7 +301,7 @@ class Samples {
     // Author computes signature using secret key
     final p = ['Arbitrary data to hash', 'is longer than expected'];
     final s = await CryptoSign.signStrings(Stream.fromIterable(p), k.sk);
-    print(hex.encode(s));
+    print(Sodium.bin2hex(s));
 
     // Recipient verifies message was issued by author using public key
     final v = await CryptoSign.verifyStrings(s, Stream.fromIterable(p), k.pk);
@@ -316,9 +315,9 @@ class Samples {
     final s = CryptoSign.randomSeed();
     final k = CryptoSign.seedKeys(s);
 
-    print('seed: ${hex.encode(s)}');
-    print('pk: ${hex.encode(k.pk)}');
-    print('sk: ${hex.encode(k.sk)}');
+    print('seed: ${Sodium.bin2hex(s)}');
+    print('pk: ${Sodium.bin2hex(k.pk)}');
+    print('sk: ${Sodium.bin2hex(k.sk)}');
 
     final s2 = CryptoSign.extractSeed(k.sk);
     final pk = CryptoSign.extractPublicKey(k.sk);
@@ -333,13 +332,13 @@ class Samples {
   void sign5(Function(Object) print) {
     // BEGIN sign5: Usage: Converts an Ed25519 key pair to a Curve25519 key pair.
     final k = CryptoSign.randomKeys();
-    print('ed25519 pk: ${hex.encode(k.pk)}');
-    print('ed25519 sk: ${hex.encode(k.sk)}');
+    print('ed25519 pk: ${Sodium.bin2hex(k.pk)}');
+    print('ed25519 sk: ${Sodium.bin2hex(k.sk)}');
 
     final pk = Sodium.cryptoSignEd25519PkToCurve25519(k.pk);
     final sk = Sodium.cryptoSignEd25519SkToCurve25519(k.sk);
-    print('curve25519 pk: ${hex.encode(pk)}');
-    print('curve25519 sk: ${hex.encode(sk)}');
+    print('curve25519 pk: ${Sodium.bin2hex(pk)}');
+    print('curve25519 sk: ${Sodium.bin2hex(sk)}');
     // END sign5
   }
 
@@ -348,7 +347,7 @@ class Samples {
     final v = 'Arbitrary data to hash';
     final h = GenericHash.hashString(v);
 
-    print(hex.encode(h));
+    print(Sodium.bin2hex(h));
     // END generic1
   }
 
@@ -359,7 +358,7 @@ class Samples {
 
     final h = GenericHash.hashString(v, key: k);
 
-    print(hex.encode(h));
+    print(Sodium.bin2hex(h));
     // END generic2
   }
 
@@ -369,7 +368,7 @@ class Samples {
 
     final h = await GenericHash.hashStrings(s);
 
-    print(hex.encode(h));
+    print(Sodium.bin2hex(h));
     // END generic3
   }
 
@@ -381,7 +380,7 @@ class Samples {
 
     final h = await GenericHash.hashStrings(s, key: k);
 
-    print(hex.encode(h));
+    print(Sodium.bin2hex(h));
     // END generic4
   }
 
@@ -391,7 +390,7 @@ class Samples {
     final s = PasswordHash.randomSalt();
     final h = PasswordHash.hashString(p, s);
 
-    print(hex.encode(h));
+    print(Sodium.bin2hex(h));
     // END pwhash1
   }
 
@@ -429,7 +428,7 @@ class Samples {
     final k = ShortHash.randomKey();
     final h = ShortHash.hashString(m, k);
 
-    print(hex.encode(h));
+    print(Sodium.bin2hex(h));
     // END shorthash1
   }
 
@@ -443,9 +442,9 @@ class Samples {
     final k2 = KeyDerivation.derive(k, 2, subKeyLength: 32);
     final k3 = KeyDerivation.derive(k, 3, subKeyLength: 64);
 
-    print('subkey1: ${hex.encode(k1)}');
-    print('subkey2: ${hex.encode(k2)}');
-    print('subkey3: ${hex.encode(k3)}');
+    print('subkey1: ${Sodium.bin2hex(k1)}');
+    print('subkey2: ${Sodium.bin2hex(k2)}');
+    print('subkey3: ${Sodium.bin2hex(k3)}');
     // END kdf1
   }
 
@@ -464,8 +463,8 @@ class Samples {
     assert(eq(ck.rx, sk.tx));
     assert(eq(ck.tx, sk.rx));
 
-    print('client rx: ${hex.encode(ck.rx)}');
-    print('client tx: ${hex.encode(ck.tx)}');
+    print('client rx: ${Sodium.bin2hex(ck.rx)}');
+    print('client tx: ${Sodium.bin2hex(ck.tx)}');
     // END kx1
   }
 
@@ -493,7 +492,7 @@ class Samples {
     final eq = ListEquality().equals;
     assert(eq(cs, ss));
 
-    print(hex.encode(cs));
+    print(Sodium.bin2hex(cs));
     // END scalarmult1
   }
 
@@ -502,15 +501,15 @@ class Samples {
     // random nonce and key
     final n = ChaCha20Poly1305.randomNonce();
     final k = ChaCha20Poly1305.randomKey();
-    print('nonce: ${hex.encode(n)}');
-    print('key: ${hex.encode(k)}');
+    print('nonce: ${Sodium.bin2hex(n)}');
+    print('key: ${Sodium.bin2hex(k)}');
 
     // encrypt
     final m = 'hello world';
     final d = '123456';
     final c = ChaCha20Poly1305.encryptString(m, n, k, additionalData: d);
 
-    print('cipher: ${hex.encode(c)}');
+    print('cipher: ${Sodium.bin2hex(c)}');
 
     // decrypt
     final s = ChaCha20Poly1305.decryptString(c, n, k, additionalData: d);
@@ -524,8 +523,8 @@ class Samples {
     // random nonce and key
     final n = ChaCha20Poly1305.randomNonce();
     final k = ChaCha20Poly1305.randomKey();
-    print('nonce: ${hex.encode(n)}');
-    print('key: ${hex.encode(k)}');
+    print('nonce: ${Sodium.bin2hex(n)}');
+    print('key: ${Sodium.bin2hex(k)}');
 
     // encrypt
     final m = 'hello world';
@@ -533,8 +532,8 @@ class Samples {
     final c =
         ChaCha20Poly1305.encryptStringDetached(m, n, k, additionalData: d);
 
-    print('cipher: ${hex.encode(c.c)}');
-    print('mac: ${hex.encode(c.mac)}');
+    print('cipher: ${Sodium.bin2hex(c.c)}');
+    print('mac: ${Sodium.bin2hex(c.mac)}');
 
     // decrypt
     final s = ChaCha20Poly1305.decryptStringDetached(c.c, c.mac, n, k,
@@ -549,15 +548,15 @@ class Samples {
     // random nonce and key
     final n = ChaCha20Poly1305Ietf.randomNonce();
     final k = ChaCha20Poly1305Ietf.randomKey();
-    print('nonce: ${hex.encode(n)}');
-    print('key: ${hex.encode(k)}');
+    print('nonce: ${Sodium.bin2hex(n)}');
+    print('key: ${Sodium.bin2hex(k)}');
 
     // encrypt
     final m = 'hello world';
     final d = '123456';
     final c = ChaCha20Poly1305Ietf.encryptString(m, n, k, additionalData: d);
 
-    print('cipher: ${hex.encode(c)}');
+    print('cipher: ${Sodium.bin2hex(c)}');
 
     // decrypt
     final s = ChaCha20Poly1305Ietf.decryptString(c, n, k, additionalData: d);
@@ -571,8 +570,8 @@ class Samples {
     // random nonce and key
     final n = ChaCha20Poly1305Ietf.randomNonce();
     final k = ChaCha20Poly1305Ietf.randomKey();
-    print('nonce: ${hex.encode(n)}');
-    print('key: ${hex.encode(k)}');
+    print('nonce: ${Sodium.bin2hex(n)}');
+    print('key: ${Sodium.bin2hex(k)}');
 
     // encrypt
     final m = 'hello world';
@@ -580,8 +579,8 @@ class Samples {
     final c =
         ChaCha20Poly1305Ietf.encryptStringDetached(m, n, k, additionalData: d);
 
-    print('cipher: ${hex.encode(c.c)}');
-    print('mac: ${hex.encode(c.mac)}');
+    print('cipher: ${Sodium.bin2hex(c.c)}');
+    print('mac: ${Sodium.bin2hex(c.mac)}');
 
     // decrypt
     final s = ChaCha20Poly1305Ietf.decryptStringDetached(c.c, c.mac, n, k,
@@ -596,15 +595,15 @@ class Samples {
     // random nonce and key
     final n = XChaCha20Poly1305Ietf.randomNonce();
     final k = XChaCha20Poly1305Ietf.randomKey();
-    print('nonce: ${hex.encode(n)}');
-    print('key: ${hex.encode(k)}');
+    print('nonce: ${Sodium.bin2hex(n)}');
+    print('key: ${Sodium.bin2hex(k)}');
 
     // encrypt
     final m = 'hello world';
     final d = '123456';
     final c = XChaCha20Poly1305Ietf.encryptString(m, n, k, additionalData: d);
 
-    print('cipher: ${hex.encode(c)}');
+    print('cipher: ${Sodium.bin2hex(c)}');
 
     // decrypt
     final s = XChaCha20Poly1305Ietf.decryptString(c, n, k, additionalData: d);
@@ -618,8 +617,8 @@ class Samples {
     // random nonce and key
     final n = XChaCha20Poly1305Ietf.randomNonce();
     final k = XChaCha20Poly1305Ietf.randomKey();
-    print('nonce: ${hex.encode(n)}');
-    print('key: ${hex.encode(k)}');
+    print('nonce: ${Sodium.bin2hex(n)}');
+    print('key: ${Sodium.bin2hex(k)}');
 
     // encrypt
     final m = 'hello world';
@@ -627,8 +626,8 @@ class Samples {
     final c =
         XChaCha20Poly1305Ietf.encryptStringDetached(m, n, k, additionalData: d);
 
-    print('cipher: ${hex.encode(c.c)}');
-    print('mac: ${hex.encode(c.mac)}');
+    print('cipher: ${Sodium.bin2hex(c.c)}');
+    print('mac: ${Sodium.bin2hex(c.mac)}');
 
     // decrypt
     final s = XChaCha20Poly1305Ietf.decryptStringDetached(c.c, c.mac, n, k,
@@ -643,7 +642,7 @@ class Samples {
     final m = 'hello world';
     final k = OnetimeAuth.randomKey();
     final t = OnetimeAuth.computeString(m, k);
-    print(hex.encode(t));
+    print(Sodium.bin2hex(t));
 
     // verify tag
     final valid = OnetimeAuth.verifyString(t, m, k);
@@ -656,7 +655,7 @@ class Samples {
     final i = Stream.fromIterable(['Muti-part', 'data']);
     final k = OnetimeAuth.randomKey();
     final t = await OnetimeAuth.computeStrings(i, k);
-    print(hex.encode(t));
+    print(Sodium.bin2hex(t));
     // END onetime2
   }
 
@@ -664,7 +663,7 @@ class Samples {
     // BEGIN hash1: Usage: SHA-512 hashing
     final m = 'hello world';
     final h = Hash.hashString(m);
-    print(hex.encode(h));
+    print(Sodium.bin2hex(h));
     // END hash1
   }
 
@@ -676,7 +675,7 @@ class Samples {
 
     // generate 16 bytes
     var c = CryptoStream.stream(16, n, k);
-    print(hex.encode(c));
+    print(Sodium.bin2hex(c));
 
     // use same nonce and key yields same bytes
     var c2 = CryptoStream.stream(16, n, k);
