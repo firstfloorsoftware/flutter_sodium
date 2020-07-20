@@ -100,6 +100,23 @@ class Samples {
     // END util1
   }
 
+  void util2(Function(Object) print) {
+    // BEGIN util2: Base64 encoding: Converts byte sequence to base64 string and vice versa. Support multiple base64 variants
+    final r = Sodium.randombytesBuf(16);
+
+    // to base64
+    final h = Sodium.bin2base64(r);
+    print(h);
+
+    // and back to binary
+    final b = Sodium.base642bin(h);
+
+    // assert equality
+    final eq = ListEquality().equals;
+    assert(eq(r, b));
+    // END util2
+  }
+
   void auth1(Function(Object) print) {
     // BEGIN auth1: Usage: Secret key authentication
     // generate secret

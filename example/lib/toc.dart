@@ -60,7 +60,10 @@ Future<List<Topic>> buildToc(BuildContext context) async {
     Topic('Helpers',
         description: 'Various helper functions',
         url: 'https://libsodium.gitbook.io/doc/helpers',
-        samples: <Sample>[Sample('util1', func: samples.util1)]),
+        samples: <Sample>[
+          Sample('util1', func: samples.util1),
+          Sample('util2', func: samples.util2)
+        ]),
     Section('Secret-key cryptography'),
     Topic('Authenticated encryption',
         description: 'Secret-key encryption and verification',
