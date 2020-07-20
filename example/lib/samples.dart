@@ -84,6 +84,23 @@ class Samples {
     // END version2
   }
 
+  void util1(Function(Object) print) {
+    // BEGIN util1: Hexadecimal encoding: Converts byte sequence to hexadecimal string and vice versa.
+    final r = Sodium.randombytesBuf(16);
+
+    // to hex
+    final h = Sodium.bin2hex(r);
+    print(h);
+
+    // and back to binary
+    final b = Sodium.hex2bin(h);
+
+    // assert equality
+    final eq = ListEquality().equals;
+    assert(eq(r, b));
+    // END util1
+  }
+
   void auth1(Function(Object) print) {
     // BEGIN auth1: Usage: Secret key authentication
     // generate secret

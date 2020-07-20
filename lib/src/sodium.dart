@@ -2020,6 +2020,46 @@ class Sodium {
   static int get libraryVersionMajor => _sodium.sodium_library_version_major();
   static int get libraryVersionMinor => _sodium.sodium_library_version_minor();
   static bool get libraryMinimal => _sodium.sodium_library_minimal() == 1;
+
+  static String bin2hex(Uint8List bin) {
+    assert(bin != null);
+
+    final _hexMaxlen = bin.length * 2 + 1;
+    final _hex = allocate<Uint8>(count: _hexMaxlen);
+    final _bin = bin.toPointer();
+    try {
+      return Utf8.fromUtf8(
+          _sodium.sodium_bin2hex(_hex, _hexMaxlen, _bin, bin.length));
+    } finally {
+      free(_hex);
+      free(_bin);
+    }
+  }
+
+  static Uint8List hex2bin(String hex, {String ignore = ': '}) {
+    assert(hex != null);
+
+    final _bin = allocate<Uint8>(count: hex.length);
+    final _hex = Utf8.toUtf8(hex);
+    final _hexlen = Utf8.strlen(_hex);
+    final _ignore = Utf8.toUtf8(ignore);
+    final _binlen = allocate<Uint8>(count: 4);
+    try {
+      _sodium
+          .sodium_hex2bin(
+              _bin, hex.length, _hex, _hexlen, _ignore, _binlen, nullptr)
+          .mustSucceed('sodium_hex2bin');
+
+      final binlen =
+          _binlen.toList(4).buffer.asByteData().getUint32(0, Endian.host);
+      return _bin.toList(binlen);
+    } finally {
+      free(_bin);
+      free(_hex);
+      free(_ignore);
+      free(_binlen);
+    }
+  }
 }
 
 class _CryptoAead {
