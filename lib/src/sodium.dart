@@ -2042,7 +2042,7 @@ class Sodium {
     final _bin = allocate<Uint8>(count: hex.length);
     final _hex = Utf8.toUtf8(hex);
     final _hexlen = Utf8.strlen(_hex);
-    final _ignore = Utf8.toUtf8(ignore);
+    final _ignore = ignore == null ? nullptr : Utf8.toUtf8(ignore);
     final _binlen = allocate<Uint8>(count: 4);
     try {
       _sodium
