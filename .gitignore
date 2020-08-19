@@ -6,6 +6,7 @@
 .pub/
 .vscode/
 build/
-ios/.generated/
+**/ios/.generated/
+**/ios/Flutter/.last_build_id
 packages
 pubspec.lock
