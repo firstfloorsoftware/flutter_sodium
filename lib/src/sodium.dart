@@ -2009,19 +2009,108 @@ class Sodium {
   //
   // sodium
   //
-  static void sodiumInit() {
+  static void init() {
     if (_sodium.sodium_init() == -1) {
       throw SodiumException('Libsodium initialization failed');
     }
   }
 
-  static String get sodiumVersionString =>
+  static String get versionString =>
       Utf8.fromUtf8(_sodium.sodium_version_string());
-  static int get sodiumLibraryVersionMajor =>
-      _sodium.sodium_library_version_major();
-  static int get sodiumLibraryVersionMinor =>
-      _sodium.sodium_library_version_minor();
-  static bool get sodiumLibraryMinimal => _sodium.sodium_library_minimal() == 1;
+  static int get libraryVersionMajor => _sodium.sodium_library_version_major();
+  static int get libraryVersionMinor => _sodium.sodium_library_version_minor();
+  static bool get libraryMinimal => _sodium.sodium_library_minimal() == 1;
+
+  static String bin2hex(Uint8List bin) {
+    assert(bin != null);
+
+    final _hexMaxlen = bin.length * 2 + 1;
+    final _hex = allocate<Uint8>(count: _hexMaxlen);
+    final _bin = bin.toPointer();
+    try {
+      return Utf8.fromUtf8(
+          _sodium.sodium_bin2hex(_hex, _hexMaxlen, _bin, bin.length));
+    } finally {
+      free(_hex);
+      free(_bin);
+    }
+  }
+
+  static Uint8List hex2bin(String hex, {String ignore = ': '}) {
+    assert(hex != null);
+
+    final _bin = allocate<Uint8>(count: hex.length);
+    final _hex = Utf8.toUtf8(hex);
+    final _hexlen = Utf8.strlen(_hex);
+    final _ignore = ignore == null ? nullptr : Utf8.toUtf8(ignore);
+    final _binlen = allocate<Uint8>(count: 4);
+    try {
+      _sodium
+          .sodium_hex2bin(
+              _bin, hex.length, _hex, _hexlen, _ignore, _binlen, nullptr)
+          .mustSucceed('sodium_hex2bin');
+
+      final binlen =
+          _binlen.toList(4).buffer.asByteData().getUint32(0, Endian.host);
+      return _bin.toList(binlen);
+    } finally {
+      free(_bin);
+      free(_hex);
+      free(_ignore);
+      free(_binlen);
+    }
+  }
+
+  static const int base64VariantOriginal = 1;
+  static const int base64VariantOriginalNoPadding = 3;
+  static const int base64VariantUrlsafe = 5;
+  static const int base64VariantUrlsafeNoPadding = 7;
+
+  static int base64EncodedLen(int binlen, int variant) =>
+      _sodium.sodium_base64_encoded_len(binlen, variant);
+
+  static String bin2base64(Uint8List bin,
+      {int variant = base64VariantOriginal}) {
+    assert(bin != null);
+    assert(variant != null);
+
+    final _b64maxlen = _sodium.sodium_base64_encoded_len(bin.length, variant);
+    final _b64 = allocate<Uint8>(count: _b64maxlen);
+    final _bin = bin.toPointer();
+    try {
+      return Utf8.fromUtf8(_sodium.sodium_bin2base64(
+          _b64, _b64maxlen, _bin, bin.length, variant));
+    } finally {
+      free(_b64);
+      free(_bin);
+    }
+  }
+
+  static Uint8List base642bin(String b64,
+      {String ignore, int variant = base64VariantOriginal}) {
+    assert(b64 != null);
+
+    final _bin = allocate<Uint8>(count: b64.length);
+    final _b64 = Utf8.toUtf8(b64);
+    final _b64len = Utf8.strlen(_b64);
+    final _ignore = ignore == null ? nullptr : Utf8.toUtf8(ignore);
+    final _binlen = allocate<Uint8>(count: 4);
+    try {
+      _sodium
+          .sodium_base642bin(_bin, b64.length, _b64, _b64len, _ignore, _binlen,
+              nullptr, variant)
+          .mustSucceed('sodium_base642bin');
+
+      final binlen =
+          _binlen.toList(4).buffer.asByteData().getUint32(0, Endian.host);
+      return _bin.toList(binlen);
+    } finally {
+      free(_bin);
+      free(_b64);
+      free(_ignore);
+      free(_binlen);
+    }
+  }
 }
 
 class _CryptoAead {

@@ -4,7 +4,7 @@ import 'toc.dart';
 import 'topic_page.dart';
 
 void main() {
-  Sodium.sodiumInit();
+  Sodium.init();
 
   runApp(MyApp());
 }
