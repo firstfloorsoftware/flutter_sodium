@@ -1,3 +1,8 @@
+## 0.1.4 - September 16, 2020
+* adds sodium hex and base64 conversion helpers
+* removes sodium prefix from version and init functions (breaks API)
+* fixes generic_hash crash on Android
+
 ## 0.1.3 - July 17, 2020
 * Reverts invalid multi-platform pubspec settings
 
