@@ -36,8 +36,8 @@ class CryptoGenerichashBindings {
       libsodium
           .lookup<
               NativeFunction<
-                  Int32 Function(Pointer<Uint8>, IntPtr, Pointer<Uint8>, Int32,
-                      Pointer<Uint8>, IntPtr keylen)>>('crypto_generichash')
+                  Int32 Function(Pointer<Uint8>, IntPtr, Pointer<Uint8>, Uint64,
+                      Pointer<Uint8>, IntPtr)>>('crypto_generichash')
           .asFunction();
 
   final int Function(
