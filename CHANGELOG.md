@@ -1,3 +1,7 @@
+## 0.1.5 - September 30, 2020
+* fixes symbol lookup issue since flutter 1.20
+* fixes platforms key in pubspec.yaml
+
 ## 0.1.4 - September 16, 2020
 * adds sodium hex and base64 conversion helpers
 * removes sodium prefix from version and init functions (breaks API)
