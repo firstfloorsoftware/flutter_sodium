@@ -1,1 +1,4 @@
-int sodium_init(void);
+#import <Flutter/Flutter.h>
+
+@interface FlutterSodiumPlugin : NSObject<FlutterPlugin>
+@end
