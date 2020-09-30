@@ -1,3 +1,6 @@
+## 0.1.6 - September 30, 2020
+* fixes "cannot find symbol" compile error on Android
+
 ## 0.1.5 - September 30, 2020
 * fixes symbol lookup issue since flutter 1.20
 * fixes platforms key in pubspec.yaml
