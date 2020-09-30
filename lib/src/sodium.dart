@@ -27,6 +27,7 @@ import 'key_pair.dart';
 import 'pull_result.dart';
 import 'session_keys.dart';
 
+/// The core flutter_sodium API mapping libsodium function to Dart equivalents.
 class Sodium {
   static final _chacha20poly1305 = _CryptoAead.chacha20poly1305();
   static final _chacha20poly1305Ietf = _CryptoAead.chacha20poly1305Ietf();
