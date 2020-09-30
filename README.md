@@ -11,13 +11,22 @@ In your flutter project add the dependency:
 ```yml
 dependencies:
   ...
-  flutter_sodium: any
+  flutter_sodium: ^0.1.6
 ```
-## Usage example
+
+## Initialize flutter_sodium
+Import the plugin and initialize it. Sodium.init() initializes the plugin and should be called before any other function provided by flutter_sodium.
 
 ```dart
 import 'package:flutter_sodium/flutter_sodium.dart';
 
+// initialize sodium
+Sodium.init();
+```
+
+## Usage example
+
+```dart
 // Password hashing (using Argon)
 final password = 'my password';
 final str = PasswordHash.hashStringStorage(password);
