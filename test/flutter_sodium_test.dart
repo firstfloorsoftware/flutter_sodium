@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
-import 'package:convert/convert.dart';
 
 void main() {
   setUp(() {});
@@ -36,7 +35,7 @@ void main() {
     test('pwhash', () {
       final outlen = 16;
       final passwd = utf8.encode('hello world');
-      final salt = hex.decode('10fb7e754a23de756aacb30f810f23df');
+      final salt = Sodium.hex2bin('10fb7e754a23de756aacb30f810f23df');
       final opslimit = 1;
       final memlimit = 8192;
       final alg = Sodium.cryptoPwhashAlgDefault;
@@ -44,7 +43,7 @@ void main() {
       final hash =
           Sodium.cryptoPwhash(outlen, passwd, salt, opslimit, memlimit, alg);
 
-      expect(hash, hex.decode('5ac37aa9233b3bda0677c496ceea4bc0'));
+      expect(hash, Sodium.hex2bin('5ac37aa9233b3bda0677c496ceea4bc0'));
     });
   });
 }
