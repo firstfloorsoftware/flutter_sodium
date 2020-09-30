@@ -14,7 +14,6 @@ dependencies:
   flutter_sodium: ^0.1.6
 ```
 
-## Initialize flutter_sodium
 Import the plugin and initialize it. Sodium.init() initializes the plugin and should be called before any other function provided by flutter_sodium.
 
 ```dart
