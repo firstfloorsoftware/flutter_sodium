@@ -19,7 +19,7 @@ public class FlutterSodiumPlugin implements FlutterPlugin, MethodCallHandler {
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "sodium");
+    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "sodium");
     channel.setMethodCallHandler(this);
   }
 
