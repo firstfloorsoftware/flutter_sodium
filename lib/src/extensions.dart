@@ -12,6 +12,17 @@ extension Uint8Pointer on Pointer<Uint8> {
     }
     return builder.takeBytes();
   }
+
+  Uint8List toNullTerminatedList(int maxLength) {
+    final builder = BytesBuilder();
+    for (var i = 0; i < maxLength; i++) {
+      builder.addByte(this[i]);
+      if (this[i] == 0) {
+        break;
+      }
+    }
+    return builder.takeBytes();
+  }
 }
 
 extension Uint8ListExtensions on Uint8List {

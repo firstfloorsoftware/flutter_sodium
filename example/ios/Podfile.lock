@@ -20,7 +20,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_sodium: cb936f3dfb79fcccd1f48831701b4e3f23e0e3d4
+  flutter_sodium: c84426b4de738514b5b66cfdeb8a06634e72fe0b
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
