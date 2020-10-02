@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
@@ -1094,7 +1093,8 @@ class Sodium {
     }
   }
 
-  static String cryptoPwhashStr(Uint8List passwd, int opslimit, int memlimit) {
+  static Uint8List cryptoPwhashStr(
+      Uint8List passwd, int opslimit, int memlimit) {
     assert(passwd != null);
     assert(opslimit != null);
     assert(memlimit != null);
@@ -1111,14 +1111,14 @@ class Sodium {
       _cryptoPwhash
           .crypto_pwhash_str(_out, _passwd, passwd.length, opslimit, memlimit)
           .mustSucceed('crypto_pwhash_str');
-      return ascii.decode(_out.toList(cryptoPwhashStrbytes));
+      return _out.toNullTerminatedList(cryptoPwhashStrbytes);
     } finally {
       free(_out);
       free(_passwd);
     }
   }
 
-  static String cryptoPwhashStrAlg(
+  static Uint8List cryptoPwhashStrAlg(
       Uint8List passwd, int opslimit, int memlimit, int alg) {
     assert(passwd != null);
     assert(opslimit != null);
@@ -1140,21 +1140,24 @@ class Sodium {
           .crypto_pwhash_str_alg(
               _out, _passwd, passwd.length, opslimit, memlimit, alg)
           .mustSucceed('crypto_pwhash_str_alg');
-      return ascii.decode(_out.toList(cryptoPwhashStrbytes));
+      return _out.toNullTerminatedList(cryptoPwhashStrbytes);
     } finally {
       free(_out);
       free(_passwd);
     }
   }
 
-  static int cryptoPwhashStrVerify(String str, Uint8List passwd) {
+  static int cryptoPwhashStrVerify(Uint8List str, Uint8List passwd) {
     assert(str != null);
     assert(passwd != null);
-    RangeError.checkValueInInterval(str.length, cryptoPwhashStrbytes,
-        cryptoPwhashStrbytes, 'str', 'Invalid length');
+    RangeError.checkValueInInterval(
+        str.length, 1, cryptoPwhashStrbytes, 'str', 'Invalid length');
     RangeError.checkValueInInterval(passwd.length, cryptoPwhashPasswdMin,
         cryptoPwhashPasswdMax, 'passwd', 'Invalid length');
-    final _str = ascii.encode(str).toPointer();
+
+    // make sure str is null terminated
+    final _str =
+        str.toNullTerminatedList(maxLength: cryptoPwhashStrbytes).toPointer();
     final _passwd = passwd.toPointer();
     try {
       return _cryptoPwhash.crypto_pwhash_str_verify(
@@ -1166,18 +1169,20 @@ class Sodium {
   }
 
   static int cryptoPwhashStrNeedsRehash(
-      String str, int opslimit, int memlimit) {
+      Uint8List str, int opslimit, int memlimit) {
     assert(str != null);
     assert(opslimit != null);
     assert(memlimit != null);
-    RangeError.checkValueInInterval(str.length, cryptoPwhashStrbytes,
-        cryptoPwhashStrbytes, 'str', 'Invalid length');
+    RangeError.checkValueInInterval(
+        str.length, 1, cryptoPwhashStrbytes, 'str', 'Invalid length');
     RangeError.checkValueInInterval(
         opslimit, cryptoPwhashOpslimitMin, cryptoPwhashOpslimitMax, 'opslimit');
     RangeError.checkValueInInterval(
         memlimit, cryptoPwhashMemlimitMin, cryptoPwhashMemlimitMax, 'memlimit');
 
-    final _str = ascii.encode(str).toPointer();
+    // make sure str is null terminated
+    final _str =
+        str.toNullTerminatedList(maxLength: cryptoPwhashStrbytes).toPointer();
     try {
       return _cryptoPwhash.crypto_pwhash_str_needs_rehash(
           _str, opslimit, memlimit);

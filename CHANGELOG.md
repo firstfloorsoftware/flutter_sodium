@@ -1,3 +1,6 @@
+## 0.1.8 - October 2, 2020
+* backwards incompatible Sodium.cryptoPwhashStr* changes, str return value and parameter type changed from ascii decoded String to null terminated Uint8List
+
 ## 0.1.7 - September 30, 2020
 * improves API documentation
 * removes obsolete convert package dependency

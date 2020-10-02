@@ -12,6 +12,17 @@ extension Uint8Pointer on Pointer<Uint8> {
     }
     return builder.takeBytes();
   }
+
+  Uint8List toNullTerminatedList(int maxLength) {
+    final builder = BytesBuilder();
+    for (var i = 0; i < maxLength; i++) {
+      builder.addByte(this[i]);
+      if (this[i] == 0) {
+        break;
+      }
+    }
+    return builder.takeBytes();
+  }
 }
 
 extension Uint8ListExtensions on Uint8List {
@@ -22,6 +33,15 @@ extension Uint8ListExtensions on Uint8List {
     final p = allocate<Uint8>(count: this.length);
     p.asTypedList(this.length).setAll(0, this);
     return p;
+  }
+
+  Uint8List toNullTerminatedList({int maxLength}) {
+    if ((maxLength == null || this.length < maxLength) && this.last != 0) {
+      return new Uint8List(this.length + 1)..setAll(0, this);
+    }
+
+    // return unchanged
+    return this;
   }
 }
 
