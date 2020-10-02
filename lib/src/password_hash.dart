@@ -84,11 +84,7 @@ class PasswordHash {
 
   /// Verifies that the storage is a valid password verification string for given password.
   static bool verifyStorage(String storage, String password) {
-    var str = ascii.encode(storage);
-    // make sure str is null terminated
-    if (str.length < Sodium.cryptoPwhashStrbytes && str[str.length - 1] != 0) {
-      str = new Uint8List(str.length + 1)..setAll(0, str);
-    }
+    final str = ascii.encode(storage);
     final passwd = utf8.encode(password);
 
     return Sodium.cryptoPwhashStrVerify(str, passwd) == 0;

@@ -34,6 +34,15 @@ extension Uint8ListExtensions on Uint8List {
     p.asTypedList(this.length).setAll(0, this);
     return p;
   }
+
+  Uint8List toNullTerminatedList({int maxLength}) {
+    if ((maxLength == null || this.length < maxLength) && this.last != 0) {
+      return new Uint8List(this.length + 1)..setAll(0, this);
+    }
+
+    // return unchanged
+    return this;
+  }
 }
 
 extension Result on int {

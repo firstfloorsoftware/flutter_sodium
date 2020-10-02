@@ -1155,7 +1155,9 @@ class Sodium {
     RangeError.checkValueInInterval(passwd.length, cryptoPwhashPasswdMin,
         cryptoPwhashPasswdMax, 'passwd', 'Invalid length');
 
-    final _str = str.toPointer();
+    // make sure str is null terminated
+    final _str =
+        str.toNullTerminatedList(maxLength: cryptoPwhashStrbytes).toPointer();
     final _passwd = passwd.toPointer();
     try {
       return _cryptoPwhash.crypto_pwhash_str_verify(
@@ -1178,7 +1180,9 @@ class Sodium {
     RangeError.checkValueInInterval(
         memlimit, cryptoPwhashMemlimitMin, cryptoPwhashMemlimitMax, 'memlimit');
 
-    final _str = str.toPointer();
+    // make sure str is null terminated
+    final _str =
+        str.toNullTerminatedList(maxLength: cryptoPwhashStrbytes).toPointer();
     try {
       return _cryptoPwhash.crypto_pwhash_str_needs_rehash(
           _str, opslimit, memlimit);
