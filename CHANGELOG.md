@@ -1,3 +1,6 @@
+## 0.1.9 - October 31, 2020
+* sets Android build.gradle minSdkVersion 16, fixing implicit permissions READ_PHONE_STATE, READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE
+
 ## 0.1.8 - October 2, 2020
 * backwards incompatible Sodium.cryptoPwhashStr* changes, str return value and parameter type changed from ascii decoded String to null terminated Uint8List
 
