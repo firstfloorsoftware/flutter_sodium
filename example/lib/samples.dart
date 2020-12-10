@@ -99,8 +99,8 @@ class Samples {
     // END about3
   }
 
-  void util1(Function(Object) print) {
-    // BEGIN util1: Hexadecimal encoding: Converts byte sequence to hexadecimal string and vice versa.
+  void encoding1(Function(Object) print) {
+    // BEGIN encoding1: Hexadecimal encoding: Converts byte sequence to hexadecimal string and vice versa.
     final r = Sodium.randombytesBuf(16);
 
     // to hex
@@ -112,11 +112,11 @@ class Samples {
 
     // assert equality
     assert(Sodium.memcmp(r, b));
-    // END util1
+    // END encoding1
   }
 
-  void util2(Function(Object) print) {
-    // BEGIN util2: Base64 encoding: Converts byte sequence to base64 string and vice versa. Support multiple base64 variants
+  void encoding2(Function(Object) print) {
+    // BEGIN encoding2: Base64 encoding: Converts byte sequence to base64 string and vice versa. Support multiple base64 variants
     final r = Sodium.randombytesBuf(16);
 
     // to base64
@@ -128,7 +128,25 @@ class Samples {
 
     // assert equality
     assert(Sodium.memcmp(r, b));
-    // END util2
+    // END encoding2
+  }
+
+  void padding1(Function(Object) print) {
+    // BEGIN padding1: Usage: Appends padding data using the ISO/IEC 7816-4 padding algorithm.
+    final b = Sodium.randombytesBuf(10);
+
+    // add padding
+    final p = Sodium.pad(b, 16);
+
+    print(Sodium.bin2hex(b));
+    print(Sodium.bin2hex(p));
+
+    // remove padding
+    final r = Sodium.unpad(p, 16);
+
+    // b and r should be equal
+    assert(Sodium.memcmp(b, r));
+    // END padding1
   }
 
   void auth1(Function(Object) print) {

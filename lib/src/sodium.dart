@@ -2146,6 +2146,41 @@ class Sodium {
       free(_b2);
     }
   }
+
+  static Uint8List pad(Uint8List buf, int blockSize) {
+    assert(buf != null);
+    assert(blockSize != null);
+    final _buf = buf.toPointer(size: buf.length + blockSize);
+    final _paddedlen = allocate<Uint32>(count: 1);
+    try {
+      _sodium
+          .sodium_pad(
+              _paddedlen, _buf, buf.length, blockSize, buf.length + blockSize)
+          .mustSucceed('sodium_pad');
+
+      return _buf.toList(_paddedlen[0]);
+    } finally {
+      free(_buf);
+      free(_paddedlen);
+    }
+  }
+
+  static Uint8List unpad(Uint8List buf, int blockSize) {
+    assert(buf != null);
+    assert(blockSize != null);
+    final _buf = buf.toPointer();
+    final _unpaddedlen = allocate<Uint32>(count: 1);
+    try {
+      _sodium
+          .sodium_unpad(_unpaddedlen, _buf, buf.length, blockSize)
+          .mustSucceed('sodium_unpad');
+
+      return _buf.toList(_unpaddedlen[0]);
+    } finally {
+      free(_buf);
+      free(_unpaddedlen);
+    }
+  }
 }
 
 class _CryptoAead {

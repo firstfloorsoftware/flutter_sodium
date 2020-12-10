@@ -130,4 +130,22 @@ class SodiumBindings {
                   Int32 Function(
                       Pointer<Uint8>, Pointer<Uint8>, IntPtr)>>('sodium_memcmp')
           .asFunction();
+
+  final int Function(Pointer<Uint32> padded_buflen_p, Pointer<Uint8> buf,
+          int unpadded_buflen, int blocksize, int max_buflen) sodium_pad =
+      libsodium
+          .lookup<
+              NativeFunction<
+                  Int32 Function(Pointer<Uint32>, Pointer<Uint8>, IntPtr,
+                      IntPtr, IntPtr)>>('sodium_pad')
+          .asFunction();
+
+  final int Function(Pointer<Uint32> unpadded_buflen_p, Pointer<Uint8> buf,
+          int padded_buflen, int blocksize) sodium_unpad =
+      libsodium
+          .lookup<
+              NativeFunction<
+                  Int32 Function(Pointer<Uint32>, Pointer<Uint8>, IntPtr,
+                      IntPtr)>>('sodium_unpad')
+          .asFunction();
 }
