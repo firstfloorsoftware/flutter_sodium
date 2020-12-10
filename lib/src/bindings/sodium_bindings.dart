@@ -122,4 +122,12 @@ class SodiumBindings {
                       Pointer<Uint8>,
                       Int32)>>('sodium_base642bin')
           .asFunction();
+
+  final int Function(Pointer<Uint8> b1_, Pointer<Uint8> b2_, int len)
+      sodium_memcmp = libsodium
+          .lookup<
+              NativeFunction<
+                  Int32 Function(
+                      Pointer<Uint8>, Pointer<Uint8>, IntPtr)>>('sodium_memcmp')
+          .asFunction();
 }

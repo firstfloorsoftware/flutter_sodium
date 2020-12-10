@@ -2130,6 +2130,22 @@ class Sodium {
       free(_binlen);
     }
   }
+
+  static bool memcmp(Uint8List b1, Uint8List b2) {
+    assert(b1 != null);
+    assert(b2 != null);
+    if (b1.length != b2.length) {
+      return false;
+    }
+    final _b1 = b1.toPointer();
+    final _b2 = b2.toPointer();
+    try {
+      return _sodium.sodium_memcmp(_b1, _b2, b1.length) == 0;
+    } finally {
+      free(_b1);
+      free(_b2);
+    }
+  }
 }
 
 class _CryptoAead {
