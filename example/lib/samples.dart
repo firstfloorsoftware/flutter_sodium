@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 
 class Samples {
@@ -112,8 +111,7 @@ class Samples {
     final b = Sodium.hex2bin(h);
 
     // assert equality
-    final eq = ListEquality().equals;
-    assert(eq(r, b));
+    assert(Sodium.memcmp(r, b));
     // END util1
   }
 
@@ -129,8 +127,7 @@ class Samples {
     final b = Sodium.base642bin(h);
 
     // assert equality
-    final eq = ListEquality().equals;
-    assert(eq(r, b));
+    assert(Sodium.memcmp(r, b));
     // END util2
   }
 
@@ -357,9 +354,8 @@ class Samples {
     final pk = CryptoSign.extractPublicKey(k.sk);
 
     // assert equality
-    final eq = ListEquality().equals;
-    assert(eq(s, s2));
-    assert(eq(pk, k.pk));
+    assert(Sodium.memcmp(s, s2));
+    assert(Sodium.memcmp(pk, k.pk));
     // END sign4
   }
 
@@ -493,9 +489,8 @@ class Samples {
     final sk = KeyExchange.computeServerSessionKeys(s, c.pk);
 
     // assert keys do match
-    final eq = ListEquality().equals;
-    assert(eq(ck.rx, sk.tx));
-    assert(eq(ck.tx, sk.rx));
+    assert(Sodium.memcmp(ck.rx, sk.tx));
+    assert(Sodium.memcmp(ck.tx, sk.rx));
 
     print('client rx: ${Sodium.bin2hex(ck.rx)}');
     print('client tx: ${Sodium.bin2hex(ck.tx)}');
@@ -523,8 +518,7 @@ class Samples {
         await GenericHash.hashStream(Stream.fromIterable([sq, cpk, spk]));
 
     // assert shared keys do match
-    final eq = ListEquality().equals;
-    assert(eq(cs, ss));
+    assert(Sodium.memcmp(cs, ss));
 
     print(Sodium.bin2hex(cs));
     // END scalarmult1
@@ -715,8 +709,7 @@ class Samples {
     var c2 = CryptoStream.stream(16, n, k);
 
     // assert equality
-    final eq = ListEquality().equals;
-    assert(eq(c, c2));
+    assert(Sodium.memcmp(c, c2));
     // END stream1
   }
 }
