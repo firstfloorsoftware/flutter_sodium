@@ -2027,6 +2027,19 @@ class Sodium {
   static int get libraryVersionMinor => _sodium.sodium_library_version_minor();
   static bool get libraryMinimal => _sodium.sodium_library_minimal() == 1;
 
+  static bool get runtimeHasNeon => _sodium.sodium_runtime_has_neon() == 1;
+  static bool get runtimeHasSse2 => _sodium.sodium_runtime_has_sse2() == 1;
+  static bool get runtimeHasSse3 => _sodium.sodium_runtime_has_sse3() == 1;
+  static bool get runtimeHasSsse3 => _sodium.sodium_runtime_has_ssse3() == 1;
+  static bool get runtimeHasSse41 => _sodium.sodium_runtime_has_sse41() == 1;
+  static bool get runtimeHasAvx => _sodium.sodium_runtime_has_avx() == 1;
+  static bool get runtimeHasAvx2 => _sodium.sodium_runtime_has_avx2() == 1;
+  static bool get runtimeHasAvx512f =>
+      _sodium.sodium_runtime_has_avx512f() == 1;
+  static bool get runtimeHasPclmul => _sodium.sodium_runtime_has_pclmul() == 1;
+  static bool get runtimeHasAesni => _sodium.sodium_runtime_has_aesni() == 1;
+  static bool get runtimeHasRdrand => _sodium.sodium_runtime_has_rdrand() == 1;
+
   static String bin2hex(Uint8List bin) {
     assert(bin != null);
 

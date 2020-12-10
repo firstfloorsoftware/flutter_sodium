@@ -21,6 +21,40 @@ class SodiumBindings {
       .lookup<NativeFunction<Int32 Function()>>('sodium_library_minimal')
       .asFunction();
 
+  final int Function() sodium_runtime_has_neon = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_neon')
+      .asFunction();
+  final int Function() sodium_runtime_has_sse2 = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_sse2')
+      .asFunction();
+  final int Function() sodium_runtime_has_sse3 = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_sse3')
+      .asFunction();
+  final int Function() sodium_runtime_has_ssse3 = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_ssse3')
+      .asFunction();
+  final int Function() sodium_runtime_has_sse41 = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_sse41')
+      .asFunction();
+  final int Function() sodium_runtime_has_avx = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_avx')
+      .asFunction();
+  final int Function() sodium_runtime_has_avx2 = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_avx2')
+      .asFunction();
+  final int Function() sodium_runtime_has_avx512f = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_avx512f')
+      .asFunction();
+  final int Function() sodium_runtime_has_pclmul = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_pclmul')
+      .asFunction();
+  final int Function() sodium_runtime_has_aesni = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_aesni')
+      .asFunction();
+  final int Function() sodium_runtime_has_rdrand = libsodium
+      .lookup<NativeFunction<Int32 Function()>>('sodium_runtime_has_rdrand')
+      .asFunction();
+
   final Pointer<Utf8> Function(
           Pointer<Uint8> hex, int hex_maxlen, Pointer<Uint8> bin, int bin_len)
       sodium_bin2hex = libsodium

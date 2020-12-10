@@ -53,19 +53,19 @@ class Samples {
     // END random3
   }
 
-  void version1(Function(Object) print) {
-    // BEGIN version1: Usage: Retrieves the version details of the loaded libsodium library.
+  void about1(Function(Object) print) {
+    // BEGIN about1: Version: Retrieves the version details of the loaded libsodium library.
     final v = Sodium.versionString;
     final v1 = Sodium.libraryVersionMajor;
     final v2 = Sodium.libraryVersionMinor;
     final m = Sodium.libraryMinimal;
 
     print('$v ($v1.$v2), minimal: $m');
-    // END version1
+    // END about1
   }
 
-  void version2(Function(Object) print) {
-    // BEGIN version2: Primitives: Retrieves the names of the algorithms used in the various libsodium APIs.
+  void about2(Function(Object) print) {
+    // BEGIN about2: Primitives: Retrieves the names of the algorithms used in the various libsodium APIs.
     print('crypto_auth: ${Sodium.cryptoAuthPrimitive}');
     print('crypto_box: ${Sodium.cryptoBoxPrimitive}');
     print('crypto_generichash: ${Sodium.cryptoGenerichashPrimitive}');
@@ -80,7 +80,24 @@ class Samples {
     print('crypto_sign: ${Sodium.cryptoSignPrimitive}');
     print('crypto_stream: ${Sodium.cryptoStreamPrimitive}');
     print('randombytes: ${Sodium.randombytesImplementationName}');
-    // END version2
+    // END about2
+  }
+
+  void about3(Function(Object) print) {
+    // BEGIN about3: Runtime: Retrieves CPU capabilities
+    print('neon: ${Sodium.runtimeHasNeon}');
+    //print('armcrypto: ${Sodium.runtimeHasArmcrypto}');
+    print('sse2: ${Sodium.runtimeHasSse2}');
+    print('sse3: ${Sodium.runtimeHasSse3}');
+    print('ssse3: ${Sodium.runtimeHasSsse3}');
+    print('sse41: ${Sodium.runtimeHasSse41}');
+    print('avx: ${Sodium.runtimeHasAvx}');
+    print('avx2: ${Sodium.runtimeHasAvx2}');
+    print('avx512f: ${Sodium.runtimeHasAvx512f}');
+    print('pclmul: ${Sodium.runtimeHasPclmul}');
+    print('aesni: ${Sodium.runtimeHasAesni}');
+    print('rdrand: ${Sodium.runtimeHasRdrand}');
+    // END about3
   }
 
   void util1(Function(Object) print) {

@@ -50,19 +50,20 @@ Future<List<Topic>> buildToc(BuildContext context) async {
           Sample('random2', func: samples.random2),
           Sample('random3', func: samples.random3)
         ]),
-    Topic('Version and primitives',
-        description: 'Provides libsodium version and algorithm info.',
-        url: 'https://libsodium.gitbook.io/doc/',
-        samples: <Sample>[
-          Sample('version1', func: samples.version1),
-          Sample('version2', func: samples.version2)
-        ]),
     Topic('Helpers',
         description: 'Various helper functions',
         url: 'https://libsodium.gitbook.io/doc/helpers',
         samples: <Sample>[
           Sample('util1', func: samples.util1),
           Sample('util2', func: samples.util2)
+        ]),
+    Topic('About libsodium',
+        description: 'Provides libsodium version, runtime and algorithm info.',
+        url: 'https://libsodium.gitbook.io/doc/',
+        samples: <Sample>[
+          Sample('about1', func: samples.about1),
+          Sample('about2', func: samples.about2),
+          Sample('about3', func: samples.about3)
         ]),
     Section('Secret-key cryptography'),
     Topic('Authenticated encryption',
