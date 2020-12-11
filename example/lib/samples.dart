@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 
 class Samples {
@@ -53,19 +52,19 @@ class Samples {
     // END random3
   }
 
-  void version1(Function(Object) print) {
-    // BEGIN version1: Usage: Retrieves the version details of the loaded libsodium library.
+  void about1(Function(Object) print) {
+    // BEGIN about1: Version: Retrieves the version details of the loaded libsodium library.
     final v = Sodium.versionString;
     final v1 = Sodium.libraryVersionMajor;
     final v2 = Sodium.libraryVersionMinor;
     final m = Sodium.libraryMinimal;
 
     print('$v ($v1.$v2), minimal: $m');
-    // END version1
+    // END about1
   }
 
-  void version2(Function(Object) print) {
-    // BEGIN version2: Primitives: Retrieves the names of the algorithms used in the various libsodium APIs.
+  void about2(Function(Object) print) {
+    // BEGIN about2: Primitives: Retrieves the names of the algorithms used in the various libsodium APIs.
     print('crypto_auth: ${Sodium.cryptoAuthPrimitive}');
     print('crypto_box: ${Sodium.cryptoBoxPrimitive}');
     print('crypto_generichash: ${Sodium.cryptoGenerichashPrimitive}');
@@ -80,11 +79,28 @@ class Samples {
     print('crypto_sign: ${Sodium.cryptoSignPrimitive}');
     print('crypto_stream: ${Sodium.cryptoStreamPrimitive}');
     print('randombytes: ${Sodium.randombytesImplementationName}');
-    // END version2
+    // END about2
   }
 
-  void util1(Function(Object) print) {
-    // BEGIN util1: Hexadecimal encoding: Converts byte sequence to hexadecimal string and vice versa.
+  void about3(Function(Object) print) {
+    // BEGIN about3: Runtime: Retrieves CPU capabilities
+    print('neon: ${Sodium.runtimeHasNeon}');
+    //print('armcrypto: ${Sodium.runtimeHasArmcrypto}');
+    print('sse2: ${Sodium.runtimeHasSse2}');
+    print('sse3: ${Sodium.runtimeHasSse3}');
+    print('ssse3: ${Sodium.runtimeHasSsse3}');
+    print('sse41: ${Sodium.runtimeHasSse41}');
+    print('avx: ${Sodium.runtimeHasAvx}');
+    print('avx2: ${Sodium.runtimeHasAvx2}');
+    print('avx512f: ${Sodium.runtimeHasAvx512f}');
+    print('pclmul: ${Sodium.runtimeHasPclmul}');
+    print('aesni: ${Sodium.runtimeHasAesni}');
+    print('rdrand: ${Sodium.runtimeHasRdrand}');
+    // END about3
+  }
+
+  void encoding1(Function(Object) print) {
+    // BEGIN encoding1: Hexadecimal encoding: Converts byte sequence to hexadecimal string and vice versa.
     final r = Sodium.randombytesBuf(16);
 
     // to hex
@@ -95,13 +111,12 @@ class Samples {
     final b = Sodium.hex2bin(h);
 
     // assert equality
-    final eq = ListEquality().equals;
-    assert(eq(r, b));
-    // END util1
+    assert(Sodium.memcmp(r, b));
+    // END encoding1
   }
 
-  void util2(Function(Object) print) {
-    // BEGIN util2: Base64 encoding: Converts byte sequence to base64 string and vice versa. Support multiple base64 variants
+  void encoding2(Function(Object) print) {
+    // BEGIN encoding2: Base64 encoding: Converts byte sequence to base64 string and vice versa. Support multiple base64 variants
     final r = Sodium.randombytesBuf(16);
 
     // to base64
@@ -112,9 +127,26 @@ class Samples {
     final b = Sodium.base642bin(h);
 
     // assert equality
-    final eq = ListEquality().equals;
-    assert(eq(r, b));
-    // END util2
+    assert(Sodium.memcmp(r, b));
+    // END encoding2
+  }
+
+  void padding1(Function(Object) print) {
+    // BEGIN padding1: Usage: Appends padding data using the ISO/IEC 7816-4 padding algorithm.
+    final b = Sodium.randombytesBuf(10);
+
+    // add padding
+    final p = Sodium.pad(b, 16);
+
+    print(Sodium.bin2hex(b));
+    print(Sodium.bin2hex(p));
+
+    // remove padding
+    final r = Sodium.unpad(p, 16);
+
+    // b and r should be equal
+    assert(Sodium.memcmp(b, r));
+    // END padding1
   }
 
   void auth1(Function(Object) print) {
@@ -340,9 +372,8 @@ class Samples {
     final pk = CryptoSign.extractPublicKey(k.sk);
 
     // assert equality
-    final eq = ListEquality().equals;
-    assert(eq(s, s2));
-    assert(eq(pk, k.pk));
+    assert(Sodium.memcmp(s, s2));
+    assert(Sodium.memcmp(pk, k.pk));
     // END sign4
   }
 
@@ -476,9 +507,8 @@ class Samples {
     final sk = KeyExchange.computeServerSessionKeys(s, c.pk);
 
     // assert keys do match
-    final eq = ListEquality().equals;
-    assert(eq(ck.rx, sk.tx));
-    assert(eq(ck.tx, sk.rx));
+    assert(Sodium.memcmp(ck.rx, sk.tx));
+    assert(Sodium.memcmp(ck.tx, sk.rx));
 
     print('client rx: ${Sodium.bin2hex(ck.rx)}');
     print('client tx: ${Sodium.bin2hex(ck.tx)}');
@@ -506,8 +536,7 @@ class Samples {
         await GenericHash.hashStream(Stream.fromIterable([sq, cpk, spk]));
 
     // assert shared keys do match
-    final eq = ListEquality().equals;
-    assert(eq(cs, ss));
+    assert(Sodium.memcmp(cs, ss));
 
     print(Sodium.bin2hex(cs));
     // END scalarmult1
@@ -698,8 +727,7 @@ class Samples {
     var c2 = CryptoStream.stream(16, n, k);
 
     // assert equality
-    final eq = ListEquality().equals;
-    assert(eq(c, c2));
+    assert(Sodium.memcmp(c, c2));
     // END stream1
   }
 }

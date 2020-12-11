@@ -1,3 +1,6 @@
+## 0.1.10 - December 11, 2020
+* adds support for sodium_runtime_*, sodium_memcmp, sodium_pad and sodium_unpad
+
 ## 0.1.9 - October 31, 2020
 * sets Android build.gradle minSdkVersion 16, fixing implicit permissions READ_PHONE_STATE, READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE
 

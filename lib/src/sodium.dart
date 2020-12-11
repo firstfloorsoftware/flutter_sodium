@@ -2027,6 +2027,19 @@ class Sodium {
   static int get libraryVersionMinor => _sodium.sodium_library_version_minor();
   static bool get libraryMinimal => _sodium.sodium_library_minimal() == 1;
 
+  static bool get runtimeHasNeon => _sodium.sodium_runtime_has_neon() == 1;
+  static bool get runtimeHasSse2 => _sodium.sodium_runtime_has_sse2() == 1;
+  static bool get runtimeHasSse3 => _sodium.sodium_runtime_has_sse3() == 1;
+  static bool get runtimeHasSsse3 => _sodium.sodium_runtime_has_ssse3() == 1;
+  static bool get runtimeHasSse41 => _sodium.sodium_runtime_has_sse41() == 1;
+  static bool get runtimeHasAvx => _sodium.sodium_runtime_has_avx() == 1;
+  static bool get runtimeHasAvx2 => _sodium.sodium_runtime_has_avx2() == 1;
+  static bool get runtimeHasAvx512f =>
+      _sodium.sodium_runtime_has_avx512f() == 1;
+  static bool get runtimeHasPclmul => _sodium.sodium_runtime_has_pclmul() == 1;
+  static bool get runtimeHasAesni => _sodium.sodium_runtime_has_aesni() == 1;
+  static bool get runtimeHasRdrand => _sodium.sodium_runtime_has_rdrand() == 1;
+
   static String bin2hex(Uint8List bin) {
     assert(bin != null);
 
@@ -2115,6 +2128,57 @@ class Sodium {
       free(_b64);
       free(_ignore);
       free(_binlen);
+    }
+  }
+
+  static bool memcmp(Uint8List b1, Uint8List b2) {
+    assert(b1 != null);
+    assert(b2 != null);
+    if (b1.length != b2.length) {
+      return false;
+    }
+    final _b1 = b1.toPointer();
+    final _b2 = b2.toPointer();
+    try {
+      return _sodium.sodium_memcmp(_b1, _b2, b1.length) == 0;
+    } finally {
+      free(_b1);
+      free(_b2);
+    }
+  }
+
+  static Uint8List pad(Uint8List buf, int blockSize) {
+    assert(buf != null);
+    assert(blockSize != null);
+    final _buf = buf.toPointer(size: buf.length + blockSize);
+    final _paddedlen = allocate<Uint32>(count: 1);
+    try {
+      _sodium
+          .sodium_pad(
+              _paddedlen, _buf, buf.length, blockSize, buf.length + blockSize)
+          .mustSucceed('sodium_pad');
+
+      return _buf.toList(_paddedlen[0]);
+    } finally {
+      free(_buf);
+      free(_paddedlen);
+    }
+  }
+
+  static Uint8List unpad(Uint8List buf, int blockSize) {
+    assert(buf != null);
+    assert(blockSize != null);
+    final _buf = buf.toPointer();
+    final _unpaddedlen = allocate<Uint32>(count: 1);
+    try {
+      _sodium
+          .sodium_unpad(_unpaddedlen, _buf, buf.length, blockSize)
+          .mustSucceed('sodium_unpad');
+
+      return _buf.toList(_unpaddedlen[0]);
+    } finally {
+      free(_buf);
+      free(_unpaddedlen);
     }
   }
 }
