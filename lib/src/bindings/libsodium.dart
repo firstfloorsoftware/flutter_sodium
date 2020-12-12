@@ -17,6 +17,11 @@ DynamicLibrary _load() {
     // see also https://libsodium.gitbook.io/doc/installation
     return DynamicLibrary.open('/usr/local/lib/libsodium.dylib');
   }
+  if (Platform.isLinux) {
+    // assuming user installed libsodium as per the installation instructions
+    // see also https://libsodium.gitbook.io/doc/installation
+    return DynamicLibrary.open('/usr/local/lib/libsodium.so');
+  }
   throw SodiumException('platform not supported');
 }
 
