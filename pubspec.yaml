@@ -4,13 +4,13 @@ version: 0.1.10
 homepage: https://github.com/firstfloorsoftware/flutter_sodium
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0-0 <3.0.0"
   flutter: ">=1.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  ffi: ^0.1.3
+  ffi: ^0.2.0-nullsafety
 
 dev_dependencies:
   flutter_test:
