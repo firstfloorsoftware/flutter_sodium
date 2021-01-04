@@ -13,5 +13,5 @@ class ShortHash {
 
   /// Computes a fixed-size fingerprint for given string value and key.
   static Uint8List hashString(String value, Uint8List key) =>
-      hash(utf8.encode(value), key);
+      hash(utf8.encoder.convert(value), key);
 }

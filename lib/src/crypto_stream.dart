@@ -21,5 +21,5 @@ class CryptoStream {
 
   /// Encrypts specified string value using a nonce and a secret key.
   static Uint8List xorString(String value, Uint8List nonce, Uint8List key) =>
-      xor(utf8.encode(value), nonce, key);
+      xor(utf8.encoder.convert(value), nonce, key);
 }

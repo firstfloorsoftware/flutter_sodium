@@ -8,5 +8,6 @@ class Hash {
   static Uint8List hash(Uint8List value) => Sodium.cryptoHash(value);
 
   /// Computes a hash for given string value.
-  static Uint8List hashString(String value) => hash(utf8.encode(value));
+  static Uint8List hashString(String value) =>
+      hash(utf8.encoder.convert(value));
 }

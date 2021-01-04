@@ -33,9 +33,9 @@ class PasswordHash {
 
   /// Derives a hash from given password and salt.
   static Uint8List hash(Uint8List password, Uint8List salt,
-      {int outlen,
-      int opslimit,
-      int memlimit,
+      {int? outlen,
+      int? opslimit,
+      int? memlimit,
       PasswordHashAlgorithm alg = PasswordHashAlgorithm.Default}) {
     outlen ??= Sodium.cryptoPwhashBytesMin;
     opslimit ??= Sodium.cryptoPwhashOpslimitInteractive;
@@ -47,15 +47,16 @@ class PasswordHash {
 
   /// Derives a hash from given string password and salt.
   static Uint8List hashString(String password, Uint8List salt,
-          {int outlen,
-          int opslimit,
-          int memlimit,
+          {int? outlen,
+          int? opslimit,
+          int? memlimit,
           PasswordHashAlgorithm alg = PasswordHashAlgorithm.Default}) =>
-      hash(utf8.encode(password), salt,
+      hash(utf8.encoder.convert(password), salt,
           outlen: outlen, opslimit: opslimit, memlimit: memlimit);
 
   /// Computes a password verification string for given password.
-  static String hashStorage(Uint8List password, {int opslimit, int memlimit}) {
+  static String hashStorage(Uint8List password,
+      {int? opslimit, int? memlimit}) {
     opslimit ??= Sodium.cryptoPwhashOpslimitInteractive;
     memlimit ??= Sodium.cryptoPwhashMemlimitInteractive;
 
@@ -66,8 +67,8 @@ class PasswordHash {
 
   /// Computes a password verification string for given string password.
   static String hashStringStorage(String password,
-          {int opslimit, int memlimit}) =>
-      hashStorage(utf8.encode(password),
+          {int? opslimit, int? memlimit}) =>
+      hashStorage(utf8.encoder.convert(password),
           opslimit: opslimit, memlimit: memlimit);
 
   /// Computes a password verification string for given password in moderate mode.
@@ -85,7 +86,7 @@ class PasswordHash {
   /// Verifies that the storage is a valid password verification string for given password.
   static bool verifyStorage(String storage, String password) {
     final str = ascii.encode(storage);
-    final passwd = utf8.encode(password);
+    final passwd = utf8.encoder.convert(password);
 
     return Sodium.cryptoPwhashStrVerify(str, passwd) == 0;
   }

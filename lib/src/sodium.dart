@@ -566,7 +566,7 @@ class Sodium {
 
     final _out = allocate<Uint8>(count: outlen);
     final _in = i.toPointer();
-    final _key = key?.toPointer() ?? Pointer.fromAddress(0);
+    final _key = key?.toPointer() ?? nullptr;
 
     try {
       _cryptoGenerichash
@@ -577,7 +577,7 @@ class Sodium {
     } finally {
       free(_out);
       free(_in);
-      if (_key != null) {
+      if (_key != nullptr) {
         free(_key);
       }
     }
@@ -592,7 +592,7 @@ class Sodium {
         outlen, cryptoGenerichashBytesMin, cryptoGenerichashBytesMax);
 
     final _state = allocate<Uint8>(count: cryptoGenerichashStatebytes);
-    final _key = key?.toPointer() ?? Pointer.fromAddress(0);
+    final _key = key?.toPointer() ?? nullptr;
 
     try {
       _cryptoGenerichash
@@ -600,7 +600,7 @@ class Sodium {
           .mustSucceed('crypto_generichash_init');
       return _state;
     } finally {
-      if (_key != null) {
+      if (_key != nullptr) {
         free(_key);
       }
     }
@@ -1344,12 +1344,12 @@ class Sodium {
   }
 
   static Uint8List cryptoSecretstreamXchacha20poly1305Push(
-      Pointer<Uint8> state, Uint8List m, Uint8List ad, int tag) {
+      Pointer<Uint8> state, Uint8List m, Uint8List? ad, int tag) {
     final _c = allocate<Uint8>(
         count: m.length + cryptoSecretstreamXchacha20poly1305Abytes);
     final _clenP = allocate<Uint64>(count: 1);
     final _m = m.toPointer();
-    final _ad = ad.toPointer();
+    final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
     try {
       _cryptoSecretStream
@@ -1398,13 +1398,13 @@ class Sodium {
   }
 
   static PullResult cryptoSecretstreamXchacha20poly1305Pull(
-      Pointer<Uint8> state, Uint8List c, Uint8List ad) {
+      Pointer<Uint8> state, Uint8List c, Uint8List? ad) {
     final _m = allocate<Uint8>(
         count: c.length - cryptoSecretstreamXchacha20poly1305Abytes);
     final _mlenP = allocate<Uint64>(count: 1);
     final _tagP = allocate<Uint8>(count: 1);
     final _c = c.toPointer();
-    final _ad = ad.toPointer();
+    final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
     try {
       _cryptoSecretStream
@@ -2044,14 +2044,13 @@ class _CryptoAead {
     final _c = allocate<Uint8>(count: m.length + abytes);
     final _clenP = allocate<Uint64>(count: 1);
     final _m = m.toPointer();
-    final _ad = ad?.toPointer() ?? Pointer.fromAddress(0);
+    final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
     final _npub = npub.toPointer();
     final _k = k.toPointer();
     try {
       _bindings
-          .encrypt(_c, _clenP, _m, m.length, _ad, _adlen,
-              Pointer.fromAddress(0), _npub, _k)
+          .encrypt(_c, _clenP, _m, m.length, _ad, _adlen, nullptr, _npub, _k)
           .mustSucceed('${name}_encrypt');
       return _c.toList(_clenP[0]);
     } finally {
@@ -2075,14 +2074,13 @@ class _CryptoAead {
     final _m = allocate<Uint8>(count: c.length - abytes);
     final _mlenP = allocate<Uint64>(count: 1);
     final _c = c.toPointer();
-    final _ad = ad?.toPointer() ?? Pointer.fromAddress(0);
+    final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
     final _npub = npub.toPointer();
     final _k = k.toPointer();
     try {
       _bindings
-          .decrypt(_m, _mlenP, Pointer.fromAddress(0), _c, c.length, _ad,
-              _adlen, _npub, _k)
+          .decrypt(_m, _mlenP, nullptr, _c, c.length, _ad, _adlen, _npub, _k)
           .mustSucceed('${name}_decrypt');
       return _m.toList(_mlenP[0]);
     } finally {
@@ -2107,14 +2105,14 @@ class _CryptoAead {
     final _mac = allocate<Uint8>(count: abytes);
     final _maclenP = allocate<Uint64>(count: 1);
     final _m = m.toPointer();
-    final _ad = ad?.toPointer() ?? Pointer.fromAddress(0);
+    final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
     final _npub = npub.toPointer();
     final _k = k.toPointer();
     try {
       _bindings
-          .encrypt_detached(_c, _mac, _maclenP, _m, m.length, _ad, _adlen,
-              Pointer.fromAddress(0), _npub, _k)
+          .encrypt_detached(
+              _c, _mac, _maclenP, _m, m.length, _ad, _adlen, nullptr, _npub, _k)
           .mustSucceed('${name}_encrypt_detached');
       return DetachedCipher(
           c: _c.toList(m.length), mac: _mac.toList(_maclenP[0]));
@@ -2142,14 +2140,14 @@ class _CryptoAead {
     final _m = allocate<Uint8>(count: c.length);
     final _c = c.toPointer();
     final _mac = mac.toPointer();
-    final _ad = ad?.toPointer() ?? Pointer.fromAddress(0);
+    final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
     final _npub = npub.toPointer();
     final _k = k.toPointer();
     try {
       _bindings
-          .decrypt_detached(_m, Pointer.fromAddress(0), _c, c.length, _mac, _ad,
-              _adlen, _npub, _k)
+          .decrypt_detached(
+              _m, nullptr, _c, c.length, _mac, _ad, _adlen, _npub, _k)
           .mustSucceed('${name}_decrypt_detached');
       return _m.toList(c.length);
     } finally {
