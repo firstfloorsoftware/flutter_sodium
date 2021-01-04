@@ -128,8 +128,6 @@ class Sodium {
       Utf8.fromUtf8(_cryptoAuth.crypto_auth_primitive());
 
   static Uint8List cryptoAuth(Uint8List i, Uint8List k) {
-    assert(i != null);
-    assert(k != null);
     RangeError.checkValueInInterval(k.length, cryptoAuthKeybytes,
         cryptoAuthKeybytes, 'k', 'Invalid length');
 
@@ -151,9 +149,6 @@ class Sodium {
   }
 
   static bool cryptoAuthVerify(Uint8List h, Uint8List i, Uint8List k) {
-    assert(h != null);
-    assert(i != null);
-    assert(k != null);
     RangeError.checkValueInInterval(
         h.length, cryptoAuthBytes, cryptoAuthBytes, 'h', 'Invalid length');
     RangeError.checkValueInInterval(k.length, cryptoAuthKeybytes,
@@ -201,7 +196,6 @@ class Sodium {
       Utf8.fromUtf8(_cryptoBox.crypto_box_primitive());
 
   static KeyPair cryptoBoxSeedKeypair(Uint8List seed) {
-    assert(seed != null);
     RangeError.checkValueInInterval(seed.length, cryptoBoxSeedbytes,
         cryptoBoxSeedbytes, 'seed', 'Invalid length');
     final _pk = allocate<Uint8>(count: cryptoBoxPublickeybytes);
@@ -239,10 +233,6 @@ class Sodium {
 
   static Uint8List cryptoBoxEasy(
       Uint8List m, Uint8List n, Uint8List pk, Uint8List sk) {
-    assert(m != null);
-    assert(n != null);
-    assert(pk != null);
-    assert(sk != null);
     RangeError.checkValueInInterval(n.length, cryptoBoxNoncebytes,
         cryptoBoxNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(pk.length, cryptoBoxPublickeybytes,
@@ -273,10 +263,6 @@ class Sodium {
 
   static Uint8List cryptoBoxOpenEasy(
       Uint8List c, Uint8List n, Uint8List pk, Uint8List sk) {
-    assert(c != null);
-    assert(n != null);
-    assert(pk != null);
-    assert(sk != null);
     RangeError.checkValueInInterval(n.length, cryptoBoxNoncebytes,
         cryptoBoxNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(pk.length, cryptoBoxPublickeybytes,
@@ -307,10 +293,6 @@ class Sodium {
 
   static DetachedCipher cryptoBoxDetached(
       Uint8List m, Uint8List n, Uint8List pk, Uint8List sk) {
-    assert(m != null);
-    assert(n != null);
-    assert(pk != null);
-    assert(sk != null);
     RangeError.checkValueInInterval(n.length, cryptoBoxNoncebytes,
         cryptoBoxNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(pk.length, cryptoBoxPublickeybytes,
@@ -344,11 +326,6 @@ class Sodium {
 
   static Uint8List cryptoBoxOpenDetached(
       Uint8List c, Uint8List mac, Uint8List n, Uint8List pk, Uint8List sk) {
-    assert(c != null);
-    assert(mac != null);
-    assert(n != null);
-    assert(pk != null);
-    assert(sk != null);
     RangeError.checkValueInInterval(mac.length, cryptoBoxMacbytes,
         cryptoBoxMacbytes, 'mac', 'Invalid length');
     RangeError.checkValueInInterval(n.length, cryptoBoxNoncebytes,
@@ -382,8 +359,6 @@ class Sodium {
   }
 
   static Uint8List cryptoBoxBeforenm(Uint8List pk, Uint8List sk) {
-    assert(pk != null);
-    assert(sk != null);
     RangeError.checkValueInInterval(pk.length, cryptoBoxPublickeybytes,
         cryptoBoxPublickeybytes, 'pk', 'Invalid length');
     RangeError.checkValueInInterval(sk.length, cryptoBoxSecretkeybytes,
@@ -406,9 +381,6 @@ class Sodium {
   }
 
   static Uint8List cryptoBoxEasyAfternm(Uint8List m, Uint8List n, Uint8List k) {
-    assert(m != null);
-    assert(n != null);
-    assert(k != null);
     RangeError.checkValueInInterval(n.length, cryptoBoxNoncebytes,
         cryptoBoxNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(k.length, cryptoBoxBeforenmbytes,
@@ -435,9 +407,6 @@ class Sodium {
 
   static Uint8List cryptoBoxOpenEasyAfternm(
       Uint8List c, Uint8List n, Uint8List k) {
-    assert(c != null);
-    assert(n != null);
-    assert(k != null);
     RangeError.checkValueInInterval(n.length, cryptoBoxNoncebytes,
         cryptoBoxNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(k.length, cryptoBoxBeforenmbytes,
@@ -464,9 +433,6 @@ class Sodium {
 
   static DetachedCipher cryptoBoxDetachedAfternm(
       Uint8List m, Uint8List n, Uint8List k) {
-    assert(m != null);
-    assert(n != null);
-    assert(k != null);
     RangeError.checkValueInInterval(n.length, cryptoBoxNoncebytes,
         cryptoBoxNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(k.length, cryptoBoxBeforenmbytes,
@@ -496,10 +462,6 @@ class Sodium {
 
   static Uint8List cryptoBoxOpenDetachedAfternm(
       Uint8List c, Uint8List mac, Uint8List n, Uint8List k) {
-    assert(c != null);
-    assert(mac != null);
-    assert(n != null);
-    assert(k != null);
     RangeError.checkValueInInterval(mac.length, cryptoBoxMacbytes,
         cryptoBoxMacbytes, 'mac', 'Invalid length');
     RangeError.checkValueInInterval(n.length, cryptoBoxNoncebytes,
@@ -529,8 +491,6 @@ class Sodium {
   }
 
   static Uint8List cryptoBoxSeal(Uint8List m, Uint8List pk) {
-    assert(m != null);
-    assert(pk != null);
     RangeError.checkValueInInterval(pk.length, cryptoBoxPublickeybytes,
         cryptoBoxPublickeybytes, 'pk', 'Invalid length');
 
@@ -552,9 +512,6 @@ class Sodium {
   }
 
   static Uint8List cryptoBoxSealOpen(Uint8List c, Uint8List pk, Uint8List sk) {
-    assert(c != null);
-    assert(pk != null);
-    assert(sk != null);
     RangeError.checkValueInInterval(pk.length, cryptoBoxPublickeybytes,
         cryptoBoxPublickeybytes, 'pk', 'Invalid length');
     RangeError.checkValueInInterval(sk.length, cryptoBoxSecretkeybytes,
@@ -599,9 +556,7 @@ class Sodium {
   static int get cryptoGenerichashStatebytes =>
       _cryptoGenerichash.crypto_generichash_statebytes();
 
-  static Uint8List cryptoGenerichash(int outlen, Uint8List i, Uint8List key) {
-    assert(outlen != null);
-    assert(i != null);
+  static Uint8List cryptoGenerichash(int outlen, Uint8List i, Uint8List? key) {
     RangeError.checkValueInInterval(
         outlen, cryptoGenerichashBytesMin, cryptoGenerichashBytesMax);
     if (key != null) {
@@ -611,7 +566,7 @@ class Sodium {
 
     final _out = allocate<Uint8>(count: outlen);
     final _in = i.toPointer();
-    final _key = key.toPointer();
+    final _key = key?.toPointer() ?? Pointer.fromAddress(0);
 
     try {
       _cryptoGenerichash
@@ -628,8 +583,7 @@ class Sodium {
     }
   }
 
-  static Pointer<Uint8> cryptoGenerichashInit(Uint8List key, int outlen) {
-    assert(outlen != null);
+  static Pointer<Uint8> cryptoGenerichashInit(Uint8List? key, int outlen) {
     if (key != null) {
       RangeError.checkValueInInterval(key.length, cryptoGenerichashKeybytesMin,
           cryptoGenerichashKeybytesMax, 'key', 'Invalid length');
@@ -638,7 +592,7 @@ class Sodium {
         outlen, cryptoGenerichashBytesMin, cryptoGenerichashBytesMax);
 
     final _state = allocate<Uint8>(count: cryptoGenerichashStatebytes);
-    final _key = key.toPointer();
+    final _key = key?.toPointer() ?? Pointer.fromAddress(0);
 
     try {
       _cryptoGenerichash
@@ -653,9 +607,6 @@ class Sodium {
   }
 
   static void cryptoGenerichashUpdate(Pointer<Uint8> state, Uint8List i) {
-    assert(state != null);
-    assert(i != null);
-
     final _in = i.toPointer();
 
     try {
@@ -668,8 +619,6 @@ class Sodium {
   }
 
   static Uint8List cryptoGenerichashFinal(Pointer<Uint8> state, int outlen) {
-    assert(state != null);
-    assert(outlen != null);
     RangeError.checkValueInInterval(
         outlen, cryptoGenerichashBytesMin, cryptoGenerichashBytesMax);
 
@@ -703,7 +652,6 @@ class Sodium {
   static String get cryptoHashPrimitive =>
       Utf8.fromUtf8(_cryptoHash.primitive());
   static Uint8List cryptoHash(Uint8List i) {
-    assert(i != null);
     final _out = allocate<Uint8>(count: cryptoHashBytes);
     final _i = i.toPointer();
     try {
@@ -727,10 +675,6 @@ class Sodium {
 
   static Uint8List cryptoKdfDeriveFromKey(
       int subkeyLen, int subkeyId, Uint8List ctx, Uint8List key) {
-    assert(subkeyLen != null);
-    assert(subkeyId != null);
-    assert(ctx != null);
-    assert(key != null);
     RangeError.checkValueInInterval(
         subkeyLen, cryptoKdfBytesMin, cryptoKdfBytesMax, 'subkeyLen');
     RangeError.checkValueInInterval(subkeyId, 0, (2 ^ 64) - 1, 'subkeyId');
@@ -777,7 +721,6 @@ class Sodium {
       Utf8.fromUtf8(_cryptoKx.crypto_kx_primitive());
 
   static KeyPair cryptoKxSeedKeypair(Uint8List seed) {
-    assert(seed != null);
     RangeError.checkValueInInterval(seed.length, cryptoKxSeedbytes,
         cryptoKxSeedbytes, 'seed', 'Invalid length');
     final _pk = allocate<Uint8>(count: cryptoKxPublickeybytes);
@@ -815,9 +758,6 @@ class Sodium {
 
   static SessionKeys cryptoKxClientSessionKeys(
       Uint8List clientPk, Uint8List clientSk, Uint8List serverPk) {
-    assert(clientPk != null);
-    assert(clientSk != null);
-    assert(serverPk != null);
     RangeError.checkValueInInterval(clientPk.length, cryptoKxPublickeybytes,
         cryptoKxPublickeybytes, 'clientPk', 'Invalid length');
     RangeError.checkValueInInterval(clientSk.length, cryptoKxSecretkeybytes,
@@ -851,9 +791,6 @@ class Sodium {
 
   static SessionKeys cryptoKxServerSessionKeys(
       Uint8List serverPk, Uint8List serverSk, Uint8List clientPk) {
-    assert(serverPk != null);
-    assert(serverSk != null);
-    assert(clientPk != null);
     RangeError.checkValueInInterval(serverPk.length, cryptoKxPublickeybytes,
         cryptoKxPublickeybytes, 'serverPk', 'Invalid length');
     RangeError.checkValueInInterval(serverSk.length, cryptoKxSecretkeybytes,
@@ -898,8 +835,6 @@ class Sodium {
       Utf8.fromUtf8(_cryptoOnetimeauth.crypto_onetimeauth_primitive());
 
   static Uint8List cryptoOnetimeauth(Uint8List i, Uint8List k) {
-    assert(i != null);
-    assert(k != null);
     RangeError.checkValueInInterval(k.length, cryptoOnetimeauthKeybytes,
         cryptoOnetimeauthKeybytes, 'k', 'Invalid length');
 
@@ -919,9 +854,6 @@ class Sodium {
   }
 
   static bool cryptoOnetimeauthVerify(Uint8List h, Uint8List i, Uint8List k) {
-    assert(h != null);
-    assert(i != null);
-    assert(k != null);
     RangeError.checkValueInInterval(h.length, cryptoOnetimeauthBytes,
         cryptoOnetimeauthBytes, 'h', 'Invalid length');
     RangeError.checkValueInInterval(k.length, cryptoOnetimeauthKeybytes,
@@ -942,7 +874,6 @@ class Sodium {
   }
 
   static Pointer<Uint8> cryptoOnetimeauthInit(Uint8List key) {
-    assert(key != null);
     RangeError.checkValueInInterval(key.length, cryptoOnetimeauthKeybytes,
         cryptoOnetimeauthKeybytes, 'key', 'Invalid length');
 
@@ -959,9 +890,6 @@ class Sodium {
   }
 
   static void cryptoOnetimeauthUpdate(Pointer<Uint8> state, Uint8List i) {
-    assert(state != null);
-    assert(i != null);
-
     final _in = i.toPointer();
     try {
       _cryptoOnetimeauth
@@ -973,8 +901,6 @@ class Sodium {
   }
 
   static Uint8List cryptoOnetimeauthFinal(Pointer<Uint8> state) {
-    assert(state != null);
-
     final _out = allocate<Uint8>(count: cryptoOnetimeauthBytes);
     try {
       _cryptoOnetimeauth.crypto_onetimeauth_final(state, _out);
@@ -1050,12 +976,6 @@ class Sodium {
 
   static Uint8List cryptoPwhash(int outlen, Uint8List passwd, Uint8List salt,
       int opslimit, int memlimit, int alg) {
-    assert(outlen != null);
-    assert(passwd != null);
-    assert(salt != null);
-    assert(opslimit != null);
-    assert(memlimit != null);
-    assert(alg != null);
     RangeError.checkValueInInterval(
         outlen, cryptoPwhashBytesMin, cryptoPwhashBytesMax, 'outlen');
     RangeError.checkValueInInterval(passwd.length, cryptoPwhashPasswdMin,
@@ -1095,9 +1015,6 @@ class Sodium {
 
   static Uint8List cryptoPwhashStr(
       Uint8List passwd, int opslimit, int memlimit) {
-    assert(passwd != null);
-    assert(opslimit != null);
-    assert(memlimit != null);
     RangeError.checkValueInInterval(passwd.length, cryptoPwhashPasswdMin,
         cryptoPwhashPasswdMax, 'passwd', 'Invalid length');
     RangeError.checkValueInInterval(
@@ -1120,10 +1037,6 @@ class Sodium {
 
   static Uint8List cryptoPwhashStrAlg(
       Uint8List passwd, int opslimit, int memlimit, int alg) {
-    assert(passwd != null);
-    assert(opslimit != null);
-    assert(memlimit != null);
-    assert(alg != null);
     RangeError.checkValueInInterval(passwd.length, cryptoPwhashPasswdMin,
         cryptoPwhashPasswdMax, 'passwd', 'Invalid length');
     RangeError.checkValueInInterval(
@@ -1148,8 +1061,6 @@ class Sodium {
   }
 
   static int cryptoPwhashStrVerify(Uint8List str, Uint8List passwd) {
-    assert(str != null);
-    assert(passwd != null);
     RangeError.checkValueInInterval(
         str.length, 1, cryptoPwhashStrbytes, 'str', 'Invalid length');
     RangeError.checkValueInInterval(passwd.length, cryptoPwhashPasswdMin,
@@ -1170,9 +1081,6 @@ class Sodium {
 
   static int cryptoPwhashStrNeedsRehash(
       Uint8List str, int opslimit, int memlimit) {
-    assert(str != null);
-    assert(opslimit != null);
-    assert(memlimit != null);
     RangeError.checkValueInInterval(
         str.length, 1, cryptoPwhashStrbytes, 'str', 'Invalid length');
     RangeError.checkValueInInterval(
@@ -1204,7 +1112,6 @@ class Sodium {
       Utf8.fromUtf8(_cryptoScalarmult.crypto_scalarmult_primitive());
 
   static Uint8List cryptoScalarmultBase(Uint8List n) {
-    assert(n != null);
     RangeError.checkValueInInterval(n.length, cryptoScalarmultScalarbytes,
         cryptoScalarmultScalarbytes, 'n', 'Invalid length');
 
@@ -1222,8 +1129,6 @@ class Sodium {
   }
 
   static Uint8List cryptoScalarmult(Uint8List n, Uint8List p) {
-    assert(n != null);
-    assert(p != null);
     RangeError.checkValueInInterval(n.length, cryptoScalarmultScalarbytes,
         cryptoScalarmultScalarbytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(p.length, cryptoScalarmultBytes,
@@ -1259,9 +1164,6 @@ class Sodium {
       Utf8.fromUtf8(_cryptoSecretbox.crypto_secretbox_primitive());
 
   static Uint8List cryptoSecretboxEasy(Uint8List m, Uint8List n, Uint8List k) {
-    assert(m != null);
-    assert(n != null);
-    assert(k != null);
     RangeError.checkValueInInterval(n.length, cryptoSecretboxNoncebytes,
         cryptoSecretboxNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
@@ -1287,9 +1189,6 @@ class Sodium {
 
   static Uint8List cryptoSecretboxOpenEasy(
       Uint8List c, Uint8List n, Uint8List k) {
-    assert(c != null);
-    assert(n != null);
-    assert(k != null);
     RangeError.checkValueInInterval(n.length, cryptoSecretboxNoncebytes,
         cryptoSecretboxNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
@@ -1315,9 +1214,6 @@ class Sodium {
 
   static DetachedCipher cryptoSecretboxDetached(
       Uint8List m, Uint8List n, Uint8List k) {
-    assert(m != null);
-    assert(n != null);
-    assert(k != null);
     RangeError.checkValueInInterval(n.length, cryptoSecretboxNoncebytes,
         cryptoSecretboxNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
@@ -1346,10 +1242,6 @@ class Sodium {
 
   static Uint8List cryptoSecretboxOpenDetached(
       Uint8List c, Uint8List mac, Uint8List n, Uint8List k) {
-    assert(c != null);
-    assert(mac != null);
-    assert(n != null);
-    assert(k != null);
     RangeError.checkValueInInterval(mac.length, cryptoSecretboxMacbytes,
         cryptoSecretboxMacbytes, 'mac', 'Invalid length');
     RangeError.checkValueInInterval(n.length, cryptoSecretboxNoncebytes,
@@ -1423,7 +1315,6 @@ class Sodium {
 
   static InitPushResult cryptoSecretstreamXchacha20poly1305InitPush(
       Uint8List key) {
-    assert(key != null);
     RangeError.checkValueInInterval(
         key.length,
         cryptoSecretstreamXchacha20poly1305Keybytes,
@@ -1454,10 +1345,6 @@ class Sodium {
 
   static Uint8List cryptoSecretstreamXchacha20poly1305Push(
       Pointer<Uint8> state, Uint8List m, Uint8List ad, int tag) {
-    assert(state != null);
-    assert(m != null);
-    assert(tag != null);
-
     final _c = allocate<Uint8>(
         count: m.length + cryptoSecretstreamXchacha20poly1305Abytes);
     final _clenP = allocate<Uint64>(count: 1);
@@ -1481,8 +1368,6 @@ class Sodium {
 
   static Pointer<Uint8> cryptoSecretstreamXchacha20poly1305InitPull(
       Uint8List header, Uint8List k) {
-    assert(header != null);
-    assert(k != null);
     RangeError.checkValueInInterval(
         header.length,
         cryptoSecretstreamXchacha20poly1305Headerbytes,
@@ -1514,9 +1399,6 @@ class Sodium {
 
   static PullResult cryptoSecretstreamXchacha20poly1305Pull(
       Pointer<Uint8> state, Uint8List c, Uint8List ad) {
-    assert(state != null);
-    assert(c != null);
-
     final _m = allocate<Uint8>(
         count: c.length - cryptoSecretstreamXchacha20poly1305Abytes);
     final _mlenP = allocate<Uint64>(count: 1);
@@ -1549,7 +1431,6 @@ class Sodium {
   }
 
   static void cryptoSecretstreamXchacha20poly1305Rekey(Pointer<Uint8> state) {
-    assert(state != null);
     _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_rekey(state);
   }
 
@@ -1564,8 +1445,6 @@ class Sodium {
       Utf8.fromUtf8(_cryptoShorthash.crypto_shorthash_primitive());
 
   static Uint8List cryptoShorthash(Uint8List i, Uint8List k) {
-    assert(i != null);
-    assert(k != null);
     RangeError.checkValueInInterval(k.length, cryptoShorthashKeybytes,
         cryptoShorthashKeybytes, 'k', 'Invalid length');
 
@@ -1613,7 +1492,6 @@ class Sodium {
       Utf8.fromUtf8(_cryptoSign.crypto_sign_primitive());
 
   static KeyPair cryptoSignSeedKeypair(Uint8List seed) {
-    assert(seed != null);
     RangeError.checkValueInInterval(seed.length, cryptoSignSeedbytes,
         cryptoSignSeedbytes, 'seed', 'Invalid length');
     final _pk = allocate<Uint8>(count: cryptoSignPublickeybytes);
@@ -1652,8 +1530,6 @@ class Sodium {
   }
 
   static Uint8List cryptoSign(Uint8List m, Uint8List sk) {
-    assert(m != null);
-    assert(sk != null);
     RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
         cryptoSignSecretkeybytes, 'sk', 'Invalid length');
 
@@ -1676,8 +1552,6 @@ class Sodium {
   }
 
   static Uint8List cryptoSignOpen(Uint8List sm, Uint8List pk) {
-    assert(sm != null);
-    assert(pk != null);
     RangeError.checkValueInInterval(pk.length, cryptoSignPublickeybytes,
         cryptoSignPublickeybytes, 'pk', 'Invalid length');
 
@@ -1700,8 +1574,6 @@ class Sodium {
   }
 
   static Uint8List cryptoSignDetached(Uint8List m, Uint8List sk) {
-    assert(m != null);
-    assert(sk != null);
     RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
         cryptoSignSecretkeybytes, 'sk', 'Invalid length');
 
@@ -1725,9 +1597,6 @@ class Sodium {
 
   static int cryptoSignVerifyDetached(
       Uint8List sig, Uint8List m, Uint8List pk) {
-    assert(sig != null);
-    assert(m != null);
-    assert(pk != null);
     RangeError.checkValueInInterval(
         sig.length, cryptoSignBytes, cryptoSignBytes, 'sig', 'Invalid length');
     RangeError.checkValueInInterval(pk.length, cryptoSignPublickeybytes,
@@ -1753,9 +1622,6 @@ class Sodium {
   }
 
   static void cryptoSignUpdate(Pointer<Uint8> state, Uint8List m) {
-    assert(state != null);
-    assert(m != null);
-
     final _m = m.toPointer();
     try {
       _cryptoSign
@@ -1767,8 +1633,6 @@ class Sodium {
   }
 
   static Uint8List cryptoSignFinalCreate(Pointer<Uint8> state, Uint8List sk) {
-    assert(state != null);
-    assert(sk != null);
     RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
         cryptoSignSecretkeybytes, 'sk', 'Invalid length');
 
@@ -1790,9 +1654,6 @@ class Sodium {
 
   static int cryptoSignFinalVerify(
       Pointer<Uint8> state, Uint8List sig, Uint8List pk) {
-    assert(state != null);
-    assert(sig != null);
-    assert(pk != null);
     RangeError.checkValueInInterval(
         sig.length, cryptoSignBytes, cryptoSignBytes, 'sig', 'Invalid length');
     RangeError.checkValueInInterval(pk.length, cryptoSignPublickeybytes,
@@ -1810,7 +1671,6 @@ class Sodium {
   }
 
   static Uint8List cryptoSignEd25519SkToSeed(Uint8List sk) {
-    assert(sk != null);
     RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
         cryptoSignSecretkeybytes, 'sk', 'Invalid length');
 
@@ -1828,7 +1688,6 @@ class Sodium {
   }
 
   static Uint8List cryptoSignEd25519SkToPk(Uint8List sk) {
-    assert(sk != null);
     RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
         cryptoSignSecretkeybytes, 'sk', 'Invalid length');
 
@@ -1846,7 +1705,6 @@ class Sodium {
   }
 
   static Uint8List cryptoSignEd25519PkToCurve25519(Uint8List ed25519Pk) {
-    assert(ed25519Pk != null);
     RangeError.checkValueInInterval(
         ed25519Pk.length,
         cryptoSignEd25519Publickeybytes,
@@ -1869,7 +1727,6 @@ class Sodium {
   }
 
   static Uint8List cryptoSignEd25519SkToCurve25519(Uint8List ed25519Sk) {
-    assert(ed25519Sk != null);
     RangeError.checkValueInInterval(
         ed25519Sk.length,
         cryptoSignEd25519Secretkeybytes,
@@ -1903,8 +1760,6 @@ class Sodium {
       Utf8.fromUtf8(_cryptoStream.crypto_stream_primitive());
 
   static Uint8List cryptoStream(int clen, Uint8List n, Uint8List k) {
-    assert(n != null);
-    assert(k != null);
     RangeError.checkValueInInterval(n.length, cryptoStreamNoncebytes,
         cryptoStreamNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(k.length, cryptoStreamKeybytes,
@@ -1926,9 +1781,6 @@ class Sodium {
   }
 
   static Uint8List cryptoStreamXor(Uint8List m, Uint8List n, Uint8List k) {
-    assert(m != null);
-    assert(n != null);
-    assert(k != null);
     RangeError.checkValueInInterval(n.length, cryptoStreamNoncebytes,
         cryptoStreamNoncebytes, 'n', 'Invalid length');
     RangeError.checkValueInInterval(k.length, cryptoStreamKeybytes,
@@ -1967,7 +1819,6 @@ class Sodium {
   static int get randombytesSeedbytes => _randombytes.randombytes_seedbytes();
 
   static Uint8List randombytesBuf(int size) {
-    assert(size != null);
     RangeError.checkNotNegative(size);
 
     final _buf = allocate<Uint8>(count: size);
@@ -1980,8 +1831,6 @@ class Sodium {
   }
 
   static Uint8List randombytesBufDeterministic(int size, Uint8List seed) {
-    assert(size != null);
-    assert(seed != null);
     RangeError.checkNotNegative(size);
     RangeError.checkValueInInterval(seed.length, randombytesSeedbytes,
         randombytesSeedbytes, 'seed', 'Invalid length');
@@ -2000,7 +1849,6 @@ class Sodium {
   static int randombytesRandom() => _randombytes.randombytes_random();
 
   static int randombytesUniform(int upperBound) {
-    assert(upperBound != null);
     RangeError.checkNotNegative(upperBound);
 
     return _randombytes.randombytes_uniform(upperBound);
@@ -2041,8 +1889,6 @@ class Sodium {
   static bool get runtimeHasRdrand => _sodium.sodium_runtime_has_rdrand() == 1;
 
   static String bin2hex(Uint8List bin) {
-    assert(bin != null);
-
     final _hexMaxlen = bin.length * 2 + 1;
     final _hex = allocate<Uint8>(count: _hexMaxlen);
     final _bin = bin.toPointer();
@@ -2055,9 +1901,7 @@ class Sodium {
     }
   }
 
-  static Uint8List hex2bin(String hex, {String ignore = ': '}) {
-    assert(hex != null);
-
+  static Uint8List hex2bin(String hex, {String? ignore = ': '}) {
     final _bin = allocate<Uint8>(count: hex.length);
     final _hex = Utf8.toUtf8(hex);
     final _hexlen = Utf8.strlen(_hex);
@@ -2090,9 +1934,6 @@ class Sodium {
 
   static String bin2base64(Uint8List bin,
       {int variant = base64VariantOriginal}) {
-    assert(bin != null);
-    assert(variant != null);
-
     final _b64maxlen = _sodium.sodium_base64_encoded_len(bin.length, variant);
     final _b64 = allocate<Uint8>(count: _b64maxlen);
     final _bin = bin.toPointer();
@@ -2106,9 +1947,7 @@ class Sodium {
   }
 
   static Uint8List base642bin(String b64,
-      {String ignore, int variant = base64VariantOriginal}) {
-    assert(b64 != null);
-
+      {String? ignore, int variant = base64VariantOriginal}) {
     final _bin = allocate<Uint8>(count: b64.length);
     final _b64 = Utf8.toUtf8(b64);
     final _b64len = Utf8.strlen(_b64);
@@ -2132,8 +1971,6 @@ class Sodium {
   }
 
   static bool memcmp(Uint8List b1, Uint8List b2) {
-    assert(b1 != null);
-    assert(b2 != null);
     if (b1.length != b2.length) {
       return false;
     }
@@ -2148,8 +1985,6 @@ class Sodium {
   }
 
   static Uint8List pad(Uint8List buf, int blockSize) {
-    assert(buf != null);
-    assert(blockSize != null);
     final _buf = buf.toPointer(size: buf.length + blockSize);
     final _paddedlen = allocate<Uint32>(count: 1);
     try {
@@ -2166,8 +2001,6 @@ class Sodium {
   }
 
   static Uint8List unpad(Uint8List buf, int blockSize) {
-    assert(buf != null);
-    assert(blockSize != null);
     final _buf = buf.toPointer();
     final _unpaddedlen = allocate<Uint32>(count: 1);
     try {
@@ -2199,12 +2032,9 @@ class _CryptoAead {
   int get abytes => _bindings.abytes();
   int get messagebytesMax => _bindings.messagebytes_max();
 
-  Uint8List encrypt(
-      Uint8List m, Uint8List ad, Uint8List nsec, Uint8List npub, Uint8List k) {
-    assert(m != null);
+  Uint8List encrypt(Uint8List m, Uint8List? ad, Uint8List? nsec, Uint8List npub,
+      Uint8List k) {
     assert(nsec == null); // yes, nsec must be null
-    assert(npub != null);
-    assert(k != null);
 
     RangeError.checkValueInInterval(
         npub.length, npubbytes, npubbytes, 'npub', 'Invalid length');
@@ -2214,7 +2044,7 @@ class _CryptoAead {
     final _c = allocate<Uint8>(count: m.length + abytes);
     final _clenP = allocate<Uint64>(count: 1);
     final _m = m.toPointer();
-    final _ad = ad.toPointer();
+    final _ad = ad?.toPointer() ?? Pointer.fromAddress(0);
     final _adlen = ad?.length ?? 0;
     final _npub = npub.toPointer();
     final _k = k.toPointer();
@@ -2234,12 +2064,9 @@ class _CryptoAead {
     }
   }
 
-  Uint8List decrypt(
-      Uint8List nsec, Uint8List c, Uint8List ad, Uint8List npub, Uint8List k) {
+  Uint8List decrypt(Uint8List? nsec, Uint8List c, Uint8List? ad, Uint8List npub,
+      Uint8List k) {
     assert(nsec == null); // yes, nsec must be null
-    assert(c != null);
-    assert(npub != null);
-    assert(k != null);
     RangeError.checkValueInInterval(
         npub.length, npubbytes, npubbytes, 'npub', 'Invalid length');
     RangeError.checkValueInInterval(
@@ -2248,7 +2075,7 @@ class _CryptoAead {
     final _m = allocate<Uint8>(count: c.length - abytes);
     final _mlenP = allocate<Uint64>(count: 1);
     final _c = c.toPointer();
-    final _ad = ad.toPointer();
+    final _ad = ad?.toPointer() ?? Pointer.fromAddress(0);
     final _adlen = ad?.length ?? 0;
     final _npub = npub.toPointer();
     final _k = k.toPointer();
@@ -2268,12 +2095,9 @@ class _CryptoAead {
     }
   }
 
-  DetachedCipher encryptDetached(
-      Uint8List m, Uint8List ad, Uint8List nsec, Uint8List npub, Uint8List k) {
-    assert(m != null);
+  DetachedCipher encryptDetached(Uint8List m, Uint8List? ad, Uint8List? nsec,
+      Uint8List npub, Uint8List k) {
     assert(nsec == null); // yes, nsec must be null
-    assert(npub != null);
-    assert(k != null);
     RangeError.checkValueInInterval(
         npub.length, npubbytes, npubbytes, 'npub', 'Invalid length');
     RangeError.checkValueInInterval(
@@ -2283,7 +2107,7 @@ class _CryptoAead {
     final _mac = allocate<Uint8>(count: abytes);
     final _maclenP = allocate<Uint64>(count: 1);
     final _m = m.toPointer();
-    final _ad = ad.toPointer();
+    final _ad = ad?.toPointer() ?? Pointer.fromAddress(0);
     final _adlen = ad?.length ?? 0;
     final _npub = npub.toPointer();
     final _k = k.toPointer();
@@ -2305,13 +2129,9 @@ class _CryptoAead {
     }
   }
 
-  Uint8List decryptDetached(Uint8List nsec, Uint8List c, Uint8List mac,
-      Uint8List ad, Uint8List npub, Uint8List k) {
+  Uint8List decryptDetached(Uint8List? nsec, Uint8List c, Uint8List mac,
+      Uint8List? ad, Uint8List npub, Uint8List k) {
     assert(nsec == null); // yes, nsec must be null
-    assert(c != null);
-    assert(mac != null);
-    assert(npub != null);
-    assert(k != null);
     RangeError.checkValueInInterval(
         mac.length, abytes, abytes, 'mac', 'Invalid length');
     RangeError.checkValueInInterval(
@@ -2322,7 +2142,7 @@ class _CryptoAead {
     final _m = allocate<Uint8>(count: c.length);
     final _c = c.toPointer();
     final _mac = mac.toPointer();
-    final _ad = ad.toPointer();
+    final _ad = ad?.toPointer() ?? Pointer.fromAddress(0);
     final _adlen = ad?.length ?? 0;
     final _npub = npub.toPointer();
     final _k = k.toPointer();
