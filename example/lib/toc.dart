@@ -11,20 +11,20 @@ class Section extends Topic {
 
 class Topic {
   final String title;
-  final String description;
-  final String url;
-  final List<Sample> samples;
+  final String? description;
+  final String? url;
+  final List<Sample>? samples;
 
   Topic(this.title, {this.description, this.url, this.samples});
 }
 
 class Sample {
   final String name;
-  final SampleFunc func;
-  final SampleFuncAsync funcAsync;
-  String title;
-  String description;
-  String code;
+  final SampleFunc? func;
+  final SampleFuncAsync? funcAsync;
+  String? title;
+  String? description;
+  String? code;
 
   Sample(this.name, {this.func, this.funcAsync});
 }
@@ -207,7 +207,7 @@ Future<List<Topic>> buildToc(BuildContext context) async {
   // iterate all samples in the toc, and parse title, description and code snippet
   for (var topic in toc) {
     if (topic.samples != null) {
-      for (var sample in topic.samples) {
+      for (var sample in topic.samples!) {
         final beginTag = '// BEGIN ${sample.name}:';
         final begin = src.indexOf(beginTag);
         assert(begin != -1);

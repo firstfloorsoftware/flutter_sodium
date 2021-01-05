@@ -7,7 +7,7 @@ class Samples {
 
   void api1(Function(Object) print) {
     // BEGIN api1: Core API: Compute a password hash using the Core API with predefined salt.
-    final p = utf8.encode('hello world');
+    final p = utf8.encoder.convert('hello world');
     final h = Sodium.cryptoPwhash(
         Sodium.cryptoPwhashBytesMin,
         p,

@@ -1,16 +1,15 @@
 name: flutter_sodium_example
-version: 1.0.0
+version: 2.0.0-nullsafety.0
 description: Demonstrates how to use the flutter_sodium plugin.
 publish_to: 'none'
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: ">=2.12.0-0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^0.1.2
-  url_launcher: ^5.7.2
+  url_launcher: ^6.0.0-nullsafety.1
 
 dev_dependencies:
   flutter_test:
