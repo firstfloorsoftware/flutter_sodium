@@ -1,3 +1,6 @@
+## 0.2.0-nullsafety.1 - February 5, 2021
+* adds support for sodium_core_hchacha and hsalsa (merge 0.1.11)
+
 ## 0.2.0-nullsafety.0 - February 5, 2021
 * implements null safety
 
