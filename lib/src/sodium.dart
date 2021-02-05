@@ -4,6 +4,7 @@ import 'package:ffi/ffi.dart';
 import 'bindings/crypto_aead_bindings.dart';
 import 'bindings/crypto_auth_bindings.dart';
 import 'bindings/crypto_box_bindings.dart';
+import 'bindings/crypto_core_bindings.dart';
 import 'bindings/crypto_generichash_bindings.dart';
 import 'bindings/crypto_hash_bindings.dart';
 import 'bindings/crypto_kdf_bindings.dart';
@@ -33,6 +34,7 @@ class Sodium {
   static final _xchacha20poly1305Ietf = _CryptoAead.xchacha20poly1305Ietf();
   static final _cryptoAuth = CryptoAuthBindings();
   static final _cryptoBox = CryptoBoxBindings();
+  static final _cryptoCore = CryptoCoreBindings();
   static final _cryptoGenerichash = CryptoGenerichashBindings();
   static final _cryptoHash = CryptoHashBindings('crypto_hash');
   static final _cryptoKdf = CryptoKdfBindings();
@@ -533,6 +535,85 @@ class Sodium {
       free(_c);
       free(_pk);
       free(_sk);
+    }
+  }
+
+  //
+  // crypto_core
+  //
+  static int get cryptoCoreHchacha20Outputbytes =>
+      _cryptoCore.crypto_core_hchacha20_outputbytes();
+  static int get cryptoCoreHchacha20Inputbytes =>
+      _cryptoCore.crypto_core_hchacha20_inputbytes();
+  static int get cryptoCoreHchacha20Keybytes =>
+      _cryptoCore.crypto_core_hchacha20_keybytes();
+  static int get cryptoCoreHchacha20Constbytes =>
+      _cryptoCore.crypto_core_hchacha20_constbytes();
+
+  static Uint8List cryptoCoreHchacha20(Uint8List i, Uint8List k, Uint8List? c) {
+    RangeError.checkValueInInterval(i.length, cryptoCoreHchacha20Inputbytes,
+        cryptoCoreHchacha20Inputbytes, 'i', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, cryptoCoreHchacha20Keybytes,
+        cryptoCoreHchacha20Keybytes, 'k', 'Invalid length');
+    if (c != null) {
+      RangeError.checkValueInInterval(c.length, cryptoCoreHchacha20Constbytes,
+          cryptoCoreHchacha20Constbytes, 'c', 'Invalid length');
+    }
+    final _out = allocate<Uint8>(count: cryptoCoreHchacha20Outputbytes);
+    final _in = i.toPointer();
+    final _k = k.toPointer();
+    final _c = c?.toPointer() ?? nullptr;
+
+    try {
+      _cryptoCore
+          .crypto_core_hchacha20(_out, _in, _k, _c)
+          .mustSucceed('crypto_core_hchacha20');
+      return _out.toList(cryptoCoreHchacha20Outputbytes);
+    } finally {
+      free(_out);
+      free(_in);
+      free(_k);
+      if (_c != nullptr) {
+        free(_c);
+      }
+    }
+  }
+
+  static int get cryptoCoreHsalsa20Outputbytes =>
+      _cryptoCore.crypto_core_hsalsa20_outputbytes();
+  static int get cryptoCoreHsalsa20Inputbytes =>
+      _cryptoCore.crypto_core_hsalsa20_inputbytes();
+  static int get cryptoCoreHsalsa20Keybytes =>
+      _cryptoCore.crypto_core_hsalsa20_keybytes();
+  static int get cryptoCoreHsalsa20Constbytes =>
+      _cryptoCore.crypto_core_hsalsa20_constbytes();
+
+  static Uint8List cryptoCoreHsalsa20(Uint8List i, Uint8List k, Uint8List? c) {
+    RangeError.checkValueInInterval(i.length, cryptoCoreHsalsa20Inputbytes,
+        cryptoCoreHsalsa20Inputbytes, 'i', 'Invalid length');
+    RangeError.checkValueInInterval(k.length, cryptoCoreHsalsa20Keybytes,
+        cryptoCoreHsalsa20Keybytes, 'k', 'Invalid length');
+    if (c != null) {
+      RangeError.checkValueInInterval(c.length, cryptoCoreHsalsa20Constbytes,
+          cryptoCoreHsalsa20Constbytes, 'c', 'Invalid length');
+    }
+    final _out = allocate<Uint8>(count: cryptoCoreHsalsa20Outputbytes);
+    final _in = i.toPointer();
+    final _k = k.toPointer();
+    final _c = c?.toPointer() ?? nullptr;
+
+    try {
+      _cryptoCore
+          .crypto_core_hsalsa20(_out, _in, _k, _c)
+          .mustSucceed('crypto_core_hsalsa20');
+      return _out.toList(cryptoCoreHsalsa20Outputbytes);
+    } finally {
+      free(_out);
+      free(_in);
+      free(_k);
+      if (_c != nullptr) {
+        free(_c);
+      }
     }
   }
 

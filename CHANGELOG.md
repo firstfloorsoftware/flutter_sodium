@@ -1,5 +1,9 @@
-## 0.2.0-nullsafety.0 - January 5, 2021
+## 0.2.0-nullsafety.0 - February 5, 2021
 * implements null safety
+
+## 0.1.11 - February 5, 2021
+* adds support for loading libsodium on Linux and Windows
+* adds support for sodium_core_hchacha and hsalsa
 
 ## 0.1.10 - December 11, 2020
 * adds support for sodium_runtime_*, sodium_memcmp, sodium_pad and sodium_unpad
