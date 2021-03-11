@@ -37,7 +37,7 @@ class CryptoBox {
   /// Encrypts a string message with a key and a nonce.
   static Uint8List encryptString(String value, Uint8List nonce,
           Uint8List publicKey, Uint8List secretKey) =>
-      encrypt(utf8.encode(value), nonce, publicKey, secretKey);
+      encrypt(utf8.encoder.convert(value), nonce, publicKey, secretKey);
 
   /// Verifies and decrypts a cipher text produced by encrypt.
   static String decryptString(Uint8List cipherText, Uint8List nonce,
@@ -59,7 +59,7 @@ class CryptoBox {
   /// Encrypts a string message with a key and a nonce, returning the encrypted message and authentication tag
   static DetachedCipher encryptStringDetached(String value, Uint8List nonce,
           Uint8List publicKey, Uint8List secretKey) =>
-      encryptDetached(utf8.encode(value), nonce, publicKey, secretKey);
+      encryptDetached(utf8.encoder.convert(value), nonce, publicKey, secretKey);
 
   /// Verifies and decrypts a detached cipher text and tag.
   static String decryptStringDetached(Uint8List cipher, Uint8List mac,
@@ -81,7 +81,7 @@ class CryptoBox {
   /// Encrypts a string message with a key and a nonce.
   static Uint8List encryptStringAfternm(
           String value, Uint8List nonce, Uint8List k) =>
-      encryptAfternm(utf8.encode(value), nonce, k);
+      encryptAfternm(utf8.encoder.convert(value), nonce, k);
 
   /// Verifies and decrypts a cipher text produced by encrypt.
   static String decryptStringAfternm(
@@ -103,7 +103,7 @@ class CryptoBox {
   /// Encrypts a string message with a key and a nonce, returning the encrypted message and authentication tag
   static DetachedCipher encryptStringDetachedAfternm(
           String value, Uint8List nonce, Uint8List k) =>
-      encryptDetachedAfternm(utf8.encode(value), nonce, k);
+      encryptDetachedAfternm(utf8.encoder.convert(value), nonce, k);
 
   /// Verifies and decrypts a detached cipher text and tag.
   static String decryptStringDetachedAfternm(

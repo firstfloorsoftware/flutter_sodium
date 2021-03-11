@@ -25,7 +25,7 @@ class TopicPage extends StatelessWidget {
                         if (topic.description != null)
                           Padding(
                               padding: EdgeInsets.only(bottom: 16.0),
-                              child: Text(topic.description)),
+                              child: Text(topic.description!)),
                         // more info button
                         if (topic.url != null)
                           Padding(
@@ -36,11 +36,11 @@ class TopicPage extends StatelessWidget {
                                   style: TextStyle(
                                       color: Theme.of(context).accentColor),
                                 ),
-                                onTap: () => launch(topic.url)),
+                                onTap: () => launch(topic.url!)),
                           ),
                         // 0..n samples
                         if (topic.samples != null)
-                          for (var sample in topic.samples)
+                          for (var sample in topic.samples!)
                             Padding(
                                 padding: EdgeInsets.only(bottom: 16.0),
                                 child: SampleWidget(sample))

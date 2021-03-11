@@ -39,23 +39,24 @@ class HomePage extends StatelessWidget {
                     return snapshot.hasError
                         ? Text("Build TOC failed\n\n${snapshot.error}")
                         : ListView(children: <Widget>[
-                            for (var topic in snapshot.data)
-                              if (topic is Section)
-                                ListTile(
-                                    title: Text(topic.title,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline6))
-                              else
-                                ListTile(
-                                    title: Text(topic.title),
-                                    trailing: Icon(Icons.arrow_forward_ios,
-                                        size: 12.0),
-                                    onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                TopicPage(topic))))
+                            if (snapshot.hasData)
+                              for (var topic in snapshot.data!)
+                                if (topic is Section)
+                                  ListTile(
+                                      title: Text(topic.title,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6))
+                                else
+                                  ListTile(
+                                      title: Text(topic.title),
+                                      trailing: Icon(Icons.arrow_forward_ios,
+                                          size: 12.0),
+                                      onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TopicPage(topic))))
                           ]);
                   }
 

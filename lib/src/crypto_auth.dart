@@ -17,9 +17,9 @@ class CryptoAuth {
 
   /// Computes a tag for given string value and key.
   static Uint8List computeString(String value, Uint8List key) =>
-      compute(utf8.encode(value), key);
+      compute(utf8.encoder.convert(value), key);
 
   /// Verifies that the tag is valid for given string value and key.
   static bool verifyString(Uint8List tag, String value, Uint8List key) =>
-      verify(tag, utf8.encode(value), key);
+      verify(tag, utf8.encoder.convert(value), key);
 }

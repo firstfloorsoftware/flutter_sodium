@@ -24,7 +24,7 @@ class SecretBox {
   /// Encrypts a string message with a key and a nonce.
   static Uint8List encryptString(
           String value, Uint8List nonce, Uint8List key) =>
-      encrypt(utf8.encode(value), nonce, key);
+      encrypt(utf8.encoder.convert(value), nonce, key);
 
   /// Verifies and decrypts a cipher text produced by encrypt.
   static String decryptString(
@@ -46,7 +46,7 @@ class SecretBox {
   /// Encrypts a string message with a key and a nonce, returning the encrypted message and authentication tag
   static DetachedCipher encryptStringDetached(
           String value, Uint8List nonce, Uint8List key) =>
-      encryptDetached(utf8.encode(value), nonce, key);
+      encryptDetached(utf8.encoder.convert(value), nonce, key);
 
   /// Verifies and decrypts a detached cipher text and tag.
   static String decryptStringDetached(

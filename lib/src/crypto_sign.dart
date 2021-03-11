@@ -23,7 +23,7 @@ class CryptoSign {
 
   /// Prepends a signature to specified string message for given secret key.
   static Uint8List signString(String message, Uint8List secretKey) =>
-      sign(utf8.encode(message), secretKey);
+      sign(utf8.encoder.convert(message), secretKey);
 
   /// Checks the signed message using given public key and returns the message with the signature removed.
   static Uint8List open(Uint8List signedMessage, Uint8List publicKey) =>
@@ -41,7 +41,7 @@ class CryptoSign {
 
   /// Computes a signature for given string message and secret key.
   static Uint8List signStringDetached(String message, Uint8List secretKey) =>
-      signDetached(utf8.encode(message), secretKey);
+      signDetached(utf8.encoder.convert(message), secretKey);
 
   /// Verifies whether the signature is valid for given message using the signer's public key.
   static bool verify(
@@ -51,7 +51,7 @@ class CryptoSign {
   /// Verifies whether the signature is valid for given string message using the signer's public key.
   static bool verifyString(
           Uint8List signature, String message, Uint8List publicKey) =>
-      verify(signature, utf8.encode(message), publicKey);
+      verify(signature, utf8.encoder.convert(message), publicKey);
 
   /// Computes a signature for given stream and secret key.
   static Future<Uint8List> signStream(
@@ -63,7 +63,7 @@ class CryptoSign {
       }
       return Sodium.cryptoSignFinalCreate(state, secretKey);
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 
@@ -77,7 +77,7 @@ class CryptoSign {
       }
       return Sodium.cryptoSignFinalVerify(state, signature, publicKey) == 0;
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 
@@ -87,11 +87,11 @@ class CryptoSign {
     final state = Sodium.cryptoSignInit();
     try {
       await for (var value in stream) {
-        Sodium.cryptoSignUpdate(state, utf8.encode(value));
+        Sodium.cryptoSignUpdate(state, utf8.encoder.convert(value));
       }
       return Sodium.cryptoSignFinalCreate(state, secretKey);
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 
@@ -101,11 +101,11 @@ class CryptoSign {
     final state = Sodium.cryptoSignInit();
     try {
       await for (var value in stream) {
-        Sodium.cryptoSignUpdate(state, utf8.encode(value));
+        Sodium.cryptoSignUpdate(state, utf8.encoder.convert(value));
       }
       return Sodium.cryptoSignFinalVerify(state, signature, publicKey) == 0;
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 

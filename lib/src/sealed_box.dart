@@ -18,7 +18,7 @@ class SealedBox {
 
   /// Encrypts a string message for a recipient having specified public key.
   static Uint8List sealString(String value, Uint8List publicKey) =>
-      seal(utf8.encode(value), publicKey);
+      seal(utf8.encoder.convert(value), publicKey);
 
   /// Decrypts the ciphertext using given keypair.
   static String openString(Uint8List cipher, KeyPair keys) {

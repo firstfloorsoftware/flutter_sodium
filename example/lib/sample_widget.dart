@@ -10,12 +10,12 @@ class SampleWidget extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
           padding: EdgeInsets.symmetric(vertical: 16.0),
-          child:
-              Text(sample.title, style: Theme.of(context).textTheme.headline5)),
-      if (sample.description != null && sample.description.length > 0)
+          child: Text(sample.title ?? '(no title)',
+              style: Theme.of(context).textTheme.headline5)),
+      if (sample.description != null && sample.description!.length > 0)
         Padding(
           padding: EdgeInsets.only(bottom: 16.0),
-          child: Text(sample.description),
+          child: Text(sample.description!),
         ),
       CodeBlock(sample.code),
       SampleRunner(sample)
@@ -33,7 +33,7 @@ class SampleRunner extends StatefulWidget {
 }
 
 class _SampleRunnerState extends State<SampleRunner> {
-  Future<String> _sampleRun;
+  Future<String>? _sampleRun;
 
   void _runSample() {
     setState(() {
@@ -46,9 +46,9 @@ class _SampleRunnerState extends State<SampleRunner> {
 
     // run sync or async code sample
     if (widget.sample.funcAsync != null) {
-      await widget.sample.funcAsync((o) => out.writeln(o));
-    } else {
-      widget.sample.func((o) => out.writeln(o));
+      await widget.sample.funcAsync!((o) => out.writeln(o));
+    } else if (widget.sample.func != null) {
+      widget.sample.func!((o) => out.writeln(o));
     }
     return out.toString().trim();
   }
@@ -101,22 +101,18 @@ class _SampleRunnerState extends State<SampleRunner> {
 }
 
 class RunButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   RunButton(this.onPressed);
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-        child: Text('Run'),
-        textColor: Colors.white,
-        color: Theme.of(context).accentColor,
-        onPressed: onPressed);
+    return ElevatedButton(child: Text('Run'), onPressed: onPressed);
   }
 }
 
 class CodeBlock extends StatelessWidget {
-  final String _code;
+  final String? _code;
   final Color color;
 
   CodeBlock(this._code, {this.color = Colors.black12});
