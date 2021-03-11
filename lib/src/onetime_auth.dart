@@ -34,7 +34,7 @@ class OnetimeAuth {
       }
       return Sodium.cryptoOnetimeauthFinal(state);
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 }

@@ -27,7 +27,7 @@ extension Uint8Pointer on Pointer<Uint8> {
 
 extension Uint8ListExtensions on Uint8List {
   Pointer<Uint8> toPointer({int? size}) {
-    final p = allocate<Uint8>(count: size ?? this.length);
+    final p = calloc<Uint8>(size ?? this.length);
     p.asTypedList(size ?? this.length).setAll(0, this);
     return p;
   }

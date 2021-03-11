@@ -29,7 +29,7 @@ class GenericHash {
       }
       return Sodium.cryptoGenerichashFinal(state, outlen);
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 
@@ -44,7 +44,7 @@ class GenericHash {
       }
       return Sodium.cryptoGenerichashFinal(state, outlen);
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 }

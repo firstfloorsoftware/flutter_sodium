@@ -127,13 +127,13 @@ class Sodium {
   static int get cryptoAuthBytes => _cryptoAuth.crypto_auth_bytes();
   static int get cryptoAuthKeybytes => _cryptoAuth.crypto_auth_keybytes();
   static String get cryptoAuthPrimitive =>
-      Utf8.fromUtf8(_cryptoAuth.crypto_auth_primitive());
+      _cryptoAuth.crypto_auth_primitive().toDartString();
 
   static Uint8List cryptoAuth(Uint8List i, Uint8List k) {
     RangeError.checkValueInInterval(k.length, cryptoAuthKeybytes,
         cryptoAuthKeybytes, 'k', 'Invalid length');
 
-    final _out = allocate<Uint8>(count: cryptoAuthBytes);
+    final _out = calloc<Uint8>(cryptoAuthBytes);
     final _in = i.toPointer();
     final _k = k.toPointer();
 
@@ -144,9 +144,9 @@ class Sodium {
 
       return _out.toList(cryptoAuthBytes);
     } finally {
-      free(_out);
-      free(_in);
-      free(_k);
+      calloc.free(_out);
+      calloc.free(_in);
+      calloc.free(_k);
     }
   }
 
@@ -163,19 +163,19 @@ class Sodium {
     try {
       return _cryptoAuth.crypto_auth_verify(_h, _in, i.length, _k) == 0;
     } finally {
-      free(_h);
-      free(_in);
-      free(_k);
+      calloc.free(_h);
+      calloc.free(_in);
+      calloc.free(_k);
     }
   }
 
   static Uint8List cryptoAuthKeygen() {
-    final _k = allocate<Uint8>(count: cryptoAuthKeybytes);
+    final _k = calloc<Uint8>(cryptoAuthKeybytes);
     try {
       _cryptoAuth.crypto_auth_keygen(_k);
       return _k.toList(cryptoAuthKeybytes);
     } finally {
-      free(_k);
+      calloc.free(_k);
     }
   }
 
@@ -195,13 +195,13 @@ class Sodium {
   static int get cryptoBoxBeforenmbytes =>
       _cryptoBox.crypto_box_beforenmbytes();
   static String get cryptoBoxPrimitive =>
-      Utf8.fromUtf8(_cryptoBox.crypto_box_primitive());
+      _cryptoBox.crypto_box_primitive().toDartString();
 
   static KeyPair cryptoBoxSeedKeypair(Uint8List seed) {
     RangeError.checkValueInInterval(seed.length, cryptoBoxSeedbytes,
         cryptoBoxSeedbytes, 'seed', 'Invalid length');
-    final _pk = allocate<Uint8>(count: cryptoBoxPublickeybytes);
-    final _sk = allocate<Uint8>(count: cryptoBoxSecretkeybytes);
+    final _pk = calloc<Uint8>(cryptoBoxPublickeybytes);
+    final _sk = calloc<Uint8>(cryptoBoxSecretkeybytes);
     final _seed = seed.toPointer();
 
     try {
@@ -212,15 +212,15 @@ class Sodium {
           pk: _pk.toList(cryptoBoxPublickeybytes),
           sk: _sk.toList(cryptoBoxSecretkeybytes));
     } finally {
-      free(_pk);
-      free(_sk);
-      free(_seed);
+      calloc.free(_pk);
+      calloc.free(_sk);
+      calloc.free(_seed);
     }
   }
 
   static KeyPair cryptoBoxKeypair() {
-    final _pk = allocate<Uint8>(count: cryptoBoxPublickeybytes);
-    final _sk = allocate<Uint8>(count: cryptoBoxSecretkeybytes);
+    final _pk = calloc<Uint8>(cryptoBoxPublickeybytes);
+    final _sk = calloc<Uint8>(cryptoBoxSecretkeybytes);
 
     try {
       _cryptoBox.crypto_box_keypair(_pk, _sk).mustSucceed('crypto_box_keypair');
@@ -228,8 +228,8 @@ class Sodium {
           pk: _pk.toList(cryptoBoxPublickeybytes),
           sk: _sk.toList(cryptoBoxSecretkeybytes));
     } finally {
-      free(_pk);
-      free(_sk);
+      calloc.free(_pk);
+      calloc.free(_sk);
     }
   }
 
@@ -242,7 +242,7 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoBoxSecretkeybytes,
         cryptoBoxSecretkeybytes, 'sk', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: m.length + cryptoBoxMacbytes);
+    final _c = calloc<Uint8>(m.length + cryptoBoxMacbytes);
     final _m = m.toPointer();
     final _n = n.toPointer();
     final _pk = pk.toPointer();
@@ -255,11 +255,11 @@ class Sodium {
 
       return _c.toList(m.length + cryptoBoxMacbytes);
     } finally {
-      free(_c);
-      free(_m);
-      free(_n);
-      free(_pk);
-      free(_sk);
+      calloc.free(_c);
+      calloc.free(_m);
+      calloc.free(_n);
+      calloc.free(_pk);
+      calloc.free(_sk);
     }
   }
 
@@ -272,7 +272,7 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoBoxSecretkeybytes,
         cryptoBoxSecretkeybytes, 'sk', 'Invalid length');
 
-    final _m = allocate<Uint8>(count: c.length - cryptoBoxMacbytes);
+    final _m = calloc<Uint8>(c.length - cryptoBoxMacbytes);
     final _c = c.toPointer();
     final _n = n.toPointer();
     final _pk = pk.toPointer();
@@ -285,11 +285,11 @@ class Sodium {
 
       return _m.toList(c.length - cryptoBoxMacbytes);
     } finally {
-      free(_m);
-      free(_c);
-      free(_n);
-      free(_pk);
-      free(_sk);
+      calloc.free(_m);
+      calloc.free(_c);
+      calloc.free(_n);
+      calloc.free(_pk);
+      calloc.free(_sk);
     }
   }
 
@@ -302,8 +302,8 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoBoxSecretkeybytes,
         cryptoBoxSecretkeybytes, 'sk', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: m.length);
-    final _mac = allocate<Uint8>(count: cryptoBoxMacbytes);
+    final _c = calloc<Uint8>(m.length);
+    final _mac = calloc<Uint8>(cryptoBoxMacbytes);
     final _m = m.toPointer();
     final _n = n.toPointer();
     final _pk = pk.toPointer();
@@ -317,12 +317,12 @@ class Sodium {
       return DetachedCipher(
           c: _c.toList(m.length), mac: _mac.toList(cryptoBoxMacbytes));
     } finally {
-      free(_c);
-      free(_mac);
-      free(_m);
-      free(_n);
-      free(_pk);
-      free(_sk);
+      calloc.free(_c);
+      calloc.free(_mac);
+      calloc.free(_m);
+      calloc.free(_n);
+      calloc.free(_pk);
+      calloc.free(_sk);
     }
   }
 
@@ -337,7 +337,7 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoBoxSecretkeybytes,
         cryptoBoxSecretkeybytes, 'sk', 'Invalid length');
 
-    final _m = allocate<Uint8>(count: c.length);
+    final _m = calloc<Uint8>(c.length);
     final _mac = mac.toPointer();
     final _c = c.toPointer();
     final _n = n.toPointer();
@@ -351,12 +351,12 @@ class Sodium {
 
       return _m.toList(c.length);
     } finally {
-      free(_m);
-      free(_mac);
-      free(_c);
-      free(_n);
-      free(_pk);
-      free(_sk);
+      calloc.free(_m);
+      calloc.free(_mac);
+      calloc.free(_c);
+      calloc.free(_n);
+      calloc.free(_pk);
+      calloc.free(_sk);
     }
   }
 
@@ -366,7 +366,7 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoBoxSecretkeybytes,
         cryptoBoxSecretkeybytes, 'sk', 'Invalid length');
 
-    final _k = allocate<Uint8>(count: cryptoBoxBeforenmbytes);
+    final _k = calloc<Uint8>(cryptoBoxBeforenmbytes);
     final _pk = pk.toPointer();
     final _sk = sk.toPointer();
     try {
@@ -376,9 +376,9 @@ class Sodium {
 
       return _k.toList(cryptoBoxBeforenmbytes);
     } finally {
-      free(_k);
-      free(_pk);
-      free(_sk);
+      calloc.free(_k);
+      calloc.free(_pk);
+      calloc.free(_sk);
     }
   }
 
@@ -388,7 +388,7 @@ class Sodium {
     RangeError.checkValueInInterval(k.length, cryptoBoxBeforenmbytes,
         cryptoBoxBeforenmbytes, 'k', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: m.length + cryptoBoxMacbytes);
+    final _c = calloc<Uint8>(m.length + cryptoBoxMacbytes);
     final _m = m.toPointer();
     final _n = n.toPointer();
     final _k = k.toPointer();
@@ -400,10 +400,10 @@ class Sodium {
 
       return _c.toList(m.length + cryptoBoxMacbytes);
     } finally {
-      free(_c);
-      free(_m);
-      free(_n);
-      free(_k);
+      calloc.free(_c);
+      calloc.free(_m);
+      calloc.free(_n);
+      calloc.free(_k);
     }
   }
 
@@ -414,7 +414,7 @@ class Sodium {
     RangeError.checkValueInInterval(k.length, cryptoBoxBeforenmbytes,
         cryptoBoxBeforenmbytes, 'k', 'Invalid length');
 
-    final _m = allocate<Uint8>(count: c.length - cryptoBoxMacbytes);
+    final _m = calloc<Uint8>(c.length - cryptoBoxMacbytes);
     final _c = c.toPointer();
     final _n = n.toPointer();
     final _k = k.toPointer();
@@ -426,10 +426,10 @@ class Sodium {
 
       return _m.toList(c.length - cryptoBoxMacbytes);
     } finally {
-      free(_m);
-      free(_c);
-      free(_n);
-      free(_k);
+      calloc.free(_m);
+      calloc.free(_c);
+      calloc.free(_n);
+      calloc.free(_k);
     }
   }
 
@@ -440,8 +440,8 @@ class Sodium {
     RangeError.checkValueInInterval(k.length, cryptoBoxBeforenmbytes,
         cryptoBoxBeforenmbytes, 'k', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: m.length);
-    final _mac = allocate<Uint8>(count: cryptoBoxMacbytes);
+    final _c = calloc<Uint8>(m.length);
+    final _mac = calloc<Uint8>(cryptoBoxMacbytes);
     final _m = m.toPointer();
     final _n = n.toPointer();
     final _k = k.toPointer();
@@ -454,11 +454,11 @@ class Sodium {
       return DetachedCipher(
           c: _c.toList(m.length), mac: _mac.toList(cryptoBoxMacbytes));
     } finally {
-      free(_c);
-      free(_mac);
-      free(_m);
-      free(_n);
-      free(_k);
+      calloc.free(_c);
+      calloc.free(_mac);
+      calloc.free(_m);
+      calloc.free(_n);
+      calloc.free(_k);
     }
   }
 
@@ -471,7 +471,7 @@ class Sodium {
     RangeError.checkValueInInterval(k.length, cryptoBoxBeforenmbytes,
         cryptoBoxBeforenmbytes, 'k', 'Invalid length');
 
-    final _m = allocate<Uint8>(count: c.length);
+    final _m = calloc<Uint8>(c.length);
     final _mac = mac.toPointer();
     final _c = c.toPointer();
     final _n = n.toPointer();
@@ -484,11 +484,11 @@ class Sodium {
 
       return _m.toList(c.length);
     } finally {
-      free(_m);
-      free(_mac);
-      free(_c);
-      free(_n);
-      free(_k);
+      calloc.free(_m);
+      calloc.free(_mac);
+      calloc.free(_c);
+      calloc.free(_n);
+      calloc.free(_k);
     }
   }
 
@@ -496,7 +496,7 @@ class Sodium {
     RangeError.checkValueInInterval(pk.length, cryptoBoxPublickeybytes,
         cryptoBoxPublickeybytes, 'pk', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: m.length + cryptoBoxSealbytes);
+    final _c = calloc<Uint8>(m.length + cryptoBoxSealbytes);
     final _m = m.toPointer();
     final _pk = pk.toPointer();
 
@@ -507,9 +507,9 @@ class Sodium {
 
       return _c.toList(m.length + cryptoBoxSealbytes);
     } finally {
-      free(_c);
-      free(_m);
-      free(_pk);
+      calloc.free(_c);
+      calloc.free(_m);
+      calloc.free(_pk);
     }
   }
 
@@ -519,7 +519,7 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoBoxSecretkeybytes,
         cryptoBoxSecretkeybytes, 'sk', 'Invalid length');
 
-    final _m = allocate<Uint8>(count: c.length - cryptoBoxSealbytes);
+    final _m = calloc<Uint8>(c.length - cryptoBoxSealbytes);
     final _c = c.toPointer();
     final _pk = pk.toPointer();
     final _sk = sk.toPointer();
@@ -531,10 +531,10 @@ class Sodium {
 
       return _m.toList(c.length - cryptoBoxSealbytes);
     } finally {
-      free(_m);
-      free(_c);
-      free(_pk);
-      free(_sk);
+      calloc.free(_m);
+      calloc.free(_c);
+      calloc.free(_pk);
+      calloc.free(_sk);
     }
   }
 
@@ -559,7 +559,7 @@ class Sodium {
       RangeError.checkValueInInterval(c.length, cryptoCoreHchacha20Constbytes,
           cryptoCoreHchacha20Constbytes, 'c', 'Invalid length');
     }
-    final _out = allocate<Uint8>(count: cryptoCoreHchacha20Outputbytes);
+    final _out = calloc<Uint8>(cryptoCoreHchacha20Outputbytes);
     final _in = i.toPointer();
     final _k = k.toPointer();
     final _c = c?.toPointer() ?? nullptr;
@@ -570,11 +570,11 @@ class Sodium {
           .mustSucceed('crypto_core_hchacha20');
       return _out.toList(cryptoCoreHchacha20Outputbytes);
     } finally {
-      free(_out);
-      free(_in);
-      free(_k);
+      calloc.free(_out);
+      calloc.free(_in);
+      calloc.free(_k);
       if (_c != nullptr) {
-        free(_c);
+        calloc.free(_c);
       }
     }
   }
@@ -597,7 +597,7 @@ class Sodium {
       RangeError.checkValueInInterval(c.length, cryptoCoreHsalsa20Constbytes,
           cryptoCoreHsalsa20Constbytes, 'c', 'Invalid length');
     }
-    final _out = allocate<Uint8>(count: cryptoCoreHsalsa20Outputbytes);
+    final _out = calloc<Uint8>(cryptoCoreHsalsa20Outputbytes);
     final _in = i.toPointer();
     final _k = k.toPointer();
     final _c = c?.toPointer() ?? nullptr;
@@ -608,11 +608,11 @@ class Sodium {
           .mustSucceed('crypto_core_hsalsa20');
       return _out.toList(cryptoCoreHsalsa20Outputbytes);
     } finally {
-      free(_out);
-      free(_in);
-      free(_k);
+      calloc.free(_out);
+      calloc.free(_in);
+      calloc.free(_k);
       if (_c != nullptr) {
-        free(_c);
+        calloc.free(_c);
       }
     }
   }
@@ -633,7 +633,7 @@ class Sodium {
   static int get cryptoGenerichashKeybytes =>
       _cryptoGenerichash.crypto_generichash_keybytes();
   static String get cryptoGenerichashPrimitive =>
-      Utf8.fromUtf8(_cryptoGenerichash.crypto_generichash_primitive());
+      _cryptoGenerichash.crypto_generichash_primitive().toDartString();
   static int get cryptoGenerichashStatebytes =>
       _cryptoGenerichash.crypto_generichash_statebytes();
 
@@ -645,7 +645,7 @@ class Sodium {
           cryptoGenerichashKeybytesMax, 'key', 'Invalid length');
     }
 
-    final _out = allocate<Uint8>(count: outlen);
+    final _out = calloc<Uint8>(outlen);
     final _in = i.toPointer();
     final _key = key?.toPointer() ?? nullptr;
 
@@ -656,10 +656,10 @@ class Sodium {
           .mustSucceed('crypto_generichash');
       return _out.toList(outlen);
     } finally {
-      free(_out);
-      free(_in);
+      calloc.free(_out);
+      calloc.free(_in);
       if (_key != nullptr) {
-        free(_key);
+        calloc.free(_key);
       }
     }
   }
@@ -672,7 +672,7 @@ class Sodium {
     RangeError.checkValueInInterval(
         outlen, cryptoGenerichashBytesMin, cryptoGenerichashBytesMax);
 
-    final _state = allocate<Uint8>(count: cryptoGenerichashStatebytes);
+    final _state = calloc<Uint8>(cryptoGenerichashStatebytes);
     final _key = key?.toPointer() ?? nullptr;
 
     try {
@@ -682,7 +682,7 @@ class Sodium {
       return _state;
     } finally {
       if (_key != nullptr) {
-        free(_key);
+        calloc.free(_key);
       }
     }
   }
@@ -695,7 +695,7 @@ class Sodium {
           .crypto_generichash_update(state, _in, i.length)
           .mustSucceed('crypto_generichash_update');
     } finally {
-      free(_in);
+      calloc.free(_in);
     }
   }
 
@@ -703,7 +703,7 @@ class Sodium {
     RangeError.checkValueInInterval(
         outlen, cryptoGenerichashBytesMin, cryptoGenerichashBytesMax);
 
-    final _out = allocate<Uint8>(count: outlen);
+    final _out = calloc<Uint8>(outlen);
 
     try {
       _cryptoGenerichash
@@ -712,17 +712,17 @@ class Sodium {
       return _out.toList(outlen);
     } finally {
       // note: caller is responsible for freeing state
-      free(_out);
+      calloc.free(_out);
     }
   }
 
   static Uint8List cryptoGenerichashKeygen() {
-    final _k = allocate<Uint8>(count: cryptoGenerichashKeybytes);
+    final _k = calloc<Uint8>(cryptoGenerichashKeybytes);
     try {
       _cryptoGenerichash.crypto_generichash_keygen(_k);
       return _k.toList(cryptoGenerichashKeybytes);
     } finally {
-      free(_k);
+      calloc.free(_k);
     }
   }
 
@@ -731,16 +731,16 @@ class Sodium {
   //
   static int get cryptoHashBytes => _cryptoHash.bytes();
   static String get cryptoHashPrimitive =>
-      Utf8.fromUtf8(_cryptoHash.primitive());
+      _cryptoHash.primitive().toDartString();
   static Uint8List cryptoHash(Uint8List i) {
-    final _out = allocate<Uint8>(count: cryptoHashBytes);
+    final _out = calloc<Uint8>(cryptoHashBytes);
     final _i = i.toPointer();
     try {
       _cryptoHash.hash(_out, _i, i.length).mustSucceed('crypto_hash');
       return _out.toList(cryptoHashBytes);
     } finally {
-      free(_out);
-      free(_i);
+      calloc.free(_out);
+      calloc.free(_i);
     }
   }
 
@@ -752,7 +752,7 @@ class Sodium {
   static int get cryptoKdfContextbytes => _cryptoKdf.crypto_kdf_contextbytes();
   static int get cryptoKdfKeybytes => _cryptoKdf.crypto_kdf_keybytes();
   static String get cryptoKdfPrimitive =>
-      Utf8.fromUtf8(_cryptoKdf.crypto_kdf_primitive());
+      _cryptoKdf.crypto_kdf_primitive().toDartString();
 
   static Uint8List cryptoKdfDeriveFromKey(
       int subkeyLen, int subkeyId, Uint8List ctx, Uint8List key) {
@@ -764,7 +764,7 @@ class Sodium {
     RangeError.checkValueInInterval(key.length, cryptoKdfKeybytes,
         cryptoKdfKeybytes, 'key', 'Invalid length');
 
-    final _subkey = allocate<Uint8>(count: subkeyLen);
+    final _subkey = calloc<Uint8>(subkeyLen);
     final _ctx = ctx.toPointer();
     final _key = key.toPointer();
 
@@ -774,19 +774,19 @@ class Sodium {
           .mustSucceed('crypto_kdf_derive_from_key');
       return _subkey.toList(subkeyLen);
     } finally {
-      free(_subkey);
-      free(_ctx);
-      free(_key);
+      calloc.free(_subkey);
+      calloc.free(_ctx);
+      calloc.free(_key);
     }
   }
 
   static Uint8List cryptoKdfKeygen() {
-    final _k = allocate<Uint8>(count: cryptoKdfKeybytes);
+    final _k = calloc<Uint8>(cryptoKdfKeybytes);
     try {
       _cryptoKdf.crypto_kdf_keygen(_k);
       return _k.toList(cryptoKdfKeybytes);
     } finally {
-      free(_k);
+      calloc.free(_k);
     }
   }
 
@@ -799,13 +799,13 @@ class Sodium {
   static int get cryptoKxSessionkeybytes =>
       _cryptoKx.crypto_kx_sessionkeybytes();
   static String get cryptoKxPrimitive =>
-      Utf8.fromUtf8(_cryptoKx.crypto_kx_primitive());
+      _cryptoKx.crypto_kx_primitive().toDartString();
 
   static KeyPair cryptoKxSeedKeypair(Uint8List seed) {
     RangeError.checkValueInInterval(seed.length, cryptoKxSeedbytes,
         cryptoKxSeedbytes, 'seed', 'Invalid length');
-    final _pk = allocate<Uint8>(count: cryptoKxPublickeybytes);
-    final _sk = allocate<Uint8>(count: cryptoKxSecretkeybytes);
+    final _pk = calloc<Uint8>(cryptoKxPublickeybytes);
+    final _sk = calloc<Uint8>(cryptoKxSecretkeybytes);
     final _seed = seed.toPointer();
 
     try {
@@ -816,15 +816,15 @@ class Sodium {
           pk: _pk.toList(cryptoKxPublickeybytes),
           sk: _sk.toList(cryptoKxSecretkeybytes));
     } finally {
-      free(_pk);
-      free(_sk);
-      free(_seed);
+      calloc.free(_pk);
+      calloc.free(_sk);
+      calloc.free(_seed);
     }
   }
 
   static KeyPair cryptoKxKeypair() {
-    final _pk = allocate<Uint8>(count: cryptoKxPublickeybytes);
-    final _sk = allocate<Uint8>(count: cryptoKxSecretkeybytes);
+    final _pk = calloc<Uint8>(cryptoKxPublickeybytes);
+    final _sk = calloc<Uint8>(cryptoKxSecretkeybytes);
 
     try {
       _cryptoKx.crypto_kx_keypair(_pk, _sk).mustSucceed('crypto_kx_keypair');
@@ -832,8 +832,8 @@ class Sodium {
           pk: _pk.toList(cryptoKxPublickeybytes),
           sk: _sk.toList(cryptoKxSecretkeybytes));
     } finally {
-      free(_pk);
-      free(_sk);
+      calloc.free(_pk);
+      calloc.free(_sk);
     }
   }
 
@@ -846,8 +846,8 @@ class Sodium {
     RangeError.checkValueInInterval(serverPk.length, cryptoKxPublickeybytes,
         cryptoKxPublickeybytes, 'serverPk', 'Invalid length');
 
-    final _rx = allocate<Uint8>(count: cryptoKxSessionkeybytes);
-    final _tx = allocate<Uint8>(count: cryptoKxSessionkeybytes);
+    final _rx = calloc<Uint8>(cryptoKxSessionkeybytes);
+    final _tx = calloc<Uint8>(cryptoKxSessionkeybytes);
     final _clientPk = clientPk.toPointer();
     final _clientSk = clientSk.toPointer();
     final _serverPk = serverPk.toPointer();
@@ -862,11 +862,11 @@ class Sodium {
           rx: _rx.toList(cryptoKxSessionkeybytes),
           tx: _tx.toList(cryptoKxSessionkeybytes));
     } finally {
-      free(_rx);
-      free(_tx);
-      free(_clientPk);
-      free(_clientSk);
-      free(_serverPk);
+      calloc.free(_rx);
+      calloc.free(_tx);
+      calloc.free(_clientPk);
+      calloc.free(_clientSk);
+      calloc.free(_serverPk);
     }
   }
 
@@ -879,8 +879,8 @@ class Sodium {
     RangeError.checkValueInInterval(clientPk.length, cryptoKxPublickeybytes,
         cryptoKxPublickeybytes, 'clientPk', 'Invalid length');
 
-    final _rx = allocate<Uint8>(count: cryptoKxSessionkeybytes);
-    final _tx = allocate<Uint8>(count: cryptoKxSessionkeybytes);
+    final _rx = calloc<Uint8>(cryptoKxSessionkeybytes);
+    final _tx = calloc<Uint8>(cryptoKxSessionkeybytes);
     final _serverPk = serverPk.toPointer();
     final _serverSk = serverSk.toPointer();
     final _clientPk = clientPk.toPointer();
@@ -895,11 +895,11 @@ class Sodium {
           rx: _rx.toList(cryptoKxSessionkeybytes),
           tx: _tx.toList(cryptoKxSessionkeybytes));
     } finally {
-      free(_rx);
-      free(_tx);
-      free(_serverPk);
-      free(_serverSk);
-      free(_clientPk);
+      calloc.free(_rx);
+      calloc.free(_tx);
+      calloc.free(_serverPk);
+      calloc.free(_serverSk);
+      calloc.free(_clientPk);
     }
   }
 
@@ -913,13 +913,13 @@ class Sodium {
   static int get cryptoOnetimeauthKeybytes =>
       _cryptoOnetimeauth.crypto_onetimeauth_keybytes();
   static String get cryptoOnetimeauthPrimitive =>
-      Utf8.fromUtf8(_cryptoOnetimeauth.crypto_onetimeauth_primitive());
+      _cryptoOnetimeauth.crypto_onetimeauth_primitive().toDartString();
 
   static Uint8List cryptoOnetimeauth(Uint8List i, Uint8List k) {
     RangeError.checkValueInInterval(k.length, cryptoOnetimeauthKeybytes,
         cryptoOnetimeauthKeybytes, 'k', 'Invalid length');
 
-    final _out = allocate<Uint8>(count: cryptoOnetimeauthBytes);
+    final _out = calloc<Uint8>(cryptoOnetimeauthBytes);
     final _in = i.toPointer();
     final _k = k.toPointer();
     try {
@@ -928,9 +928,9 @@ class Sodium {
           .mustSucceed('crypto_onetimeauth');
       return _out.toList(cryptoOnetimeauthBytes);
     } finally {
-      free(_out);
-      free(_in);
-      free(_k);
+      calloc.free(_out);
+      calloc.free(_in);
+      calloc.free(_k);
     }
   }
 
@@ -948,9 +948,9 @@ class Sodium {
               _h, _in, i.length, _k) ==
           0;
     } finally {
-      free(_h);
-      free(_in);
-      free(_k);
+      calloc.free(_h);
+      calloc.free(_in);
+      calloc.free(_k);
     }
   }
 
@@ -958,7 +958,7 @@ class Sodium {
     RangeError.checkValueInInterval(key.length, cryptoOnetimeauthKeybytes,
         cryptoOnetimeauthKeybytes, 'key', 'Invalid length');
 
-    final _state = allocate<Uint8>(count: cryptoOnetimeauthStatebytes);
+    final _state = calloc<Uint8>(cryptoOnetimeauthStatebytes);
     final _k = key.toPointer();
     try {
       _cryptoOnetimeauth
@@ -966,7 +966,7 @@ class Sodium {
           .mustSucceed('crypto_onetimeauth_init');
       return _state;
     } finally {
-      free(_k);
+      calloc.free(_k);
     }
   }
 
@@ -977,27 +977,27 @@ class Sodium {
           .crypto_onetimeauth_update(state, _in, i.length)
           .mustSucceed('crypto_onetimeauth_update');
     } finally {
-      free(_in);
+      calloc.free(_in);
     }
   }
 
   static Uint8List cryptoOnetimeauthFinal(Pointer<Uint8> state) {
-    final _out = allocate<Uint8>(count: cryptoOnetimeauthBytes);
+    final _out = calloc<Uint8>(cryptoOnetimeauthBytes);
     try {
       _cryptoOnetimeauth.crypto_onetimeauth_final(state, _out);
       return _out.toList(cryptoOnetimeauthBytes);
     } finally {
-      free(_out);
+      calloc.free(_out);
     }
   }
 
   static Uint8List cryptoOnetimeauthKeygen() {
-    final _k = allocate<Uint8>(count: cryptoOnetimeauthKeybytes);
+    final _k = calloc<Uint8>(cryptoOnetimeauthKeybytes);
     try {
       _cryptoOnetimeauth.crypto_onetimeauth_keygen(_k);
       return _k.toList(cryptoOnetimeauthKeybytes);
     } finally {
-      free(_k);
+      calloc.free(_k);
     }
   }
 
@@ -1022,7 +1022,7 @@ class Sodium {
       _cryptoPwhash.crypto_pwhash_saltbytes();
   static int get cryptoPwhashStrbytes => _cryptoPwhash.crypto_pwhash_strbytes();
   static String get cryptoPwhashStrprefix =>
-      Utf8.fromUtf8(_cryptoPwhash.crypto_pwhash_strprefix());
+      _cryptoPwhash.crypto_pwhash_strprefix().toDartString();
   static int get cryptoPwhashOpslimitMin =>
       _cryptoPwhash.crypto_pwhash_opslimit_min();
   static int get cryptoPwhashOpslimitMax =>
@@ -1053,7 +1053,7 @@ class Sodium {
       _cryptoPwhash.crypto_pwhash_memlimit_sensitive();
 
   static String get cryptoPwhashPrimitive =>
-      Utf8.fromUtf8(_cryptoPwhash.crypto_pwhash_primitive());
+      _cryptoPwhash.crypto_pwhash_primitive().toDartString();
 
   static Uint8List cryptoPwhash(int outlen, Uint8List passwd, Uint8List salt,
       int opslimit, int memlimit, int alg) {
@@ -1077,7 +1077,7 @@ class Sodium {
     RangeError.checkValueInInterval(
         alg, cryptoPwhashAlgArgon2i13, cryptoPwhashAlgArgon2id13, 'alg');
 
-    final _out = allocate<Uint8>(count: outlen);
+    final _out = calloc<Uint8>(outlen);
     final _passwd = passwd.toPointer();
     final _salt = salt.toPointer();
     try {
@@ -1088,9 +1088,9 @@ class Sodium {
 
       return _out.toList(outlen);
     } finally {
-      free(_out);
-      free(_passwd);
-      free(_salt);
+      calloc.free(_out);
+      calloc.free(_passwd);
+      calloc.free(_salt);
     }
   }
 
@@ -1103,7 +1103,7 @@ class Sodium {
     RangeError.checkValueInInterval(
         memlimit, cryptoPwhashMemlimitMin, cryptoPwhashMemlimitMax, 'memlimit');
 
-    final _out = allocate<Uint8>(count: cryptoPwhashStrbytes);
+    final _out = calloc<Uint8>(cryptoPwhashStrbytes);
     final _passwd = passwd.toPointer();
     try {
       _cryptoPwhash
@@ -1111,8 +1111,8 @@ class Sodium {
           .mustSucceed('crypto_pwhash_str');
       return _out.toNullTerminatedList(cryptoPwhashStrbytes);
     } finally {
-      free(_out);
-      free(_passwd);
+      calloc.free(_out);
+      calloc.free(_passwd);
     }
   }
 
@@ -1127,7 +1127,7 @@ class Sodium {
     RangeError.checkValueInInterval(
         alg, cryptoPwhashAlgArgon2i13, cryptoPwhashAlgArgon2id13, 'alg');
 
-    final _out = allocate<Uint8>(count: cryptoPwhashStrbytes);
+    final _out = calloc<Uint8>(cryptoPwhashStrbytes);
     final _passwd = passwd.toPointer();
     try {
       _cryptoPwhash
@@ -1136,8 +1136,8 @@ class Sodium {
           .mustSucceed('crypto_pwhash_str_alg');
       return _out.toNullTerminatedList(cryptoPwhashStrbytes);
     } finally {
-      free(_out);
-      free(_passwd);
+      calloc.free(_out);
+      calloc.free(_passwd);
     }
   }
 
@@ -1155,8 +1155,8 @@ class Sodium {
       return _cryptoPwhash.crypto_pwhash_str_verify(
           _str, _passwd, passwd.length);
     } finally {
-      free(_passwd);
-      free(_str);
+      calloc.free(_passwd);
+      calloc.free(_str);
     }
   }
 
@@ -1176,7 +1176,7 @@ class Sodium {
       return _cryptoPwhash.crypto_pwhash_str_needs_rehash(
           _str, opslimit, memlimit);
     } finally {
-      free(_str);
+      calloc.free(_str);
     }
   }
 
@@ -1190,13 +1190,13 @@ class Sodium {
   static int get cryptoScalarmultCurve25519Bytes =>
       _cryptoScalarmult.crypto_scalarmult_curve25519_bytes();
   static String get cryptoScalarmultPrimitive =>
-      Utf8.fromUtf8(_cryptoScalarmult.crypto_scalarmult_primitive());
+      _cryptoScalarmult.crypto_scalarmult_primitive().toDartString();
 
   static Uint8List cryptoScalarmultBase(Uint8List n) {
     RangeError.checkValueInInterval(n.length, cryptoScalarmultScalarbytes,
         cryptoScalarmultScalarbytes, 'n', 'Invalid length');
 
-    final _q = allocate<Uint8>(count: cryptoScalarmultBytes);
+    final _q = calloc<Uint8>(cryptoScalarmultBytes);
     final _n = n.toPointer();
     try {
       _cryptoScalarmult
@@ -1204,8 +1204,8 @@ class Sodium {
           .mustSucceed('crypto_scalarmult_base');
       return _q.toList(cryptoScalarmultBytes);
     } finally {
-      free(_q);
-      free(_n);
+      calloc.free(_q);
+      calloc.free(_n);
     }
   }
 
@@ -1215,7 +1215,7 @@ class Sodium {
     RangeError.checkValueInInterval(p.length, cryptoScalarmultBytes,
         cryptoScalarmultBytes, 'p', 'Invalid length');
 
-    final _q = allocate<Uint8>(count: cryptoScalarmultBytes);
+    final _q = calloc<Uint8>(cryptoScalarmultBytes);
     final _n = n.toPointer();
     final _p = p.toPointer();
     try {
@@ -1224,9 +1224,9 @@ class Sodium {
           .mustSucceed('crypto_scalarmult');
       return _q.toList(cryptoScalarmultBytes);
     } finally {
-      free(_q);
-      free(_n);
-      free(_p);
+      calloc.free(_q);
+      calloc.free(_n);
+      calloc.free(_p);
     }
   }
 
@@ -1242,7 +1242,7 @@ class Sodium {
   static int get cryptoSecretboxMessagebytesMax =>
       _cryptoSecretbox.crypto_secretbox_messagebytes_max();
   static String get cryptoSecretboxPrimitive =>
-      Utf8.fromUtf8(_cryptoSecretbox.crypto_secretbox_primitive());
+      _cryptoSecretbox.crypto_secretbox_primitive().toDartString();
 
   static Uint8List cryptoSecretboxEasy(Uint8List m, Uint8List n, Uint8List k) {
     RangeError.checkValueInInterval(n.length, cryptoSecretboxNoncebytes,
@@ -1250,7 +1250,7 @@ class Sodium {
     RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
         cryptoSecretboxKeybytes, 'k', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: m.length + cryptoSecretboxMacbytes);
+    final _c = calloc<Uint8>(m.length + cryptoSecretboxMacbytes);
     final _m = m.toPointer();
     final _n = n.toPointer();
     final _k = k.toPointer();
@@ -1261,10 +1261,10 @@ class Sodium {
           .mustSucceed('crypto_secretbox_easy');
       return _c.toList(m.length + cryptoSecretboxMacbytes);
     } finally {
-      free(_c);
-      free(_m);
-      free(_n);
-      free(_k);
+      calloc.free(_c);
+      calloc.free(_m);
+      calloc.free(_n);
+      calloc.free(_k);
     }
   }
 
@@ -1275,7 +1275,7 @@ class Sodium {
     RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
         cryptoSecretboxKeybytes, 'k', 'Invalid length');
 
-    final _m = allocate<Uint8>(count: c.length - cryptoSecretboxMacbytes);
+    final _m = calloc<Uint8>(c.length - cryptoSecretboxMacbytes);
     final _c = c.toPointer();
     final _n = n.toPointer();
     final _k = k.toPointer();
@@ -1286,10 +1286,10 @@ class Sodium {
           .mustSucceed('crypto_secretbox_open_easy');
       return _m.toList(c.length - cryptoSecretboxMacbytes);
     } finally {
-      free(_m);
-      free(_c);
-      free(_n);
-      free(_k);
+      calloc.free(_m);
+      calloc.free(_c);
+      calloc.free(_n);
+      calloc.free(_k);
     }
   }
 
@@ -1300,8 +1300,8 @@ class Sodium {
     RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
         cryptoSecretboxKeybytes, 'k', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: m.length);
-    final _mac = allocate<Uint8>(count: cryptoSecretboxMacbytes);
+    final _c = calloc<Uint8>(m.length);
+    final _mac = calloc<Uint8>(cryptoSecretboxMacbytes);
     final _m = m.toPointer();
     final _n = n.toPointer();
     final _k = k.toPointer();
@@ -1313,11 +1313,11 @@ class Sodium {
       return DetachedCipher(
           c: _c.toList(m.length), mac: _mac.toList(cryptoSecretboxMacbytes));
     } finally {
-      free(_c);
-      free(_mac);
-      free(_m);
-      free(_n);
-      free(_k);
+      calloc.free(_c);
+      calloc.free(_mac);
+      calloc.free(_m);
+      calloc.free(_n);
+      calloc.free(_k);
     }
   }
 
@@ -1330,7 +1330,7 @@ class Sodium {
     RangeError.checkValueInInterval(k.length, cryptoSecretboxKeybytes,
         cryptoSecretboxKeybytes, 'k', 'Invalid length');
 
-    final _m = allocate<Uint8>(count: c.length);
+    final _m = calloc<Uint8>(c.length);
     final _mac = mac.toPointer();
     final _c = c.toPointer();
     final _n = n.toPointer();
@@ -1342,21 +1342,21 @@ class Sodium {
           .mustSucceed('crypto_secretbox_open_detached');
       return _m.toList(c.length);
     } finally {
-      free(_m);
-      free(_mac);
-      free(_c);
-      free(_n);
-      free(_k);
+      calloc.free(_m);
+      calloc.free(_mac);
+      calloc.free(_c);
+      calloc.free(_n);
+      calloc.free(_k);
     }
   }
 
   static Uint8List cryptoSecretboxKeygen() {
-    final _k = allocate<Uint8>(count: cryptoSecretboxKeybytes);
+    final _k = calloc<Uint8>(cryptoSecretboxKeybytes);
     try {
       _cryptoSecretbox.crypto_secretbox_keygen(_k);
       return _k.toList(cryptoSecretboxKeybytes);
     } finally {
-      free(_k);
+      calloc.free(_k);
     }
   }
 
@@ -1384,13 +1384,12 @@ class Sodium {
       _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_statebytes();
 
   static Uint8List cryptoSecretstreamXchacha20poly1305Keygen() {
-    final _k =
-        allocate<Uint8>(count: cryptoSecretstreamXchacha20poly1305Keybytes);
+    final _k = calloc<Uint8>(cryptoSecretstreamXchacha20poly1305Keybytes);
     try {
       _cryptoSecretStream.crypto_secretstream_xchacha20poly1305_keygen(_k);
       return _k.toList(cryptoSecretstreamXchacha20poly1305Keybytes);
     } finally {
-      free(_k);
+      calloc.free(_k);
     }
   }
 
@@ -1403,10 +1402,9 @@ class Sodium {
         'key',
         'Invalid length');
 
-    final _state =
-        allocate<Uint8>(count: cryptoSecretstreamXchacha20poly1305Statebytes);
+    final _state = calloc<Uint8>(cryptoSecretstreamXchacha20poly1305Statebytes);
     final _header =
-        allocate<Uint8>(count: cryptoSecretstreamXchacha20poly1305Headerbytes);
+        calloc<Uint8>(cryptoSecretstreamXchacha20poly1305Headerbytes);
     final _k = key.toPointer();
 
     try {
@@ -1419,16 +1417,16 @@ class Sodium {
           header:
               _header.toList(cryptoSecretstreamXchacha20poly1305Headerbytes));
     } finally {
-      free(_header);
-      free(_k);
+      calloc.free(_header);
+      calloc.free(_k);
     }
   }
 
   static Uint8List cryptoSecretstreamXchacha20poly1305Push(
       Pointer<Uint8> state, Uint8List m, Uint8List? ad, int tag) {
-    final _c = allocate<Uint8>(
-        count: m.length + cryptoSecretstreamXchacha20poly1305Abytes);
-    final _clenP = allocate<Uint64>(count: 1);
+    final _c =
+        calloc<Uint8>(m.length + cryptoSecretstreamXchacha20poly1305Abytes);
+    final _clenP = calloc<Uint64>(1);
     final _m = m.toPointer();
     final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
@@ -1440,10 +1438,10 @@ class Sodium {
 
       return _c.toList(_clenP[0]);
     } finally {
-      free(_c);
-      free(_clenP);
-      free(_m);
-      free(_ad);
+      calloc.free(_c);
+      calloc.free(_clenP);
+      calloc.free(_m);
+      calloc.free(_ad);
     }
   }
 
@@ -1462,8 +1460,7 @@ class Sodium {
         'k',
         'Invalid length');
 
-    final _state =
-        allocate<Uint8>(count: cryptoSecretstreamXchacha20poly1305Statebytes);
+    final _state = calloc<Uint8>(cryptoSecretstreamXchacha20poly1305Statebytes);
     final _header = header.toPointer();
     final _k = k.toPointer();
 
@@ -1473,17 +1470,17 @@ class Sodium {
           .mustSucceed('crypto_secretstream_xchacha20poly1305_init_pull');
       return _state;
     } finally {
-      free(_header);
-      free(_k);
+      calloc.free(_header);
+      calloc.free(_k);
     }
   }
 
   static PullResult cryptoSecretstreamXchacha20poly1305Pull(
       Pointer<Uint8> state, Uint8List c, Uint8List? ad) {
-    final _m = allocate<Uint8>(
-        count: c.length - cryptoSecretstreamXchacha20poly1305Abytes);
-    final _mlenP = allocate<Uint64>(count: 1);
-    final _tagP = allocate<Uint8>(count: 1);
+    final _m =
+        calloc<Uint8>(c.length - cryptoSecretstreamXchacha20poly1305Abytes);
+    final _mlenP = calloc<Uint64>(1);
+    final _tagP = calloc<Uint8>(1);
     final _c = c.toPointer();
     final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
@@ -1503,11 +1500,11 @@ class Sodium {
 
       return PullResult(m: _m.toList(_mlenP[0]), tag: _tagP[0]);
     } finally {
-      free(_m);
-      free(_mlenP);
-      free(_tagP);
-      free(_c);
-      free(_ad);
+      calloc.free(_m);
+      calloc.free(_mlenP);
+      calloc.free(_tagP);
+      calloc.free(_c);
+      calloc.free(_ad);
     }
   }
 
@@ -1523,13 +1520,13 @@ class Sodium {
   static int get cryptoShorthashKeybytes =>
       _cryptoShorthash.crypto_shorthash_keybytes();
   static String get cryptoShorthashPrimitive =>
-      Utf8.fromUtf8(_cryptoShorthash.crypto_shorthash_primitive());
+      _cryptoShorthash.crypto_shorthash_primitive().toDartString();
 
   static Uint8List cryptoShorthash(Uint8List i, Uint8List k) {
     RangeError.checkValueInInterval(k.length, cryptoShorthashKeybytes,
         cryptoShorthashKeybytes, 'k', 'Invalid length');
 
-    final _out = allocate<Uint8>(count: cryptoShorthashBytes);
+    final _out = calloc<Uint8>(cryptoShorthashBytes);
     final _in = i.toPointer();
     final _k = k.toPointer();
     try {
@@ -1538,18 +1535,18 @@ class Sodium {
           .mustSucceed('crypto_shorthash');
       return _out.toList(cryptoShorthashBytes);
     } finally {
-      free(_out);
-      free(_k);
+      calloc.free(_out);
+      calloc.free(_k);
     }
   }
 
   static Uint8List cryptoShorthashKeygen() {
-    final _k = allocate<Uint8>(count: cryptoShorthashKeybytes);
+    final _k = calloc<Uint8>(cryptoShorthashKeybytes);
     try {
       _cryptoShorthash.crypto_shorthash_keygen(_k);
       return _k.toList(cryptoShorthashKeybytes);
     } finally {
-      free(_k);
+      calloc.free(_k);
     }
   }
 
@@ -1570,13 +1567,13 @@ class Sodium {
   static int get cryptoSignEd25519Secretkeybytes =>
       _cryptoSign.crypto_sign_ed25519_secretkeybytes();
   static String get cryptoSignPrimitive =>
-      Utf8.fromUtf8(_cryptoSign.crypto_sign_primitive());
+      _cryptoSign.crypto_sign_primitive().toDartString();
 
   static KeyPair cryptoSignSeedKeypair(Uint8List seed) {
     RangeError.checkValueInInterval(seed.length, cryptoSignSeedbytes,
         cryptoSignSeedbytes, 'seed', 'Invalid length');
-    final _pk = allocate<Uint8>(count: cryptoSignPublickeybytes);
-    final _sk = allocate<Uint8>(count: cryptoSignSecretkeybytes);
+    final _pk = calloc<Uint8>(cryptoSignPublickeybytes);
+    final _sk = calloc<Uint8>(cryptoSignSecretkeybytes);
     final _seed = seed.toPointer();
 
     try {
@@ -1587,15 +1584,15 @@ class Sodium {
           pk: _pk.toList(cryptoSignPublickeybytes),
           sk: _sk.toList(cryptoSignSecretkeybytes));
     } finally {
-      free(_pk);
-      free(_sk);
-      free(_seed);
+      calloc.free(_pk);
+      calloc.free(_sk);
+      calloc.free(_seed);
     }
   }
 
   static KeyPair cryptoSignKeypair() {
-    final _pk = allocate<Uint8>(count: cryptoSignPublickeybytes);
-    final _sk = allocate<Uint8>(count: cryptoSignSecretkeybytes);
+    final _pk = calloc<Uint8>(cryptoSignPublickeybytes);
+    final _sk = calloc<Uint8>(cryptoSignSecretkeybytes);
 
     try {
       _cryptoSign
@@ -1605,8 +1602,8 @@ class Sodium {
           pk: _pk.toList(cryptoSignPublickeybytes),
           sk: _sk.toList(cryptoSignSecretkeybytes));
     } finally {
-      free(_pk);
-      free(_sk);
+      calloc.free(_pk);
+      calloc.free(_sk);
     }
   }
 
@@ -1614,8 +1611,8 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
         cryptoSignSecretkeybytes, 'sk', 'Invalid length');
 
-    final _sm = allocate<Uint8>(count: m.length + cryptoSignBytes);
-    final _smlenP = allocate<Uint64>(count: 1);
+    final _sm = calloc<Uint8>(m.length + cryptoSignBytes);
+    final _smlenP = calloc<Uint64>(1);
     final _m = m.toPointer();
     final _sk = sk.toPointer();
 
@@ -1625,10 +1622,10 @@ class Sodium {
           .mustSucceed('crypto_sign');
       return _sm.toList(_smlenP[0]);
     } finally {
-      free(_sm);
-      free(_smlenP);
-      free(_m);
-      free(_sk);
+      calloc.free(_sm);
+      calloc.free(_smlenP);
+      calloc.free(_m);
+      calloc.free(_sk);
     }
   }
 
@@ -1636,8 +1633,8 @@ class Sodium {
     RangeError.checkValueInInterval(pk.length, cryptoSignPublickeybytes,
         cryptoSignPublickeybytes, 'pk', 'Invalid length');
 
-    final _m = allocate<Uint8>(count: sm.length - cryptoSignBytes);
-    final _mlenP = allocate<Uint64>(count: 1);
+    final _m = calloc<Uint8>(sm.length - cryptoSignBytes);
+    final _mlenP = calloc<Uint64>(1);
     final _sm = sm.toPointer();
     final _pk = pk.toPointer();
 
@@ -1647,10 +1644,10 @@ class Sodium {
           .mustSucceed('crypto_sign_open');
       return _m.toList(_mlenP[0]);
     } finally {
-      free(_m);
-      free(_mlenP);
-      free(_sm);
-      free(_pk);
+      calloc.free(_m);
+      calloc.free(_mlenP);
+      calloc.free(_sm);
+      calloc.free(_pk);
     }
   }
 
@@ -1658,8 +1655,8 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
         cryptoSignSecretkeybytes, 'sk', 'Invalid length');
 
-    final _sig = allocate<Uint8>(count: cryptoSignBytes);
-    final _siglenP = allocate<Uint64>(count: 1);
+    final _sig = calloc<Uint8>(cryptoSignBytes);
+    final _siglenP = calloc<Uint64>(1);
     final _m = m.toPointer();
     final _sk = sk.toPointer();
 
@@ -1669,10 +1666,10 @@ class Sodium {
           .mustSucceed('crypto_sign_detached');
       return _sig.toList(_siglenP[0]);
     } finally {
-      free(_sig);
-      free(_siglenP);
-      free(_m);
-      free(_sk);
+      calloc.free(_sig);
+      calloc.free(_siglenP);
+      calloc.free(_m);
+      calloc.free(_sk);
     }
   }
 
@@ -1690,14 +1687,14 @@ class Sodium {
     try {
       return _cryptoSign.crypto_sign_verify_detached(_sig, _m, m.length, _pk);
     } finally {
-      free(_sig);
-      free(_m);
-      free(_pk);
+      calloc.free(_sig);
+      calloc.free(_m);
+      calloc.free(_pk);
     }
   }
 
   static Pointer<Uint8> cryptoSignInit() {
-    final _state = allocate<Uint8>(count: cryptoSignStatebytes);
+    final _state = calloc<Uint8>(cryptoSignStatebytes);
     _cryptoSign.crypto_sign_init(_state).mustSucceed('crypto_sign_init');
     return _state;
   }
@@ -1709,7 +1706,7 @@ class Sodium {
           .crypto_sign_update(state, _m, m.length)
           .mustSucceed('crypto_sign_update');
     } finally {
-      free(_m);
+      calloc.free(_m);
     }
   }
 
@@ -1717,8 +1714,8 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
         cryptoSignSecretkeybytes, 'sk', 'Invalid length');
 
-    final _sig = allocate<Uint8>(count: cryptoSignBytes);
-    final _siglenP = allocate<Uint64>(count: 1);
+    final _sig = calloc<Uint8>(cryptoSignBytes);
+    final _siglenP = calloc<Uint64>(1);
     final _sk = sk.toPointer();
     try {
       _cryptoSign
@@ -1727,9 +1724,9 @@ class Sodium {
       return _sig.toList(_siglenP[0]);
     } finally {
       // note: caller is responsible for freeing state
-      free(_sig);
-      free(_siglenP);
-      free(_sk);
+      calloc.free(_sig);
+      calloc.free(_siglenP);
+      calloc.free(_sk);
     }
   }
 
@@ -1746,8 +1743,8 @@ class Sodium {
       return _cryptoSign.crypto_sign_final_verify(state, _sig, _pk);
     } finally {
       // note: caller is responsible for freeing state
-      free(_sig);
-      free(_pk);
+      calloc.free(_sig);
+      calloc.free(_pk);
     }
   }
 
@@ -1755,7 +1752,7 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
         cryptoSignSecretkeybytes, 'sk', 'Invalid length');
 
-    final _seed = allocate<Uint8>(count: cryptoSignSeedbytes);
+    final _seed = calloc<Uint8>(cryptoSignSeedbytes);
     final _sk = sk.toPointer();
     try {
       _cryptoSign
@@ -1763,8 +1760,8 @@ class Sodium {
           .mustSucceed('crypto_sign_ed25519_sk_to_seed');
       return _seed.toList(cryptoSignSeedbytes);
     } finally {
-      free(_seed);
-      free(_sk);
+      calloc.free(_seed);
+      calloc.free(_sk);
     }
   }
 
@@ -1772,7 +1769,7 @@ class Sodium {
     RangeError.checkValueInInterval(sk.length, cryptoSignSecretkeybytes,
         cryptoSignSecretkeybytes, 'sk', 'Invalid length');
 
-    final _pk = allocate<Uint8>(count: cryptoSignPublickeybytes);
+    final _pk = calloc<Uint8>(cryptoSignPublickeybytes);
     final _sk = sk.toPointer();
     try {
       _cryptoSign
@@ -1780,8 +1777,8 @@ class Sodium {
           .mustSucceed('crypto_sign_ed25519_sk_to_pk');
       return _pk.toList(cryptoSignPublickeybytes);
     } finally {
-      free(_pk);
-      free(_sk);
+      calloc.free(_pk);
+      calloc.free(_sk);
     }
   }
 
@@ -1793,8 +1790,7 @@ class Sodium {
         'ed25519Pk',
         'Invalid length');
 
-    final _curve25519Pk =
-        allocate<Uint8>(count: cryptoScalarmultCurve25519Bytes);
+    final _curve25519Pk = calloc<Uint8>(cryptoScalarmultCurve25519Bytes);
     final _ed25519Pk = ed25519Pk.toPointer();
     try {
       _cryptoSign
@@ -1802,8 +1798,8 @@ class Sodium {
           .mustSucceed('crypto_sign_ed25519_pk_to_curve25519');
       return _curve25519Pk.toList(cryptoScalarmultCurve25519Bytes);
     } finally {
-      free(_curve25519Pk);
-      free(_ed25519Pk);
+      calloc.free(_curve25519Pk);
+      calloc.free(_ed25519Pk);
     }
   }
 
@@ -1815,8 +1811,7 @@ class Sodium {
         'ed25519Sk',
         'Invalid length');
 
-    final _curve25519Pk =
-        allocate<Uint8>(count: cryptoScalarmultCurve25519Bytes);
+    final _curve25519Pk = calloc<Uint8>(cryptoScalarmultCurve25519Bytes);
     final _ed25519Sk = ed25519Sk.toPointer();
     try {
       _cryptoSign
@@ -1824,8 +1819,8 @@ class Sodium {
           .mustSucceed('crypto_sign_ed25519_sk_to_curve25519');
       return _curve25519Pk.toList(cryptoScalarmultCurve25519Bytes);
     } finally {
-      free(_curve25519Pk);
-      free(_ed25519Sk);
+      calloc.free(_curve25519Pk);
+      calloc.free(_ed25519Sk);
     }
   }
 
@@ -1838,7 +1833,7 @@ class Sodium {
   static int get cryptoStreamMessagebytesMax =>
       _cryptoStream.crypto_stream_messagebytes_max();
   static String get cryptoStreamPrimitive =>
-      Utf8.fromUtf8(_cryptoStream.crypto_stream_primitive());
+      _cryptoStream.crypto_stream_primitive().toDartString();
 
   static Uint8List cryptoStream(int clen, Uint8List n, Uint8List k) {
     RangeError.checkValueInInterval(n.length, cryptoStreamNoncebytes,
@@ -1846,7 +1841,7 @@ class Sodium {
     RangeError.checkValueInInterval(k.length, cryptoStreamKeybytes,
         cryptoStreamKeybytes, 'k', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: clen);
+    final _c = calloc<Uint8>(clen);
     final _n = n.toPointer();
     final _k = k.toPointer();
     try {
@@ -1855,9 +1850,9 @@ class Sodium {
           .mustSucceed('crypto_stream');
       return _c.toList(clen);
     } finally {
-      free(_c);
-      free(_n);
-      free(_k);
+      calloc.free(_c);
+      calloc.free(_n);
+      calloc.free(_k);
     }
   }
 
@@ -1867,7 +1862,7 @@ class Sodium {
     RangeError.checkValueInInterval(k.length, cryptoStreamKeybytes,
         cryptoStreamKeybytes, 'k', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: m.length);
+    final _c = calloc<Uint8>(m.length);
     final _m = m.toPointer();
     final _n = n.toPointer();
     final _k = k.toPointer();
@@ -1877,20 +1872,20 @@ class Sodium {
           .mustSucceed('crypto_stream_xor');
       return _c.toList(m.length);
     } finally {
-      free(_c);
-      free(_m);
-      free(_n);
-      free(_k);
+      calloc.free(_c);
+      calloc.free(_m);
+      calloc.free(_n);
+      calloc.free(_k);
     }
   }
 
   static Uint8List cryptoStreamKeygen() {
-    final _k = allocate<Uint8>(count: cryptoStreamKeybytes);
+    final _k = calloc<Uint8>(cryptoStreamKeybytes);
     try {
       _cryptoStream.crypto_stream_keygen(_k);
       return _k.toList(cryptoStreamKeybytes);
     } finally {
-      free(_k);
+      calloc.free(_k);
     }
   }
 
@@ -1902,12 +1897,12 @@ class Sodium {
   static Uint8List randombytesBuf(int size) {
     RangeError.checkNotNegative(size);
 
-    final _buf = allocate<Uint8>(count: size);
+    final _buf = calloc<Uint8>(size);
     try {
       _randombytes.randombytes_buf(_buf, size);
       return _buf.toList(size);
     } finally {
-      free(_buf);
+      calloc.free(_buf);
     }
   }
 
@@ -1916,14 +1911,14 @@ class Sodium {
     RangeError.checkValueInInterval(seed.length, randombytesSeedbytes,
         randombytesSeedbytes, 'seed', 'Invalid length');
 
-    final _buf = allocate<Uint8>(count: size);
+    final _buf = calloc<Uint8>(size);
     final _seed = seed.toPointer();
     try {
       _randombytes.randombytes_buf_deterministic(_buf, size, _seed);
       return _buf.toList(size);
     } finally {
-      free(_buf);
-      free(_seed);
+      calloc.free(_buf);
+      calloc.free(_seed);
     }
   }
 
@@ -1939,7 +1934,7 @@ class Sodium {
   static void randombytesClose() => _randombytes.randombytes_close();
 
   static String get randombytesImplementationName =>
-      Utf8.fromUtf8(_randombytes.randombytes_implementation_name());
+      _randombytes.randombytes_implementation_name().toDartString();
 
   //
   // sodium
@@ -1951,7 +1946,7 @@ class Sodium {
   }
 
   static String get versionString =>
-      Utf8.fromUtf8(_sodium.sodium_version_string());
+      _sodium.sodium_version_string().toDartString();
   static int get libraryVersionMajor => _sodium.sodium_library_version_major();
   static int get libraryVersionMinor => _sodium.sodium_library_version_minor();
   static bool get libraryMinimal => _sodium.sodium_library_minimal() == 1;
@@ -1971,37 +1966,37 @@ class Sodium {
 
   static String bin2hex(Uint8List bin) {
     final _hexMaxlen = bin.length * 2 + 1;
-    final _hex = allocate<Uint8>(count: _hexMaxlen);
+    final _hex = calloc<Uint8>(_hexMaxlen);
     final _bin = bin.toPointer();
     try {
-      return Utf8.fromUtf8(
-          _sodium.sodium_bin2hex(_hex, _hexMaxlen, _bin, bin.length));
+      return _sodium
+          .sodium_bin2hex(_hex, _hexMaxlen, _bin, bin.length)
+          .toDartString();
     } finally {
-      free(_hex);
-      free(_bin);
+      calloc.free(_hex);
+      calloc.free(_bin);
     }
   }
 
   static Uint8List hex2bin(String hex, {String? ignore = ': '}) {
-    final _bin = allocate<Uint8>(count: hex.length);
-    final _hex = Utf8.toUtf8(hex);
-    final _hexlen = Utf8.strlen(_hex);
-    final _ignore = ignore == null ? nullptr : Utf8.toUtf8(ignore);
-    final _binlen = allocate<Uint8>(count: 4);
+    final _bin = calloc<Uint8>(hex.length);
+    final _hex = hex.toNativeUtf8();
+    final _ignore = ignore == null ? nullptr : ignore.toNativeUtf8();
+    final _binlen = calloc<Uint8>(4);
     try {
       _sodium
           .sodium_hex2bin(
-              _bin, hex.length, _hex, _hexlen, _ignore, _binlen, nullptr)
+              _bin, hex.length, _hex, _hex.length, _ignore, _binlen, nullptr)
           .mustSucceed('sodium_hex2bin');
 
       final binlen =
           _binlen.toList(4).buffer.asByteData().getUint32(0, Endian.host);
       return _bin.toList(binlen);
     } finally {
-      free(_bin);
-      free(_hex);
-      free(_ignore);
-      free(_binlen);
+      calloc.free(_bin);
+      calloc.free(_hex);
+      calloc.free(_ignore);
+      calloc.free(_binlen);
     }
   }
 
@@ -2016,38 +2011,38 @@ class Sodium {
   static String bin2base64(Uint8List bin,
       {int variant = base64VariantOriginal}) {
     final _b64maxlen = _sodium.sodium_base64_encoded_len(bin.length, variant);
-    final _b64 = allocate<Uint8>(count: _b64maxlen);
+    final _b64 = calloc<Uint8>(_b64maxlen);
     final _bin = bin.toPointer();
     try {
-      return Utf8.fromUtf8(_sodium.sodium_bin2base64(
-          _b64, _b64maxlen, _bin, bin.length, variant));
+      return _sodium
+          .sodium_bin2base64(_b64, _b64maxlen, _bin, bin.length, variant)
+          .toDartString();
     } finally {
-      free(_b64);
-      free(_bin);
+      calloc.free(_b64);
+      calloc.free(_bin);
     }
   }
 
   static Uint8List base642bin(String b64,
       {String? ignore, int variant = base64VariantOriginal}) {
-    final _bin = allocate<Uint8>(count: b64.length);
-    final _b64 = Utf8.toUtf8(b64);
-    final _b64len = Utf8.strlen(_b64);
-    final _ignore = ignore == null ? nullptr : Utf8.toUtf8(ignore);
-    final _binlen = allocate<Uint8>(count: 4);
+    final _bin = calloc<Uint8>(b64.length);
+    final _b64 = b64.toNativeUtf8();
+    final _ignore = ignore == null ? nullptr : ignore.toNativeUtf8();
+    final _binlen = calloc<Uint8>(4);
     try {
       _sodium
-          .sodium_base642bin(_bin, b64.length, _b64, _b64len, _ignore, _binlen,
-              nullptr, variant)
+          .sodium_base642bin(_bin, b64.length, _b64, _b64.length, _ignore,
+              _binlen, nullptr, variant)
           .mustSucceed('sodium_base642bin');
 
       final binlen =
           _binlen.toList(4).buffer.asByteData().getUint32(0, Endian.host);
       return _bin.toList(binlen);
     } finally {
-      free(_bin);
-      free(_b64);
-      free(_ignore);
-      free(_binlen);
+      calloc.free(_bin);
+      calloc.free(_b64);
+      calloc.free(_ignore);
+      calloc.free(_binlen);
     }
   }
 
@@ -2060,14 +2055,14 @@ class Sodium {
     try {
       return _sodium.sodium_memcmp(_b1, _b2, b1.length) == 0;
     } finally {
-      free(_b1);
-      free(_b2);
+      calloc.free(_b1);
+      calloc.free(_b2);
     }
   }
 
   static Uint8List pad(Uint8List buf, int blockSize) {
     final _buf = buf.toPointer(size: buf.length + blockSize);
-    final _paddedlen = allocate<Uint32>(count: 1);
+    final _paddedlen = calloc<Uint32>(1);
     try {
       _sodium
           .sodium_pad(
@@ -2076,14 +2071,14 @@ class Sodium {
 
       return _buf.toList(_paddedlen[0]);
     } finally {
-      free(_buf);
-      free(_paddedlen);
+      calloc.free(_buf);
+      calloc.free(_paddedlen);
     }
   }
 
   static Uint8List unpad(Uint8List buf, int blockSize) {
     final _buf = buf.toPointer();
-    final _unpaddedlen = allocate<Uint32>(count: 1);
+    final _unpaddedlen = calloc<Uint32>(1);
     try {
       _sodium
           .sodium_unpad(_unpaddedlen, _buf, buf.length, blockSize)
@@ -2091,8 +2086,8 @@ class Sodium {
 
       return _buf.toList(_unpaddedlen[0]);
     } finally {
-      free(_buf);
-      free(_unpaddedlen);
+      calloc.free(_buf);
+      calloc.free(_unpaddedlen);
     }
   }
 }
@@ -2122,8 +2117,8 @@ class _CryptoAead {
     RangeError.checkValueInInterval(
         k.length, keybytes, keybytes, 'k', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: m.length + abytes);
-    final _clenP = allocate<Uint64>(count: 1);
+    final _c = calloc<Uint8>(m.length + abytes);
+    final _clenP = calloc<Uint64>(1);
     final _m = m.toPointer();
     final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
@@ -2135,12 +2130,12 @@ class _CryptoAead {
           .mustSucceed('${name}_encrypt');
       return _c.toList(_clenP[0]);
     } finally {
-      free(_c);
-      free(_clenP);
-      free(_m);
-      free(_ad);
-      free(_npub);
-      free(_k);
+      calloc.free(_c);
+      calloc.free(_clenP);
+      calloc.free(_m);
+      calloc.free(_ad);
+      calloc.free(_npub);
+      calloc.free(_k);
     }
   }
 
@@ -2152,8 +2147,8 @@ class _CryptoAead {
     RangeError.checkValueInInterval(
         k.length, keybytes, keybytes, 'k', 'Invalid length');
 
-    final _m = allocate<Uint8>(count: c.length - abytes);
-    final _mlenP = allocate<Uint64>(count: 1);
+    final _m = calloc<Uint8>(c.length - abytes);
+    final _mlenP = calloc<Uint64>(1);
     final _c = c.toPointer();
     final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
@@ -2165,12 +2160,12 @@ class _CryptoAead {
           .mustSucceed('${name}_decrypt');
       return _m.toList(_mlenP[0]);
     } finally {
-      free(_m);
-      free(_mlenP);
-      free(_c);
-      free(_ad);
-      free(_npub);
-      free(_k);
+      calloc.free(_m);
+      calloc.free(_mlenP);
+      calloc.free(_c);
+      calloc.free(_ad);
+      calloc.free(_npub);
+      calloc.free(_k);
     }
   }
 
@@ -2182,9 +2177,9 @@ class _CryptoAead {
     RangeError.checkValueInInterval(
         k.length, keybytes, keybytes, 'k', 'Invalid length');
 
-    final _c = allocate<Uint8>(count: m.length);
-    final _mac = allocate<Uint8>(count: abytes);
-    final _maclenP = allocate<Uint64>(count: 1);
+    final _c = calloc<Uint8>(m.length);
+    final _mac = calloc<Uint8>(abytes);
+    final _maclenP = calloc<Uint64>(1);
     final _m = m.toPointer();
     final _ad = ad?.toPointer() ?? nullptr;
     final _adlen = ad?.length ?? 0;
@@ -2198,13 +2193,13 @@ class _CryptoAead {
       return DetachedCipher(
           c: _c.toList(m.length), mac: _mac.toList(_maclenP[0]));
     } finally {
-      free(_c);
-      free(_mac);
-      free(_maclenP);
-      free(_m);
-      free(_ad);
-      free(_npub);
-      free(_k);
+      calloc.free(_c);
+      calloc.free(_mac);
+      calloc.free(_maclenP);
+      calloc.free(_m);
+      calloc.free(_ad);
+      calloc.free(_npub);
+      calloc.free(_k);
     }
   }
 
@@ -2218,7 +2213,7 @@ class _CryptoAead {
     RangeError.checkValueInInterval(
         k.length, keybytes, keybytes, 'k', 'Invalid length');
 
-    final _m = allocate<Uint8>(count: c.length);
+    final _m = calloc<Uint8>(c.length);
     final _c = c.toPointer();
     final _mac = mac.toPointer();
     final _ad = ad?.toPointer() ?? nullptr;
@@ -2232,22 +2227,22 @@ class _CryptoAead {
           .mustSucceed('${name}_decrypt_detached');
       return _m.toList(c.length);
     } finally {
-      free(_m);
-      free(_c);
-      free(_mac);
-      free(_ad);
-      free(_npub);
-      free(_k);
+      calloc.free(_m);
+      calloc.free(_c);
+      calloc.free(_mac);
+      calloc.free(_ad);
+      calloc.free(_npub);
+      calloc.free(_k);
     }
   }
 
   Uint8List keygen() {
-    final _k = allocate<Uint8>(count: keybytes);
+    final _k = calloc<Uint8>(keybytes);
     try {
       _bindings.keygen(_k);
       return _k.toList(keybytes);
     } finally {
-      free(_k);
+      calloc.free(_k);
     }
   }
 }

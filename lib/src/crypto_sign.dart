@@ -63,7 +63,7 @@ class CryptoSign {
       }
       return Sodium.cryptoSignFinalCreate(state, secretKey);
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 
@@ -77,7 +77,7 @@ class CryptoSign {
       }
       return Sodium.cryptoSignFinalVerify(state, signature, publicKey) == 0;
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 
@@ -91,7 +91,7 @@ class CryptoSign {
       }
       return Sodium.cryptoSignFinalCreate(state, secretKey);
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 
@@ -105,7 +105,7 @@ class CryptoSign {
       }
       return Sodium.cryptoSignFinalVerify(state, signature, publicKey) == 0;
     } finally {
-      free(state);
+      calloc.free(state);
     }
   }
 
