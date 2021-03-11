@@ -107,11 +107,7 @@ class RunButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-        child: Text('Run'),
-        textColor: Colors.white,
-        color: Theme.of(context).accentColor,
-        onPressed: onPressed);
+    return ElevatedButton(child: Text('Run'), onPressed: onPressed);
   }
 }
 
