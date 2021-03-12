@@ -15,7 +15,7 @@ DynamicLibrary _load() {
   if (Platform.isMacOS) {
     // assuming user installed libsodium as per the installation instructions
     // see also https://libsodium.gitbook.io/doc/installation
-    return DynamicLibrary.open('/usr/local/lib/libsodium.dylib');
+    return DynamicLibrary.open('libsodium.dylib');
   }
   if (Platform.isLinux) {
     // assuming user installed libsodium as per the installation instructions
