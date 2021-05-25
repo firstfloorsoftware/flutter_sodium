@@ -11,6 +11,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /** FlutterSodiumPlugin */
 public class FlutterSodiumPlugin implements FlutterPlugin, MethodCallHandler {
+  private static boolean hasLoadedLibrary = false;
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -21,6 +22,11 @@ public class FlutterSodiumPlugin implements FlutterPlugin, MethodCallHandler {
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "sodium");
     channel.setMethodCallHandler(this);
+    if (hasLoadedLibrary) {
+      return;
+    }
+    System.loadLibrary("libsodium.so");
+    hasLoadedLibrary = true;
   }
 
   // This static function is optional and equivalent to onAttachedToEngine. It supports the old
