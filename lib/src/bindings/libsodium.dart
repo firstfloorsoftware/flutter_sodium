@@ -20,7 +20,7 @@ DynamicLibrary _load() {
   if (Platform.isLinux) {
     // assuming user installed libsodium as per the installation instructions
     // see also https://libsodium.gitbook.io/doc/installation
-    return DynamicLibrary.open('/usr/local/lib/libsodium.so');
+    return DynamicLibrary.open('libsodium.so.23');
   }
   if (Platform.isWindows) {
     // assuming user installed libsodium as per the installation instructions
